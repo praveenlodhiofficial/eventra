@@ -17,6 +17,7 @@ enum Roles {
 
 model User {
   id        String     @id @default(uuid())
+  name      String
   email     String     @unique
   password  String
   role      Roles
@@ -38,16 +39,16 @@ enum TicketType {
 }
 
 model Event {
-  id          String       @id @default(uuid())
+  id          String     @id @default(uuid())
   name        String
   description String
   startDate   DateTime
   endDate     DateTime
   location    String
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
   EventType   EventType
-  TicketType  TicketType[]
+  TicketType  TicketType
   FeedBack    FeedBack[]
   Ticket      Ticket[]
   Calendar    Calendar[]

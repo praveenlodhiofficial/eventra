@@ -1,13 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-   // pageExtensions: ["ts", "tsx"],
-   // typescript: {
-   //    ignoreBuildErrors: true,
-   // },
-   // eslint: {
-   //    ignoreDuringBuilds: true,
-   // },
+   turbopack: {
+      root: "C:\\Users\\Praveen Lodhi\\Desktop\\eventra",
+   },
 };
 
 export default nextConfig;

@@ -1,7 +1,9 @@
 import { EventType, Roles, TicketType } from "@/generated/prisma";
 
+//  not used in auth.action.ts
 export interface User {
    id: string;
+   name: string;
    email: string;
    password: string;
    role: Roles;
