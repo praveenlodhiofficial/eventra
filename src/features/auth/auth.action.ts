@@ -1,3 +1,5 @@
+"use server";
+
 import { Roles, User } from "@/generated/prisma";
 import { prisma } from "@/lib/prisma";
 import { compare, hash } from "bcryptjs";

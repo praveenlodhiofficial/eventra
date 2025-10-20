@@ -1,9 +1,6 @@
 import { userSchema } from "@/features/user";
 import { z } from "zod";
 
-// ✅ Create (Sign Up) schema derived from base
-// - Require password for sign-up
-// - Do not expose role/id on the sign-up form
 export const signUpSchema = userSchema
    .pick({
       name: true,

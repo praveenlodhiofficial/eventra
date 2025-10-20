@@ -4,7 +4,6 @@ import { AuthForm, signUpSchema, signUpWithCredentials } from "@/features/auth";
 
 export default function SignUp() {
    return (
-      <div>
          <AuthForm
             type="SIGN_UP"
             schema={signUpSchema}
@@ -24,6 +23,5 @@ export default function SignUp() {
                return { success: res.success, error: res.error };
             }}
          />
-      </div>
    );
 }

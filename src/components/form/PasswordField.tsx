@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import type { Control, FieldValues, Path } from "react-hook-form";
+import { IoEye, IoEyeOff } from "react-icons/io5";
 
 export interface PasswordFieldProps<
    TFieldValues extends FieldValues,
@@ -62,33 +63,11 @@ export function PasswordField<TFieldValues extends FieldValues, TName extends Pa
                         onClick={() => setVisible((v) => !v)}
                         className="text-muted-foreground absolute inset-y-0 right-0 flex items-center px-3"
                      >
-                        {/* simple eye icon via svg to avoid extra deps */}
-                        {visible ? (
-                           <svg
-                              className="h-5 w-5"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                           >
-                              <path d="M17.94 17.94A10.94 10.94 0 0 1 12 20C7 20 2.73 16.11 1 12c.63-1.44 1.6-2.78 2.78-3.94M22.94 11.94C22.36 10.64 21.59 9.44 20.66 8.39M1 1l22 22" />
-                           </svg>
-                        ) : (
-                           <svg
-                              className="h-5 w-5"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                           >
-                              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                              <circle cx="12" cy="12" r="3" />
-                           </svg>
-                        )}
+                                                   {visible ? (
+                              <IoEyeOff className="h-5 w-5" />
+                           ) : (
+                              <IoEye className="h-5 w-5" />
+                           )}
                      </button>
                   </div>
                </FormControl>
