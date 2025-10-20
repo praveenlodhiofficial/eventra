@@ -5,7 +5,7 @@ import useSingleFileUpload from "@/hooks/useSingleFileUpload";
 import config from "@/lib/config";
 import { cn } from "@/lib/utils";
 import { Image as IKImage, Video as IKVideo } from "@imagekit/next";
-import Image from "next/image";
+import { UploadCloud } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
@@ -167,6 +167,7 @@ const FileUpload = ({
 
          {!file.filePath ? (
             <Button
+               variant="ghost"
                className={cn(
                   "relative flex min-h-9 w-full items-center justify-center gap-1.5 overflow-hidden rounded-md bg-white text-sm font-light shadow-xs transition-all duration-200 focus:outline-none",
                   className
@@ -192,13 +193,7 @@ const FileUpload = ({
                   />
                )}
 
-               <Image
-                  src="/icons/upload.svg"
-                  alt="upload-icon"
-                  width={15}
-                  height={15}
-                  className="relative z-9 object-contain"
-               />
+               <UploadCloud className="size-5 object-contain text-black" />
 
                <p className={cn("text-foreground relative z-9 text-sm")}>
                   {isUploading

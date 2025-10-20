@@ -20,7 +20,14 @@ model User {
   name      String
   email     String     @unique
   password  String
-  role      Roles
+  phone     String?
+  address   String?
+  city      String?
+  state     String?
+  country   String?
+  pinCode   String?
+  imageUrl  String?
+  role      Roles      @default(ATTENDEE)
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
   FeedBack  FeedBack[]
@@ -47,11 +54,11 @@ model Event {
   location    String
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
-  EventType   EventType
-  TicketType  TicketType
-  FeedBack    FeedBack[]
-  Ticket      Ticket[]
-  Calendar    Calendar[]
+  eventType   EventType
+  ticketType  TicketType
+  feedBack    FeedBack[]
+  ticket      Ticket[]
+  calendar    Calendar[]
 }
 
 model FeedBack {
