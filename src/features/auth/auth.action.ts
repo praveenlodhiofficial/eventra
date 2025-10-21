@@ -1,8 +1,10 @@
 "use server";
 
+import { createUserSession } from "@/features/auth/auth.session";
+import { comparePasswords, generateSalt, hashPassword } from "@/features/auth/auth.passwordHasher";
 import { Roles, User } from "@/generated/prisma";
 import { prisma } from "@/lib/prisma";
-import { compare, hash } from "bcryptjs";
+import { cookies } from "next/headers";
 
 export const signUpWithCredentials = async (
    params: Pick<User, "email" | "password" | "name">
@@ -18,16 +20,35 @@ export const signUpWithCredentials = async (
 
       if (doesUserExist) return { success: false, error: "User already exists with this email" };
 
-      const hashedPassword = await hash(password, 10);
+      const salt = generateSalt();
+      const hashedPassword = await hashPassword(password, salt);
 
       const user = await prisma.user.create({
          data: {
             name,
             email,
             password: hashedPassword,
+            salt,
             role: Roles.ATTENDEE,
          },
       });
+
+      // Create session after successful signup
+      try {
+         const cookieStore = await cookies();
+         await createUserSession(
+            {
+               id: user.id,
+               role: user.role,
+            },
+            cookieStore
+         );
+         console.log("Session created successfully for user:", user.id);
+      } catch (sessionError) {
+         console.error("Failed to create session:", sessionError);
+         // Don't fail the signup if session creation fails
+         // The user is still created in the database
+      }
 
       return { success: true, data: user };
    } catch (error) {
@@ -51,9 +72,30 @@ export const signInWithCredentials = async (
 
       if (!user) return { success: false, error: "No user associated with this email in database" };
 
-      const isPasswordValid = await compare(password, user.password);
+      const isPasswordValid = await comparePasswords({
+         password,
+         salt: user.salt,
+         hashedPassword: user.password,
+      });
 
       if (!isPasswordValid) return { success: false, error: "Invalid password" };
+
+      // Create session after successful signin
+      try {
+         const cookieStore = await cookies();
+         await createUserSession(
+            {
+               id: user.id,
+               role: user.role,
+            },
+            cookieStore
+         );
+         console.log("Session created successfully for user:", user.id);
+      } catch (sessionError) {
+         console.error("Failed to create session:", sessionError);
+         // Don't fail the signin if session creation fails
+         // The user credentials are still valid
+      }
 
       return { success: true, data: user };
    } catch (error) {

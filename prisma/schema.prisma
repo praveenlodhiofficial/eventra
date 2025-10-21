@@ -20,6 +20,7 @@ model User {
   name      String
   email     String     @unique
   password  String
+  salt      String
   phone     String?
   address   String?
   city      String?

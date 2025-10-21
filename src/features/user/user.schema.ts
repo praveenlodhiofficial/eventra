@@ -13,13 +13,14 @@ export const userSchema = z.object({
       })
       .min(6, { message: "Password must be at least 6 characters long" })
       .optional(),
-   phone: z.string().min(1, { message: "Phone number is required" }),
-   address: z.string().min(1, { message: "Address is required" }),
-   city: z.string().min(1, { message: "City is required" }),
-   state: z.string().min(1, { message: "State is required" }),
-   country: z.string().min(1, { message: "Country is required" }),
-   pinCode: z.string().min(1, { message: "Pin code is required" }),
-   imageUrl: z.url().or(z.literal("")).optional(),
+   salt: z.string().min(10, { message: "Salt is required" }).optional(),
+   phone: z.string().optional(),
+   address: z.string().min(10, { message: "Address is required" }).optional(),
+   city: z.string().min(3, { message: "City is required" }).optional(),
+   state: z.string().min(3, { message: "State is required" }).optional(),
+   country: z.string().min(3, { message: "Country is required" }).optional(),
+   pinCode: z.string().optional(),
+   imageUrl: z.string().optional(),
    role: z.enum(Roles),
 });
 

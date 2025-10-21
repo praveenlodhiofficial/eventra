@@ -63,11 +63,7 @@ export function PasswordField<TFieldValues extends FieldValues, TName extends Pa
                         onClick={() => setVisible((v) => !v)}
                         className="text-muted-foreground absolute inset-y-0 right-0 flex items-center px-3"
                      >
-                                                   {visible ? (
-                              <IoEyeOff className="h-5 w-5" />
-                           ) : (
-                              <IoEye className="h-5 w-5" />
-                           )}
+                        {visible ? <IoEyeOff className="h-5 w-5" /> : <IoEye className="h-5 w-5" />}
                      </button>
                   </div>
                </FormControl>

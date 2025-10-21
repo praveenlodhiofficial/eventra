@@ -1,7 +1,9 @@
 "use server";
 
+import { getUserFromSession } from "@/features/auth/auth.session";
 import { User } from "@/generated/prisma";
 import { prisma } from "@/lib/prisma";
+import { cookies } from "next/headers";
 
 export const getCurrentUser = async (id: string) => {
    try {
@@ -21,6 +23,45 @@ export const getCurrentUser = async (id: string) => {
       return {
          success: false,
          message: "Error getting current user",
+      };
+   }
+};
+
+export const getCurrentUserFromSession = async () => {
+   try {
+      const cookieStore = await cookies();
+      const sessionUser = await getUserFromSession(cookieStore);
+
+      if (!sessionUser) {
+         return {
+            success: false,
+            message: "No active session found",
+         };
+      }
+
+      const user = await prisma.user.findUnique({
+         where: {
+            id: sessionUser.id,
+         },
+      });
+
+      if (!user) {
+         return {
+            success: false,
+            message: "User not found",
+         };
+      }
+
+      return {
+         success: true,
+         message: "User fetched successfully from session",
+         data: user,
+      };
+   } catch (error) {
+      console.error("Error getting current user from session", error);
+      return {
+         success: false,
+         message: "Error getting current user from session",
       };
    }
 };

@@ -9,8 +9,7 @@ import {
 } from "@/components/form";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import { UserSchema, userSchema } from "@/features/user";
-import { updateCurrentUser } from "@/features/user/user.action";
+import { updateCurrentUser, UserSchema, userSchema } from "@/features/user";
 import { Roles } from "@/generated/prisma";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -39,12 +38,11 @@ export default function UserForm({
          pinCode: defaultValues?.pinCode ?? "",
          imageUrl: defaultValues?.imageUrl ?? "",
          role: defaultValues?.role ?? Roles.ATTENDEE,
+         salt: defaultValues?.salt,
       },
    });
 
    const { isDirty } = form.formState;
-
-   // Using values keeps fields in sync with DB props without useEffect
 
    async function handleSubmit(data: UserSchema) {
       if (onSubmit) {
@@ -52,23 +50,24 @@ export default function UserForm({
          return;
       }
 
-      if (!userId) {
+      const currentUserId = userId || defaultValues?.id;
+      if (!currentUserId) {
          toast.error("User ID is required for updating profile");
          return;
       }
 
       try {
          const result = await updateCurrentUser({
-            id: userId,
+            id: currentUserId,
             name: data.name,
             email: data.email,
-            phone: data.phone,
-            address: data.address,
-            city: data.city,
-            state: data.state,
-            country: data.country,
-            pinCode: data.pinCode,
-            imageUrl: data.imageUrl ?? "",
+            phone: data.phone ?? null,
+            address: data.address ?? null,
+            city: data.city ?? null,
+            state: data.state ?? null,
+            country: data.country ?? null,
+            pinCode: data.pinCode ?? null,
+            imageUrl: data.imageUrl ?? null,
          });
 
          if (result.success) {
@@ -94,11 +93,13 @@ export default function UserForm({
             >
                {/* Profile Section */}
                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <div className="relative flex h-30 items-end">
-                     <h1 className="absolute -bottom-2 -left-1.5 z-[-1] bg-gradient-to-t from-transparent via-zinc-100 to-zinc-300 bg-clip-text text-[7rem] font-semibold text-transparent">
+                  <div className="relative flex h-10 items-end md:h-20 lg:h-30">
+                     <h1 className="absolute -bottom-2 -left-1.5 z-[-1] bg-gradient-to-t from-transparent via-zinc-100 to-zinc-300 bg-clip-text text-[3rem] font-semibold text-transparent md:text-[5rem] lg:text-[7rem]">
                         Profile
                      </h1>
-                     <h1 className="relative text-[4rem] font-semibold">Profile</h1>
+                     <h1 className="relative text-[1.5rem] font-semibold md:text-[2.5rem] lg:text-[3.5rem]">
+                        Profile
+                     </h1>
                   </div>
                   {/* Submit Button */}
                   <Button
@@ -124,7 +125,7 @@ export default function UserForm({
                      />
 
                      {/* Email - Phone Number - Role */}
-                     <div className="grid w-full grid-cols-1 gap-5 md:grid-cols-3">
+                     <div className="grid w-full grid-cols-1 gap-5 md:grid-cols-2">
                         {/* Email */}
                         <TextInputField
                            control={form.control}
@@ -143,26 +144,7 @@ export default function UserForm({
                            itemClassName="flex w-full flex-col gap-1"
                            inputClassName="-ml-px w-full rounded-md rounded-l-none border border-dashed border-gray-400 bg-white px-4 py-1.5 text-sm shadow-xs transition-all duration-200 focus:outline-none"
                         />
-
-                        {/* Role */}
-                        <ReadonlyField
-                           control={form.control}
-                           name={"role"}
-                           label="Role"
-                           placeholder="Role"
-                           inputClassName="w-full cursor-not-allowed rounded-md border border-dashed border-gray-700 bg-gray-100 px-3 py-2 text-sm transition-all duration-200"
-                        />
                      </div>
-
-                     {/* Address */}
-                     <TextareaField
-                        control={form.control}
-                        name={"address"}
-                        label="Address"
-                        placeholder="Address"
-                        rows={10}
-                        textareaClassName="w-full rounded-md border border-dashed border-gray-400 bg-transparent px-3 py-2 text-sm transition-all duration-200 focus-visible:ring-0 focus-visible:ring-offset-0 active:ring-0 active:ring-offset-0"
-                     />
 
                      {/* City - State - Country - Pin Code */}
                      <div className="grid w-full grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
@@ -202,6 +184,16 @@ export default function UserForm({
                            inputClassName="w-full rounded-md border border-dashed border-gray-400 px-3 py-2 text-sm transition-all duration-200"
                         />
                      </div>
+
+                     {/* Address */}
+                     <TextareaField
+                        control={form.control}
+                        name={"address"}
+                        label="Address"
+                        placeholder="Address"
+                        rows={10}
+                        textareaClassName="w-full rounded-md border border-dashed border-gray-400 bg-transparent px-3 py-2 text-sm transition-all duration-200 focus-visible:ring-0 focus-visible:ring-offset-0 active:ring-0 active:ring-offset-0"
+                     />
                   </div>
 
                   {/* Right Side */}
@@ -211,9 +203,18 @@ export default function UserForm({
                         control={form.control}
                         name={"imageUrl"}
                         label="Profile Image"
-                        folder="eventra/profile"
+                        folder="eventra/users"
                         type="image"
                         accept="image/*"
+                     />
+
+                     {/* Role */}
+                     <ReadonlyField
+                        control={form.control}
+                        name={"role"}
+                        label="Role"
+                        placeholder="Role"
+                        inputClassName="w-full cursor-not-allowed rounded-md border border-dashed border-gray-700 bg-gray-100 px-3 py-2 text-sm transition-all duration-200"
                      />
                   </div>
                </div>
