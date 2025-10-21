@@ -1,6 +1,6 @@
-import { getCurrentUserFromSession } from "@/features/user/user.action";
-import { UserSchema } from "@/features/user/user.schema";
+import { getCurrentUser } from "@/features/user";
 import UserForm from "@/features/user/user.form";
+import { UserSchema } from "@/features/user/user.schema";
 
 export default async function ProfilePage({
    defaultValues,
@@ -15,21 +15,21 @@ export default async function ProfilePage({
    let userData = defaultValues;
 
    if (!defaultValues && !userId) {
-      const result = await getCurrentUserFromSession();
-      if (result.success && result.data) {
+      const user = await getCurrentUser({ withFullUser: true });
+      if (user) {
          userData = {
-            id: result.data.id,
-            name: result.data.name,
-            email: result.data.email,
-            phone: result.data.phone ?? undefined,
-            address: result.data.address ?? undefined,
-            city: result.data.city ?? undefined,
-            state: result.data.state ?? undefined,
-            country: result.data.country ?? undefined,
-            pinCode: result.data.pinCode ?? undefined,
-            imageUrl: result.data.imageUrl ?? undefined,
-            role: result.data.role,
-            salt: result.data.salt,
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            phone: user.phone ?? undefined,
+            address: user.address ?? undefined,
+            city: user.city ?? undefined,
+            state: user.state ?? undefined,
+            country: user.country ?? undefined,
+            pinCode: user.pinCode ?? undefined,
+            imageUrl: user.imageUrl ?? undefined,
+            role: user.role as "ORGANIZER" | "ADMIN" | "ATTENDEE" | "SPONSOR",
+            salt: undefined, // Salt is not included in getCurrentUser for security
          };
       }
    }

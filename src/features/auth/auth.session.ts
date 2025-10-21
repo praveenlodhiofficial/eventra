@@ -2,6 +2,7 @@ import { Cookies, UserSession } from "@/features/auth/auth.types";
 import config from "@/lib/config";
 import { redisClient } from "@/lib/redis";
 import crypto from "crypto";
+import { cache } from "react";
 import { z } from "zod";
 
 const {
@@ -15,12 +16,12 @@ const sessionSchema = z.object({
    role: z.string(),
 });
 
-export function getUserFromSession(cookies: Pick<Cookies, "get">) {
+export const getUserFromSession = cache((cookies: Pick<Cookies, "get">) => {
    const sessionId = cookies.get(cookieSessionKey)?.value;
    if (sessionId == null) return null;
 
    return getUserSessionById(sessionId);
-}
+});
 
 export async function updateUserSessionData(user: UserSession, cookies: Pick<Cookies, "get">) {
    const sessionId = cookies.get(cookieSessionKey)?.value;
@@ -83,10 +84,23 @@ function setCookie(sessionId: string, cookies: Pick<Cookies, "set">) {
    });
 }
 
+// In-memory cache for session data (per request)
+const sessionCache = new Map<string, UserSession>();
+
 async function getUserSessionById(sessionId: string) {
+   // Check in-memory cache first
+   if (sessionCache.has(sessionId)) {
+      return sessionCache.get(sessionId);
+   }
+
    const rawUser = await redisClient.get(`session:${sessionId}`);
 
    const { success, data: user } = sessionSchema.safeParse(rawUser);
+   
+   if (success && user) {
+      // Cache the result in memory for this request
+      sessionCache.set(sessionId, user);
+   }
 
    return success ? user : null;
 }

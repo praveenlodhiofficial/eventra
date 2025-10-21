@@ -10,8 +10,8 @@ export const eventSchema = z.object({
    location: z.string({ message: "Invalid location" }),
    createdAt: z.date({ message: "Invalid date" }),
    updatedAt: z.date({ message: "Invalid date" }),
-   EventType: z.enum(EventType, { message: "Invalid event type" }),
-   TicketType: z.enum(TicketType, { message: "Invalid ticket type" }),
+   eventType: z.enum(EventType, { message: "Invalid event type" }),
+   ticketType: z.enum(TicketType, { message: "Invalid ticket type" }),
 });
 
 export const eventCreateSchema = eventSchema.omit({ id: true, createdAt: true, updatedAt: true });

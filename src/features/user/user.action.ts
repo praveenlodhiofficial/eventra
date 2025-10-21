@@ -1,74 +1,73 @@
 "use server";
 
 import { getUserFromSession } from "@/features/auth/auth.session";
-import { User } from "@/generated/prisma";
+import { User as PrismaUser } from "@/generated/prisma";
 import { prisma } from "@/lib/prisma";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { cache } from "react";
+import { FullUser, User } from "./user.types";
 
-export const getCurrentUser = async (id: string) => {
-   try {
-      const user = await prisma.user.findUnique({
-         where: {
-            id: id,
-         },
-      });
+function _getCurrentUser(options: {
+   withFullUser: true;
+   redirectIfNotFound: true;
+}): Promise<FullUser>;
+function _getCurrentUser(options: {
+   withFullUser: true;
+   redirectIfNotFound?: false;
+}): Promise<FullUser | null>;
+function _getCurrentUser(options: {
+   withFullUser?: false;
+   redirectIfNotFound: true;
+}): Promise<User>;
+function _getCurrentUser(options?: {
+   withFullUser?: false;
+   redirectIfNotFound?: false;
+}): Promise<User | null>;
+async function _getCurrentUser({ withFullUser = false, redirectIfNotFound = false } = {}) {
+   const user = await getUserFromSession(await cookies());
 
-      return {
-         success: true,
-         message: "User fetched successfully",
-         data: user,
-      };
-   } catch (error) {
-      console.error("Error getting current user", error);
-      return {
-         success: false,
-         message: "Error getting current user",
-      };
+   if (user == null) {
+      if (redirectIfNotFound) return redirect("/sign-in");
+      return null;
    }
-};
 
-export const getCurrentUserFromSession = async () => {
-   try {
-      const cookieStore = await cookies();
-      const sessionUser = await getUserFromSession(cookieStore);
-
-      if (!sessionUser) {
-         return {
-            success: false,
-            message: "No active session found",
-         };
-      }
-
-      const user = await prisma.user.findUnique({
-         where: {
-            id: sessionUser.id,
-         },
-      });
-
-      if (!user) {
-         return {
-            success: false,
-            message: "User not found",
-         };
-      }
-
-      return {
-         success: true,
-         message: "User fetched successfully from session",
-         data: user,
-      };
-   } catch (error) {
-      console.error("Error getting current user from session", error);
-      return {
-         success: false,
-         message: "Error getting current user from session",
-      };
+   if (withFullUser) {
+      const fullUser = await getUserFromDb(user.id);
+      // This should never happen
+      if (fullUser == null) throw new Error("User not found in database");
+      return fullUser;
    }
-};
+
+   return user;
+}
+
+export const getCurrentUser = cache(_getCurrentUser);
+
+async function getUserFromDb(id: string): Promise<FullUser | null> {
+   const user = await prisma.user.findUnique({
+      where: { id },
+      select: {
+         id: true,
+         email: true,
+         role: true,
+         name: true,
+         phone: true,
+         address: true,
+         city: true,
+         state: true,
+         country: true,
+         pinCode: true,
+         imageUrl: true,
+      },
+   });
+
+   return user;
+}
 
 export const updateCurrentUser = async (
    params: Pick<
-      User,
+      PrismaUser,
       | "id"
       | "name"
       | "email"

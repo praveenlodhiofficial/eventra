@@ -4,10 +4,10 @@ import prisma from "@/lib/prisma";
 export const createEvent = async (
    params: Pick<
       Event,
-      "name" | "description" | "startDate" | "endDate" | "location" | "EventType" | "TicketType"
+      "name" | "description" | "startDate" | "endDate" | "location" | "eventType" | "ticketType"
    >
 ) => {
-   const { name, description, startDate, endDate, location, EventType, TicketType } = params;
+   const { name, description, startDate, endDate, location, eventType, ticketType } = params;
 
    try {
       const event = await prisma.event.create({
@@ -17,8 +17,8 @@ export const createEvent = async (
             startDate,
             endDate,
             location,
-            EventType,
-            TicketType,
+            eventType,
+            ticketType,
          },
       });
 
@@ -90,11 +90,11 @@ export const updateEvent = async (
       | "startDate"
       | "endDate"
       | "location"
-      | "EventType"
-      | "TicketType"
+      | "eventType"
+      | "ticketType"
    >
 ) => {
-   const { id, name, description, startDate, endDate, location, EventType, TicketType } = params;
+   const { id, name, description, startDate, endDate, location, eventType, ticketType } = params;
 
    try {
       const doesEventExist = await prisma.event.findUnique({
@@ -120,8 +120,8 @@ export const updateEvent = async (
             startDate,
             endDate,
             location,
-            EventType,
-            TicketType,
+            eventType,
+            ticketType,
          },
       });
 

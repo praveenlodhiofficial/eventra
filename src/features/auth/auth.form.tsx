@@ -45,6 +45,19 @@ export function AuthForm<T extends FieldValues>({
          const result = await onSubmit(data);
 
          if (!result.success) {
+            // Check if user already exists during sign-up
+            if (!isSignIn && result.error?.includes("User already exists")) {
+               toast.error("Account already exists", {
+                  description:
+                     "An account with this email already exists. Redirecting to sign in...",
+               });
+               // Redirect to sign-in page after a short delay
+               setTimeout(() => {
+                  router.push("/sign-in");
+               }, 1000);
+               return;
+            }
+
             toast.error(isSignIn ? "Sign in failed" : "Error signing up", {
                description: result.error ?? "An error occurred.",
             });
