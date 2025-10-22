@@ -39,6 +39,11 @@ export default async function Navbar() {
             <Link href="/tickets">Tickets</Link>
             <Link href="/community">Community</Link>
             <Link href="/feedback">Feedback</Link>
+            {user?.role === "ADMIN" && (
+               <Link href="/admin" className="text-blue-400">
+                  Admin Panel
+               </Link>
+            )}
          </div>
 
          {/* Show this when user not logged in (no session) */}

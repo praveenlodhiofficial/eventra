@@ -96,7 +96,7 @@ async function getUserSessionById(sessionId: string) {
    const rawUser = await redisClient.get(`session:${sessionId}`);
 
    const { success, data: user } = sessionSchema.safeParse(rawUser);
-   
+
    if (success && user) {
       // Cache the result in memory for this request
       sessionCache.set(sessionId, user);

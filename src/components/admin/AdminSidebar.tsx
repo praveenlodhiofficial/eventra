@@ -1,4 +1,4 @@
-import { BsCalendarEvent } from "react-icons/bs";
+import { BsCalendarEvent, BsGrid3X3 } from "react-icons/bs";
 
 import {
    Sidebar,
@@ -13,6 +13,11 @@ import {
 
 // Menu items.
 const items = [
+   {
+      title: "Dashboard",
+      url: "/admin",
+      icon: BsGrid3X3,
+   },
    {
       title: "Events",
       url: "/admin/events",

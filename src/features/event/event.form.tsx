@@ -1,112 +1,263 @@
 "use client";
 
+import {
+   DateField,
+   ImageUploadField,
+   SelectField,
+   TextareaField,
+   TextInputField,
+} from "@/components/form";
 import { Button } from "@/components/ui/button";
+import { Form } from "@/components/ui/form";
+import { updateEvent } from "@/features/event";
+import { eventSchema, EventSchema } from "@/features/event/event.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
+import { PlusIcon, XIcon } from "lucide-react";
 import { useState } from "react";
-import { DefaultValues, FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
-import { IoClose } from "react-icons/io5";
+import * as motion from "motion/react-client";
 
-interface EventFormProps<T extends FieldValues> {
-   schema: z.ZodSchema<T>;
-   defaultValues: T;
-   onSubmit: (data: T) => Promise<{ success: boolean; error?: string }>;
-   type: "CREATE" | "UPDATE";
-   isOverlay?: boolean;
-   onClose?: () => void;
-}
-
-export function EventForm<T extends FieldValues>({
-   schema,
+function AdminEventForm({
+   open,
+   onClose,
    defaultValues,
    onSubmit,
-   type,
-   isOverlay,
-   onClose,
-}: EventFormProps<T>) {
-   const router = useRouter();
-   const isCreate = type === "CREATE";
-   const [isLoading, setIsLoading] = useState(false);
-
-   const form = useForm({
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      resolver: zodResolver(schema as any) as any,
-      defaultValues: defaultValues as DefaultValues<T>,
+}: {
+   open: boolean;
+   onClose: () => void;
+   defaultValues?: Partial<EventSchema>;
+   onSubmit?: (values: EventSchema) => Promise<void>;
+}) {
+   const form = useForm<EventSchema>({
+      resolver: zodResolver(eventSchema),
+      defaultValues: {
+         id: defaultValues?.id ?? "",
+         name: defaultValues?.name ?? "",
+         description: defaultValues?.description ?? "",
+         startDate: defaultValues?.startDate ?? new Date(),
+         endDate: defaultValues?.endDate ?? new Date(),
+         location: defaultValues?.location ?? "",
+         eventType: defaultValues?.eventType ?? "ONLINE",
+         ticketType: defaultValues?.ticketType ?? "FREE",
+         createdAt: defaultValues?.createdAt ?? new Date(),
+         updatedAt: defaultValues?.updatedAt ?? new Date(),
+      },
    });
 
-   const handleSubmit: SubmitHandler<T> = async (data) => {
-      setIsLoading(true);
+   const { isDirty } = form.formState;
+
+   async function handleSubmit(data: EventSchema) {
+      if (onSubmit) {
+         await onSubmit(data);
+         return;
+      }
 
       try {
-         const result = await onSubmit(data);
-         if (result.success) {
-            toast.success(isCreate ? "Event created successfully" : "Event updated successfully", {
-               description: isCreate ? "Event created successfully" : "Event updated successfully",
-            });
+         const result = await updateEvent({
+            id: data.id,
+            name: data.name,
+            description: data.description,
+            startDate: data.startDate,
+            endDate: data.endDate,
+            location: data.location,
+            eventType: data.eventType,
+            ticketType: data.ticketType,
+         });
 
-            // Close overlay or redirect
-            if (isOverlay && onClose) {
-               onClose();
-            } else {
-               router.push("/admin/events");
-            }
+         if (result.success) {
+            toast.success(result.message);
+            form.reset(data);
          } else {
-            toast.error(isCreate ? "Event creation failed" : "Event update failed", {
-               description: result.error || "Please try again.",
-            });
+            toast.error(result.message);
          }
       } catch (error) {
-         console.error("Error submitting event form", error);
-         toast.error(isCreate ? "Event creation failed" : "Event update failed", {
-            description: "Please try again.",
-         });
-      } finally {
-         setIsLoading(false);
+         console.error("Error updating event", error);
+         toast.error(
+            error instanceof Error ? error.message : "Something went wrong! Please try again."
+         );
       }
-   };
+   }
 
-   if (isOverlay) {
-      return (
-         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-            <div className="bg-background scrollbar-hide relative mx-4 max-h-[90vh] w-full max-w-6xl overflow-y-auto rounded-2xl border shadow-lg">
-               <div className="relative flex items-center justify-between border-b px-6 pt-6 pb-4">
-                  <div className="relative flex flex-col gap-1">
-                     <h1 className="absolute -top-18 -left-1.5 z-[-1] bg-gradient-to-t from-transparent via-zinc-100 to-zinc-300 bg-clip-text text-[7rem] font-semibold text-transparent">
-                        {isCreate ? "Create New Event" : "Update Event"}
+   return (
+          <div className="fixed inset-0 bg-black/40 flex items-center justify-center backdrop-blur-xs z-10">
+      <motion.div 
+            className="overflow-hidden bg-white shadow-xl shadow-black/50 w-7xl h-[calc(100vh-4rem)] flex flex-col gap-5 p-2 rounded-xl relative"
+         initial={{ opacity: 0, scale: 0.5 }}
+         animate={{ opacity: 1, scale: 1, }}
+         exit={{ opacity: 0, scale: 0.5 }}
+         transition={{ duration: 0.3 }}
+         
+         >
+
+         <Form {...form}>
+            <form
+               onSubmit={form.handleSubmit(handleSubmit)}
+               className="flex flex-col gap-6 bg-transparent p-5"
+            >
+
+                              {/* Event Section */}
+               <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div className="relative flex items-end">
+                     <h1 className="absolute -bottom-2 -left-1.5 z-15 bg-gradient-to-t from-transparent via-zinc-100 to-zinc-300 bg-clip-text text-[3rem] font-semibold text-transparent md:text-[5rem]">
+                        Event
                      </h1>
-                     <h1 className="relative text-[4rem] font-semibold">
-                        {isCreate ? "Create New Event" : "Update Event"}
+                     <h1 className="relative z-20 text-[1.5rem] font-semibold md:text-[3rem]">
+                        Event
                      </h1>
                   </div>
-                  <p className="text-muted-foreground text-xs text-[13px]">
-                     {isCreate
-                        ? "Fill in the details to create a new event"
-                        : "Update the event information"}
-                  </p>
-               </div>
-               <div className="flex items-center gap-3">
+                     <div className="flex gap-3">
                   <Button
                      type="submit"
-                     loading={isLoading}
-                     className="bg-black text-white hover:bg-gray-800"
-                     onClick={form.handleSubmit(handleSubmit)}
+                     disabled={!isDirty}
+                     className="hidden w-fit bg-black text-white disabled:cursor-not-allowed disabled:bg-gray-400 md:block"
                   >
-                     {isCreate ? "Create Event" : "Update Event"}
-                  </Button>
-                  {onClose && (
-                     <button
-                        onClick={onClose}
-                        className="text-muted-foreground hover:text-foreground transition-colors"
-                        aria-label="Close"
-                     >
-                        <IoClose className="text-muted-foreground hover:text-foreground size-6 transition-colors" />
-                     </button>
-                  )}
+                     Update Event
+                     </Button>
+                                 <Button
+               variant="secondary"
+         //  className="absolute top-2 right-2"
+          onClick={onClose}
+        >
+          <XIcon className="size-5" />
+        </Button>
+</div>
                </div>
-            </div>
-         </div>
-      );
-   }
+               {/* Event Details */}
+               <div className="grid w-full grid-cols-1 gap-5 lg:grid-cols-[1fr_auto] lg:gap-10">
+                  {/* Left Side */}
+                  <div className="flex flex-col gap-5">
+                     {/* Name */}
+                     <TextInputField
+                        control={form.control}
+                        name={"name"}
+                        label="Name"
+                        placeholder="Name"
+                        inputClassName="w-full rounded-md border border-dashed border-gray-400 bg-transparent px-3 py-2 text-sm transition-all duration-200 focus-visible:ring-0 focus-visible:ring-offset-0 active:ring-0 active:ring-offset-0"
+                     />
+
+                     <div className="grid w-full grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr]">
+                        {/* Location */}
+                        <TextInputField
+                           control={form.control}
+                           name={"location"}
+                           label="Location"
+                           placeholder="Location"
+                           inputClassName="w-full rounded-md border border-dashed border-gray-400 px-3 py-2 text-sm transition-all duration-200"
+                        />
+
+                        {/* Event Type */}
+                        <SelectField
+                           control={form.control}
+                           name={"eventType"}
+                           label="Event Type"
+                           placeholder="Event Type"
+                           options={[
+                              { label: "Online", value: "ONLINE" },
+                              { label: "Offline", value: "OFFLINE" },
+                              { label: "Hybrid", value: "HYBRID" },
+                           ]}
+                           selectClassName="w-full rounded-md border border-dashed border-gray-400 px-3 py-2 text-sm transition-all duration-200"
+                        />
+
+                        {/* Ticket Type */}
+                        <SelectField
+                           control={form.control}
+                           name={"ticketType"}
+                           label="Ticket Type"
+                           placeholder="Ticket Type"
+                           options={[
+                              { label: "Free", value: "FREE" },
+                              { label: "Paid", value: "PAID" },
+                           ]}
+                           selectClassName="w-full rounded-md border border-dashed border-gray-400 px-3 py-2 text-sm transition-all duration-200"
+                        />
+                     </div>
+
+                     {/* Description */}
+                     <TextareaField
+                        control={form.control}
+                        name={"description"}
+                        label="Description"
+                        placeholder="Description"
+                        rows={9}
+                        textareaClassName="w-full rounded-md border border-dashed border-gray-400 bg-transparent px-3 py-2 text-sm transition-all duration-200 focus-visible:ring-0 focus-visible:ring-offset-0 active:ring-0 active:ring-offset-0"
+                     />
+                  </div>
+
+                  {/* Right Side */}
+                  <div className="flex w-full flex-col gap-5 md:flex-row lg:w-[450px] lg:flex-col">
+                     {/* Event Image Upload */}
+                     <ImageUploadField
+                        control={form.control}
+                        name={"image" as keyof EventSchema}
+                        label="Event Image"
+                        folder="events"
+                        fileClassName="w-full rounded-md text-sm transition-all duration-200"
+                     />
+
+                     <div className="grid grid-cols-2 gap-5">
+                        {/* Start Date */}
+                        <DateField
+                           control={form.control}
+                           name={"startDate"}
+                           label="Start Date"
+                           placeholder="Start Date"
+                           inputClassName="w-full rounded-md border border-dashed border-gray-400 px-3 py-2 text-sm transition-all duration-200"
+                        />
+
+                        {/* End Date */}
+                        <DateField
+                           control={form.control}
+                           name={"endDate"}
+                           label="End Date"
+                           placeholder="End Date"
+                           inputClassName="w-full rounded-md border border-dashed border-gray-400 px-3 py-2 text-sm transition-all duration-200"
+                        />
+                     </div>
+                  </div>
+               </div>
+
+               {/* Mobile Submit Button */}
+               <Button
+                  type="submit"
+                  disabled={!isDirty}
+                  className="w-full bg-black text-white disabled:cursor-not-allowed disabled:bg-gray-400 md:hidden"
+               >
+                  Update Event
+               </Button>
+            </form>
+         </Form>
+      </motion.div>
+      </div>
+   );
+}
+
+export function EventFormModalButton({defaultValues}: {defaultValues?: Partial<EventSchema>}) {
+    const [openModal, setOpenModal] = useState(false);
+   return (
+      <div>
+                     {/* Event Section */}
+               <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div className="relative flex items-end">
+                     <h1 className="absolute -bottom-2 -left-1.5 z-[-1] bg-gradient-to-t from-transparent via-zinc-100 to-zinc-300 bg-clip-text text-[3rem] font-semibold text-transparent md:text-[5rem]">
+                        Event
+                     </h1>
+                     <h1 className="relative text-[1.5rem] font-semibold md:text-[3rem]">
+                        Event
+                     </h1>
+                  </div>
+                  {/* Submit Button */}
+            <Button
+               variant="default"
+               onClick={() => setOpenModal(true)}
+               className="px-3"
+            >
+               <PlusIcon className="size-4" />
+                     Add Event
+            </Button>
+            {openModal && <AdminEventForm defaultValues={defaultValues}  open={openModal} onClose={() => setOpenModal(false)}  />}
+               </div>
+      </div>
+   )
 }
