@@ -18,17 +18,16 @@ import {
 } from "@/components/ui/table";
 import { Event } from "@/generated/prisma";
 import { formatDate } from "@/lib/utils";
-import { ArrowRight, BadgeIcon, Calendar, MapPinIcon, Ticket, TrashIcon } from "lucide-react";
+import { ArrowRight, BadgeIcon, Calendar, MapPinIcon, Ticket } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { EventFormModalButton } from "./event.form";
 
 interface AdminEventsTableProps {
    events: Event[];
-   onDeleteEvent?: (event: Event) => void;
 }
 
-export function AdminEventsTable({ events, onDeleteEvent }: AdminEventsTableProps) {
+export function AdminEventsTable({ events }: AdminEventsTableProps) {
    const [page, setPage] = useState(1);
    const [rowsPerPage, setRowsPerPage] = useState(20);
 
@@ -131,14 +130,23 @@ export function AdminEventsTable({ events, onDeleteEvent }: AdminEventsTableProp
                                        updatedAt: event.updatedAt,
                                     }}
                                  />
-                                 <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() => onDeleteEvent?.(event)}
-                                    className="h-8 w-8 p-0 hover:bg-red-50"
-                                 >
-                                    <TrashIcon className="h-4 w-4 text-red-500" />
-                                 </Button>
+                                 <EventFormModalButton
+                                    mode="delete"
+                                    defaultValues={{
+                                       id: event.id,
+                                       name: event.name,
+                                       description: event.description,
+                                       startDate: event.startDate,
+                                       endDate: event.endDate,
+                                       location: event.location,
+                                       eventType: event.eventType,
+                                       ticketType: event.ticketType,
+                                       coverImageUrl: event.coverImageUrl ?? undefined,
+                                       imageUrl: event.imageUrl,
+                                       createdAt: event.createdAt,
+                                       updatedAt: event.updatedAt,
+                                    }}
+                                 />
                               </div>
                            </TableCell>
                         </TableRow>

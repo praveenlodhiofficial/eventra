@@ -26,7 +26,7 @@ export function useMultiFileUpload(
          toArray.map(async (file, index) => {
             const id = newItems[index].id;
             try {
-               const authRes = await fetch(`${config.env.apiEndpoint}/api/imagekit-auth`);
+               const authRes = await fetch(`${config.env.apiEndpoint}/api/imagekit/auth`);
                if (!authRes.ok) {
                   const errorText = await authRes.text();
                   throw new Error(`Request failed with status ${authRes.status}: ${errorText}`);

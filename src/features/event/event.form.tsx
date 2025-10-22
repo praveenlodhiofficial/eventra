@@ -9,8 +9,16 @@ import {
 } from "@/components/form";
 import ImageTileUploadField from "@/components/form/ImageTileUploadField";
 import { Button } from "@/components/ui/button";
+import {
+   Dialog,
+   DialogContent,
+   DialogDescription,
+   DialogFooter,
+   DialogHeader,
+   DialogTitle,
+} from "@/components/ui/dialog";
 import { Form } from "@/components/ui/form";
-import { createEvent, updateEvent } from "@/features/event";
+import { createEvent, deleteEvent, updateEvent } from "@/features/event";
 import {
    eventCreateSchema,
    EventCreateSchema,
@@ -18,14 +26,51 @@ import {
    EventSchema,
 } from "@/features/event/event.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { PencilIcon, PlusIcon, XIcon } from "lucide-react";
+import { PencilIcon, PlusIcon, TrashIcon, XIcon } from "lucide-react";
 import * as motion from "motion/react-client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-type FormMode = "create" | "update";
+type FormMode = "create" | "update" | "delete";
+
+// Delete Confirmation Dialog Component
+function DeleteEventDialog({
+   event,
+   open,
+   onOpenChange,
+   onConfirm,
+}: {
+   event: Partial<EventSchema>;
+   open: boolean;
+   onOpenChange: (open: boolean) => void;
+   onConfirm: () => void;
+}) {
+   return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+         <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+               <DialogTitle className="flex items-center gap-2 text-xl mb-1">
+                  {/* <TrashIcon className="h-5 w-5 text-red-500" /> */}
+                  Delete Event
+               </DialogTitle>
+               <DialogDescription className="text-[13px]">
+                  Are you sure you want to delete <span className="font-semibold text-black">&quot;{event.name}&quot;</span> ? This action cannot be undone.
+               </DialogDescription>
+            </DialogHeader>
+            <DialogFooter className="gap-2">
+               <Button variant="outline" onClick={() => onOpenChange(false)}>
+                  Cancel
+               </Button>
+               <Button variant="destructive" onClick={onConfirm}>
+                  Delete
+               </Button>
+            </DialogFooter>
+         </DialogContent>
+      </Dialog>
+   );
+}
 
 function AdminEventForm({
    onClose,
@@ -124,43 +169,43 @@ function AdminEventForm({
       <div className="fixed inset-0 z-10 flex items-center justify-center bg-black/40 backdrop-blur-xs">
          <motion.div
             className="relative flex h-[calc(100vh-4rem)] w-7xl flex-col gap-5 overflow-hidden rounded-xl bg-white p-2 shadow-xl shadow-black/50"
-            initial={{ opacity: 0, scale: 0.5 }}
+            initial={{ opacity: 0, scale: 0.7 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.5 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.4 }}
          >
-            <Form {...form}>
-               <form
-                  onSubmit={form.handleSubmit(handleSubmit)}
-                  className="flex flex-col gap-6 bg-transparent p-5"
-               >
-                  {/* Event Section */}
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                     <div className="relative flex items-end">
-                        <h1 className="absolute -bottom-2 -left-1.5 z-15 bg-gradient-to-t from-transparent via-zinc-100 to-zinc-300 bg-clip-text text-[3rem] font-semibold text-transparent md:text-[5rem]">
-                           Event
-                        </h1>
-                        <h1 className="relative z-20 text-[1.5rem] font-semibold md:text-[3rem]">
-                           Event
-                        </h1>
+               <Form {...form}>
+                  <form
+                     onSubmit={form.handleSubmit(handleSubmit)}
+                     className="flex flex-col gap-6 bg-transparent p-5"
+                  >
+                     {/* Event Section */}
+                     <div className="flex flex-wrap items-center justify-between gap-2">
+                        <div className="relative flex items-end">
+                           <h1 className="absolute -bottom-2 -left-1.5 z-15 bg-gradient-to-t from-transparent via-zinc-100 to-zinc-300 bg-clip-text text-[3rem] font-semibold text-transparent md:text-[5rem]">
+                              Event
+                           </h1>
+                           <h1 className="relative z-20 text-[1.5rem] font-semibold md:text-[3rem]">
+                              Event
+                           </h1>
+                        </div>
+                        <div className="flex gap-3">
+                           <Button
+                              type="submit"
+                              disabled={!isDirty}
+                              className="hidden w-fit bg-black text-white disabled:cursor-not-allowed disabled:bg-gray-400 md:block"
+                           >
+                              {isUpdateMode ? "Update Event" : "Create Event"}
+                           </Button>
+                           <Button
+                              variant="secondary"
+                              //  className="absolute top-2 right-2"
+                              onClick={onClose}
+                           >
+                              <XIcon className="size-5" />
+                           </Button>
+                        </div>
                      </div>
-                     <div className="flex gap-3">
-                        <Button
-                           type="submit"
-                           disabled={!isDirty}
-                           className="hidden w-fit bg-black text-white disabled:cursor-not-allowed disabled:bg-gray-400 md:block"
-                        >
-                           {isUpdateMode ? "Update Event" : "Create Event"}
-                        </Button>
-                        <Button
-                           variant="secondary"
-                           //  className="absolute top-2 right-2"
-                           onClick={onClose}
-                        >
-                           <XIcon className="size-5" />
-                        </Button>
-                     </div>
-                  </div>
                   {/* Event Details */}
                   <div className="scrollbar-hide grid max-h-[calc(100vh-14rem)] w-full grid-cols-1 gap-5 overflow-y-auto lg:grid-cols-[1fr_auto] lg:gap-10">
                      {/* Left Side */}
@@ -268,16 +313,16 @@ function AdminEventForm({
                      </div>
                   </div>
 
-                  {/* Mobile Submit Button */}
-                  <Button
-                     type="submit"
-                     disabled={!isDirty}
-                     className="w-full bg-black text-white disabled:cursor-not-allowed disabled:bg-gray-400 md:hidden"
-                  >
-                     {isUpdateMode ? "Update Event" : "Create Event"}
-                  </Button>
-               </form>
-            </Form>
+                     {/* Mobile Submit Button */}
+                     <Button
+                        type="submit"
+                        disabled={!isDirty}
+                        className="w-full bg-black text-white disabled:cursor-not-allowed disabled:bg-gray-400 md:hidden"
+                     >
+                        {isUpdateMode ? "Update Event" : "Create Event"}
+                     </Button>
+                  </form>
+               </Form>
          </motion.div>
       </div>
    );
@@ -295,7 +340,34 @@ export function EventFormModalButton({
    buttonIcon?: React.ComponentType<{ className?: string }>;
 }) {
    const [openModal, setOpenModal] = useState(false);
+   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+   const router = useRouter();
    const isUpdateMode = mode === "update";
+   const isDeleteMode = mode === "delete";
+
+   async function handleDelete() {
+      if (!defaultValues?.id) {
+         toast.error("Event ID is required for deletion");
+         return;
+      }
+
+      try {
+         const result = await deleteEvent({ id: defaultValues.id });
+
+         if (result.success) {
+            toast.success(result.message);
+            setOpenDeleteDialog(false);
+            router.refresh();
+         } else {
+            toast.error(result.message);
+         }
+      } catch (error) {
+         console.error("Error deleting event", error);
+         toast.error(
+            error instanceof Error ? error.message : "Something went wrong! Please try again."
+         );
+      }
+   }
 
    return (
       <div>
@@ -316,6 +388,23 @@ export function EventFormModalButton({
                      mode="update"
                   />
                )}
+            </>
+         ) : isDeleteMode ? (
+            <>
+               <Button
+                  variant="ghost"
+                  onClick={() => setOpenDeleteDialog(true)}
+                  className="size-8 hover:bg-red-100"
+               >
+                  <TrashIcon className="size-4 text-red-500" />
+               </Button>
+
+               <DeleteEventDialog
+                  event={defaultValues || {}}
+                  open={openDeleteDialog}
+                  onOpenChange={setOpenDeleteDialog}
+                  onConfirm={handleDelete}
+               />
             </>
          ) : (
             <>

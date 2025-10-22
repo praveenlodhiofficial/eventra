@@ -50,7 +50,7 @@ export function useSingleFileUpload({ type, folder, onProgress, onSuccess, onErr
       setIsUploading(true);
       onProgress(0);
       try {
-         const authRes = await fetch(`${config.env.apiEndpoint}/api/imagekit-auth`);
+         const authRes = await fetch(`${config.env.apiEndpoint}/api/imagekit/auth`);
          if (!authRes.ok) {
             const errorText = await authRes.text();
             throw new Error(`Request failed with status ${authRes.status}: ${errorText}`);

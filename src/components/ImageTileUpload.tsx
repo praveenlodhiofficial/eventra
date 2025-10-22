@@ -1,6 +1,7 @@
 "use client";
 
 import FileUpload from "@/components/FileUpload";
+import { Button } from "@/components/ui/button";
 import useMultiFileUpload from "@/hooks/useMultiFileUpload";
 import { cn } from "@/lib/utils";
 import { UploadCloud, XIcon } from "lucide-react";
@@ -63,16 +64,11 @@ export default function ImageTileUpload({
          console.log("ImageTileUpload - currentImages:", currentImages);
          
          return (
-            <div className={cn("flex flex-wrap items-start gap-3", className)}>
-               {/* Debug info */}
-               <div className="w-full text-xs text-gray-500 mb-2">
-                  Images in array: {currentImages.length} | Values: {JSON.stringify(currentImages)}
-               </div>
-               {/* Show existing uploaded images */}
+            <div className={cn("w-full flex flex-wrap items-start gap-3", className)}>
                {currentImages.map((imageUrl, index) => (
                   <div
                      key={`${imageUrl}-${index}`}
-                     className="relative aspect-video w-[310px] overflow-hidden rounded-md bg-white shadow-xs border border-dashed border-gray-400 md:w-[217px]"
+                     className="relative aspect-video w-[300px] overflow-hidden rounded-md bg-white shadow-xs border border-dashed border-gray-400 md:w-[236px]"
                   >
                      {imageUrl ? (
                         <>
@@ -84,7 +80,7 @@ export default function ImageTileUpload({
                               className="h-full w-full object-cover"
                               unoptimized
                            />
-                           <div className="absolute bottom-1 left-1 bg-black/70 text-white text-xs px-1 rounded">
+                           <div className="absolute aspect-square bottom-1 left-1 bg-black/70 text-white text-xs px-1 rounded">
                               {index + 1}
                            </div>
                         </>
@@ -93,18 +89,19 @@ export default function ImageTileUpload({
                            <span className="text-sm text-gray-500">No image</span>
                         </div>
                      )}
-                     <button
+                     <Button
+                        variant="destructive"
                         type="button"
                         onClick={(e) => {
                            e.preventDefault();
                            const newImages = currentImages.filter((_, i) => i !== index);
                            onChange(newImages.length > 0 ? newImages : []);
                         }}
-                        className="absolute top-1.5 right-1.5 size-6 rounded-full bg-red-500 text-white hover:bg-red-600 transition-colors duration-200 flex items-center justify-center"
+                        className="absolute top-1.5 right-1.5 size-6 rounded-full cursor-pointer hover:bg-red-500"
                         title="Remove image"
                      >
                         <XIcon className="size-3" />
-                     </button>
+                     </Button>
                   </div>
                ))}
                
@@ -112,7 +109,7 @@ export default function ImageTileUpload({
                {pending.map((item) => (
                   <div
                      key={item.id}
-                     className="relative aspect-video w-[310px] overflow-hidden rounded-md bg-white shadow-xs md:w-[217px]"
+                     className="relative aspect-video w-[310px] overflow-hidden rounded-md bg-white shadow-xs md:w-[236px]"
                   >
                      <div className="absolute inset-0 bg-green-100" />
                      <div
@@ -132,7 +129,7 @@ export default function ImageTileUpload({
                      e.preventDefault();
                      inputRef.current?.click();
                   }}
-                  className="flex aspect-video w-[310px] border border-dashed border-gray-400 items-center justify-center rounded-md bg-gray-50 transition-all duration-200 hover:bg-gray-50/20 md:w-[217px]"
+                  className="flex aspect-video w-[310px] border border-dashed border-gray-400 items-center justify-center rounded-md bg-gray-50 transition-all duration-200 hover:bg-gray-50/20 md:w-[236px]"
                   title="Add images"
                >
                   <div className="flex items-center gap-1.5">
@@ -169,7 +166,7 @@ export default function ImageTileUpload({
 
       // Single add: delegate to FileUpload so its built-in progress is used
       return (
-         <div className="w-[310px] md:w-[217px]">
+         <div className="w-[310px] md:w-[236px]">
             <FileUpload
                key={nonce}
                type={mediaType === "video" ? "video" : "image"}
@@ -193,7 +190,7 @@ export default function ImageTileUpload({
                   onChange(p);
                   setNonce((n) => n + 1);
                }}
-               className={cn("aspect-video w-[310px] md:w-[217px]")}
+               className={cn("aspect-video w-[310px] md:w-[236px]")}
             />
          </div>
       );
@@ -214,7 +211,7 @@ export default function ImageTileUpload({
    const singleValue = Array.isArray(value) ? value[0] : value;
 
    return (
-      <div className={cn("w-[310px] md:w-[217px]", className)}>
+      <div className={cn("w-[310px] md:w-[236px]", className)}>
          <FileUpload
             type={detectMediaType(singleValue || "")}
             accept={
@@ -229,7 +226,7 @@ export default function ImageTileUpload({
             value={singleValue ?? undefined}
             onFileChange={(p) => onChange(p)}
             onRemove={() => onChange(null)}
-            className="w-[310px] md:w-[217px]"
+            className="w-[310px] md:w-[236px]"
          />
       </div>
    );

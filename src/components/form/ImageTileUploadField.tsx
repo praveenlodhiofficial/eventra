@@ -52,7 +52,7 @@ export function ImageTileUploadField<
                   {label}
                </FormLabel>
                <FormControl>
-                  <div className="flex w-full max-w-[450px] min-w-[310px]">
+                  <div className="flex w-full min-w-[310px]">
                      <ImageTileUpload
                         value={field.value}
                         onChange={(value) => {
