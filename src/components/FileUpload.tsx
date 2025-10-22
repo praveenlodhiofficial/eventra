@@ -5,7 +5,7 @@ import useSingleFileUpload from "@/hooks/useSingleFileUpload";
 import config from "@/lib/config";
 import { cn } from "@/lib/utils";
 import { Image as IKImage, Video as IKVideo } from "@imagekit/next";
-import { UploadCloud } from "lucide-react";
+import { UploadCloud, XIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
@@ -33,8 +33,7 @@ interface FileUploadProps {
    onFileChange: (filePath: string) => void;
    value?: string;
    className?: string;
-   overlayMode?: "change" | "remove"; // which overlay button to show when file is present
-   onRemove?: () => void; // called when overlayMode is remove and user clicks
+   onRemove?: () => void; // called when user clicks remove button
    objectFit?: "cover" | "contain"; // control media fit inside preview
    mediaClassName?: string; // extra classes for IKImage/IKVideo
    aspectRatio?: "16:9" | "4:3" | "1:1" | "9:16"; // control media aspect ratio
@@ -49,7 +48,6 @@ const FileUpload = ({
    onFileChange,
    value,
    className,
-   overlayMode = "change",
    onRemove,
    objectFit = "cover",
    aspectRatio = "16:9",
@@ -274,36 +272,10 @@ const FileUpload = ({
                      </div>
                   ) : null}
 
-                  {/* Overlay button: change or remove in the exact same position */}
-                  {overlayMode === "change" && !disabled ? (
-                     <button
-                        onClick={(e) => {
-                           e.preventDefault();
-                           if (fileInputRef.current) {
-                              fileInputRef.current.click();
-                           }
-                        }}
-                        className="absolute top-2 right-2 rounded-full p-2 text-white transition-colors duration-200"
-                        title="Change file"
-                     >
-                        <svg
-                           width="16"
-                           height="16"
-                           viewBox="0 0 24 24"
-                           fill="none"
-                           stroke="currentColor"
-                           strokeWidth="2"
-                           strokeLinecap="round"
-                           strokeLinejoin="round"
-                        >
-                           <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
-                           <path d="M21 3v5h-5" />
-                           <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
-                           <path d="M3 21v-5h5" />
-                        </svg>
-                     </button>
-                  ) : (
-                     <button
+                  {/* Remove file overlay button */}
+                  {!disabled && (
+                        <Button
+                           variant="secondary"
                         onClick={(e) => {
                            e.preventDefault();
                            // Clear current file and notify parent
@@ -313,23 +285,11 @@ const FileUpload = ({
                            } catch {}
                            if (onRemove) onRemove();
                         }}
-                        className="absolute top-2 right-2 rounded-full p-2 text-white transition-colors duration-200"
+                        className="absolute top-1.5 right-1.5 size-7 rounded-full bg-white/30 hover:bg-white/40 backdrop-blur-md aspect-square text-white transition-colors duration-200"
                         title="Remove file"
-                     >
-                        <svg
-                           width="16"
-                           height="16"
-                           viewBox="0 0 24 24"
-                           fill="none"
-                           stroke="currentColor"
-                           strokeWidth="2"
-                           strokeLinecap="round"
-                           strokeLinejoin="round"
                         >
-                           <path d="M18 6L6 18" />
-                           <path d="M6 6l12 12" />
-                        </svg>
-                     </button>
+                           <XIcon className="size-1 scale-400 rounded-full" />
+                     </Button>
                   )}
                </div>
             </div>

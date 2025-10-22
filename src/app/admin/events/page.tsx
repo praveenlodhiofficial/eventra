@@ -1,31 +1,24 @@
 import { AdminEventsTable, EventFormModalButton, getAllEvents } from "@/features/event";
-import { EventSchema } from "@/features/event/event.schema";
 
 export default async function AdminEventsPage() {
    const events = await getAllEvents();
-
-   // Get the first event as default values (you might want to change this logic)
-   let eventData: Partial<EventSchema> | undefined;
-
-   if (events.success && events.data && events.data.length > 0) {
-      const firstEvent = events.data[0];
-      eventData = {
-         id: firstEvent.id,
-         name: firstEvent.name,
-         description: firstEvent.description,
-         startDate: firstEvent.startDate,
-         endDate: firstEvent.endDate,
-         location: firstEvent.location,
-         eventType: firstEvent.eventType,
-         ticketType: firstEvent.ticketType,
-      };
-   }
-
    const res = events.data || [];
 
    return (
-      <div className="flex flex-col gap-4 w-full">
-         <EventFormModalButton defaultValues={eventData} />
+      <div className="flex w-full flex-col gap-4">
+         <div className="flex flex-wrap items-center justify-between gap-2">
+            {/* Heading Section - Event */}
+            <div className="relative flex items-end">
+               <h1 className="absolute -bottom-2 -left-1.5 z-[-1] bg-gradient-to-t from-transparent via-zinc-100 to-zinc-300 bg-clip-text text-[3rem] font-semibold text-transparent md:text-[5rem]">
+                  Event
+               </h1>
+               <h1 className="relative text-[1.5rem] font-semibold md:text-[3rem]">Event</h1>
+            </div>
+
+            {/* Create Event Button */}
+            <EventFormModalButton mode="create" />
+         </div>
+
          <AdminEventsTable events={res} />
       </div>
    );

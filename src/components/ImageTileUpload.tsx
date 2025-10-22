@@ -3,12 +3,13 @@
 import FileUpload from "@/components/FileUpload";
 import useMultiFileUpload from "@/hooks/useMultiFileUpload";
 import { cn } from "@/lib/utils";
+import { UploadCloud, XIcon } from "lucide-react";
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type Props = {
-   value?: string;
-   onChange: (value: string | null) => void;
+   value?: string | string[];
+   onChange: (value: string | string[] | null) => void;
    folder: string;
    className?: string;
    add?: boolean; // if true, shows the + tile; otherwise shows the image tile
@@ -30,17 +31,84 @@ export default function ImageTileUpload({
    // Move all hooks to the top level to avoid conditional hook calls
    const { pending, startUploads } = useMultiFileUpload(
       folder,
-      (filePath) => onChange(filePath),
+      (filePath) => {
+         const currentValue = valueRef.current;
+         console.log("useMultiFileUpload callback called with:", { filePath, multiple, currentValue });
+         if (multiple) {
+            // Always treat as array for multiple uploads
+            const currentArray = Array.isArray(currentValue) ? currentValue : [];
+            const newArray = [...currentArray, filePath];
+            console.log("Adding file to array:", { currentArray, filePath, newArray, currentValue });
+            onChange(newArray);
+         } else {
+            onChange(filePath);
+         }
+      },
       mediaType
    );
    const inputRef = useRef<HTMLInputElement>(null);
    const [nonce, setNonce] = useState(0);
+   const valueRef = useRef(value);
+
+   // Update ref when value changes
+   useEffect(() => {
+      valueRef.current = value;
+      console.log("ImageTileUpload value changed:", { value, multiple });
+   }, [value, multiple]);
 
    // Add tile
    if (add) {
       if (multiple) {
+         const currentImages = Array.isArray(value) ? value : [];
+         console.log("ImageTileUpload - currentImages:", currentImages);
+         
          return (
             <div className={cn("flex flex-wrap items-start gap-3", className)}>
+               {/* Debug info */}
+               <div className="w-full text-xs text-gray-500 mb-2">
+                  Images in array: {currentImages.length} | Values: {JSON.stringify(currentImages)}
+               </div>
+               {/* Show existing uploaded images */}
+               {currentImages.map((imageUrl, index) => (
+                  <div
+                     key={`${imageUrl}-${index}`}
+                     className="relative aspect-video w-[310px] overflow-hidden rounded-md bg-white shadow-xs border border-dashed border-gray-400 md:w-[217px]"
+                  >
+                     {imageUrl ? (
+                        <>
+                           <Image
+                              src={imageUrl}
+                              alt={`Uploaded ${index + 1}`}
+                              width={310}
+                              height={217}
+                              className="h-full w-full object-cover"
+                              unoptimized
+                           />
+                           <div className="absolute bottom-1 left-1 bg-black/70 text-white text-xs px-1 rounded">
+                              {index + 1}
+                           </div>
+                        </>
+                     ) : (
+                        <div className="flex h-full w-full items-center justify-center bg-gray-100">
+                           <span className="text-sm text-gray-500">No image</span>
+                        </div>
+                     )}
+                     <button
+                        type="button"
+                        onClick={(e) => {
+                           e.preventDefault();
+                           const newImages = currentImages.filter((_, i) => i !== index);
+                           onChange(newImages.length > 0 ? newImages : []);
+                        }}
+                        className="absolute top-1.5 right-1.5 size-6 rounded-full bg-red-500 text-white hover:bg-red-600 transition-colors duration-200 flex items-center justify-center"
+                        title="Remove image"
+                     >
+                        <XIcon className="size-3" />
+                     </button>
+                  </div>
+               ))}
+               
+               {/* Show uploading progress */}
                {pending.map((item) => (
                   <div
                      key={item.id}
@@ -56,23 +124,20 @@ export default function ImageTileUpload({
                      </div>
                   </div>
                ))}
+               
+               {/* Add new image button */}
                <button
                   type="button"
                   onClick={(e) => {
                      e.preventDefault();
                      inputRef.current?.click();
                   }}
-                  className="flex aspect-video w-[310px] items-center justify-center rounded-md bg-gray-50 transition-all duration-200 hover:bg-gray-50/20 md:w-[217px]"
+                  className="flex aspect-video w-[310px] border border-dashed border-gray-400 items-center justify-center rounded-md bg-gray-50 transition-all duration-200 hover:bg-gray-50/20 md:w-[217px]"
                   title="Add images"
                >
                   <div className="flex items-center gap-1.5">
-                     <Image
-                        src="/icons/upload.svg"
-                        alt="upload-icon"
-                        width={15}
-                        height={15}
-                        className="relative z-10 object-cover"
-                     />
+               <UploadCloud className="size-5 object-contain text-black" />
+
                      <span className="text-muted-foreground text-[13px]">
                         {placeholder ?? "Upload media"}
                      </span>
@@ -145,10 +210,13 @@ export default function ImageTileUpload({
       return mediaType === "video" ? "video" : "image";
    };
 
+   // For single file display, ensure we have a string value
+   const singleValue = Array.isArray(value) ? value[0] : value;
+
    return (
       <div className={cn("w-[310px] md:w-[217px]", className)}>
          <FileUpload
-            type={detectMediaType(value || "")}
+            type={detectMediaType(singleValue || "")}
             accept={
                mediaType === "both"
                   ? "image/*,video/*"
@@ -158,9 +226,8 @@ export default function ImageTileUpload({
             }
             placeholder={placeholder ?? (mediaType === "video" ? "Change video" : "Change image")}
             folder={folder}
-            value={value ?? undefined}
+            value={singleValue ?? undefined}
             onFileChange={(p) => onChange(p)}
-            overlayMode="remove"
             onRemove={() => onChange(null)}
             className="w-[310px] md:w-[217px]"
          />

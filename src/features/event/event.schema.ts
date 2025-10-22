@@ -7,6 +7,8 @@ export const eventSchema = z.object({
    description: z.string({ message: "Invalid description" }),
    startDate: z.date({ message: "Invalid start date" }),
    endDate: z.date({ message: "Invalid end date" }),
+   coverImageUrl: z.string({ message: "Invalid cover image url" }).optional(),
+   imageUrl: z.array(z.string({ message: "Invalid image url" })).default([]),
    location: z.string({ message: "Invalid location" }),
    createdAt: z.date({ message: "Invalid date" }),
    updatedAt: z.date({ message: "Invalid date" }),

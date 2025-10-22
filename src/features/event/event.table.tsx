@@ -18,26 +18,17 @@ import {
 } from "@/components/ui/table";
 import { Event } from "@/generated/prisma";
 import { formatDate } from "@/lib/utils";
-import {
-   ArrowRight,
-   BadgeIcon,
-   Calendar,
-   MapPinIcon,
-   PencilIcon,
-   PlusCircleIcon,
-   Ticket,
-   TrashIcon,
-} from "lucide-react";
+import { ArrowRight, BadgeIcon, Calendar, MapPinIcon, Ticket, TrashIcon } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { EventFormModalButton } from "./event.form";
 
 interface AdminEventsTableProps {
    events: Event[];
-   onEditEvent?: (event: Event) => void;
-   onCreateEvent?: () => void;
+   onDeleteEvent?: (event: Event) => void;
 }
 
-export function AdminEventsTable({ events, onEditEvent, onCreateEvent }: AdminEventsTableProps) {
+export function AdminEventsTable({ events, onDeleteEvent }: AdminEventsTableProps) {
    const [page, setPage] = useState(1);
    const [rowsPerPage, setRowsPerPage] = useState(20);
 
@@ -53,28 +44,18 @@ export function AdminEventsTable({ events, onEditEvent, onCreateEvent }: AdminEv
 
    return (
       <div className="w-full space-y-4">
-         {/* Create Button */}
-         {onCreateEvent && (
-            <div className="flex justify-end">
-               <Button onClick={onCreateEvent} className="flex items-center gap-2">
-                  <PlusCircleIcon className="h-4 w-4" />
-                  Create New Event
-               </Button>
-            </div>
-         )}
-
          {/* Table */}
          <div className="rounded-md border">
             <Table>
                <TableHeader>
                   <TableRow>
-                     <TableHead className="w-[110px] px-5">Actions</TableHead>
-                     <TableHead>Event Name</TableHead>
+                     <TableHead className="pl-3">Event Name</TableHead>
                      <TableHead className="w-[150px] text-center">Start Date</TableHead>
                      <TableHead className="w-[150px] text-center">End Date</TableHead>
                      <TableHead className="w-[150px] text-center">Location</TableHead>
                      <TableHead className="w-[150px] text-center">Event Type</TableHead>
                      <TableHead className="w-[150px] text-center">Ticket Type</TableHead>
+                     <TableHead className="w-[110px] text-center">Actions</TableHead>
                   </TableRow>
                </TableHeader>
                <TableBody>
@@ -82,30 +63,10 @@ export function AdminEventsTable({ events, onEditEvent, onCreateEvent }: AdminEv
                      const eventtId = event.id || "";
                      return (
                         <TableRow key={eventtId} className="hover:bg-muted/50">
-                           <TableCell>
-                              <div className="flex items-center justify-start gap-2">
-                                 <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() => onEditEvent?.(event)}
-                                    className="h-8 w-8 p-0 hover:bg-green-50"
-                                 >
-                                    <PencilIcon className="h-4 w-4 text-green-600" />
-                                 </Button>
-                                 <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() => onEditEvent?.(event)}
-                                    className="h-8 w-8 p-0 hover:bg-red-50"
-                                 >
-                                    <TrashIcon className="h-4 w-4 text-red-500" />
-                                 </Button>
-                              </div>
-                           </TableCell>
                            <TableCell className="group">
                               <Link
                                  href={`/events/${event.id}`}
-                                 className="group flex items-center space-x-2"
+                                 className="group flex items-center space-x-2 pl-1"
                               >
                                  <div className="font-medium text-blue-600 hover:text-blue-700">
                                     {event.name || "Untitled"}
@@ -113,13 +74,10 @@ export function AdminEventsTable({ events, onEditEvent, onCreateEvent }: AdminEv
                                  <ArrowRight className="relative -top-2 -left-1 h-3 w-3 rotate-[-45deg] text-blue-600 transition-all duration-150 group-hover:-top-2.5 group-hover:-left-0.5 hover:text-blue-700" />
                               </Link>
                            </TableCell>
-                           {/* <TableCell className="text-center">
-                           {getStatusBadge(event.startDate)}
-                        </TableCell> */}
                            <TableCell className="text-center">
                               <div className="flex items-center justify-center gap-2">
                                  <Calendar className="h-4 w-4 text-gray-500" />
-                                 <span className="text-sm">
+                                 <span className="text-[13px]">
                                     {formatDate(event.startDate ? new Date(event.startDate) : null)}
                                  </span>
                               </div>
@@ -127,7 +85,7 @@ export function AdminEventsTable({ events, onEditEvent, onCreateEvent }: AdminEv
                            <TableCell className="text-center">
                               <div className="flex items-center justify-center gap-2">
                                  <Calendar className="h-4 w-4 text-gray-500" />
-                                 <span className="text-sm">
+                                 <span className="text-[13px]">
                                     {formatDate(event.endDate ? new Date(event.endDate) : null)}
                                  </span>
                               </div>
@@ -135,19 +93,52 @@ export function AdminEventsTable({ events, onEditEvent, onCreateEvent }: AdminEv
                            <TableCell className="text-center">
                               <div className="flex items-center justify-center gap-2">
                                  <MapPinIcon className="h-4 w-4 text-gray-500" />
-                                 <span className="text-sm">{event.location || "N/A"}</span>
+                                 <span className="text-[13px]">{event.location || "N/A"}</span>
                               </div>
                            </TableCell>
                            <TableCell className="text-center">
                               <div className="flex items-center justify-center gap-2">
                                  <BadgeIcon className="h-4 w-4 text-gray-500" />
-                                 <span className="text-sm capitalize">{event.eventType || "N/A"}</span>
+                                 <span className="text-[13px] capitalize">
+                                    {event.eventType || "N/A"}
+                                 </span>
                               </div>
                            </TableCell>
                            <TableCell className="text-center">
                               <div className="flex items-center justify-center gap-2">
                                  <Ticket className="h-4 w-4 text-gray-500" />
-                                 <span className="text-sm capitalize">{event.ticketType || "N/A"}</span>
+                                 <span className="text-[13px] capitalize">
+                                    {event.ticketType || "N/A"}
+                                 </span>
+                              </div>
+                           </TableCell>
+                                                      <TableCell>
+                              <div className="flex items-center justify-start gap-2">
+                                 <EventFormModalButton
+                                    mode="update"
+                                    defaultValues={{
+                                       id: event.id,
+                                       name: event.name,
+                                       description: event.description,
+                                       startDate: event.startDate,
+                                       endDate: event.endDate,
+                                       location: event.location,
+                                       eventType: event.eventType,
+                                       ticketType: event.ticketType,
+                                       coverImageUrl: event.coverImageUrl ?? undefined,
+                                       imageUrl: event.imageUrl,
+                                       createdAt: event.createdAt,
+                                       updatedAt: event.updatedAt,
+                                    }}
+                                 />
+                                 <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => onDeleteEvent?.(event)}
+                                    className="h-8 w-8 p-0 hover:bg-red-50"
+                                 >
+                                    <TrashIcon className="h-4 w-4 text-red-500" />
+                                 </Button>
                               </div>
                            </TableCell>
                         </TableRow>

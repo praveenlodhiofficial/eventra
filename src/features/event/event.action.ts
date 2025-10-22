@@ -1,13 +1,33 @@
+"use server";
+
 import { Event } from "@/generated/prisma";
 import prisma from "@/lib/prisma";
 
 export const createEvent = async (
    params: Pick<
       Event,
-      "name" | "description" | "startDate" | "endDate" | "location" | "eventType" | "ticketType"
+      | "name"
+      | "description"
+      | "startDate"
+      | "endDate"
+      | "location"
+      | "eventType"
+      | "ticketType"
+      | "coverImageUrl"
+      | "imageUrl"
    >
 ) => {
-   const { name, description, startDate, endDate, location, eventType, ticketType } = params;
+   const {
+      name,
+      description,
+      startDate,
+      endDate,
+      location,
+      eventType,
+      ticketType,
+      coverImageUrl,
+      imageUrl,
+   } = params;
 
    try {
       const event = await prisma.event.create({
@@ -19,6 +39,8 @@ export const createEvent = async (
             location,
             eventType,
             ticketType,
+            coverImageUrl: coverImageUrl || null,
+            imageUrl: imageUrl || [],
          },
       });
 
@@ -92,9 +114,22 @@ export const updateEvent = async (
       | "location"
       | "eventType"
       | "ticketType"
+      | "coverImageUrl"
+      | "imageUrl"
    >
 ) => {
-   const { id, name, description, startDate, endDate, location, eventType, ticketType } = params;
+   const {
+      id,
+      name,
+      description,
+      startDate,
+      endDate,
+      location,
+      eventType,
+      ticketType,
+      coverImageUrl,
+      imageUrl,
+   } = params;
 
    try {
       const doesEventExist = await prisma.event.findUnique({
@@ -122,6 +157,8 @@ export const updateEvent = async (
             location,
             eventType,
             ticketType,
+            coverImageUrl: coverImageUrl || null,
+            imageUrl: imageUrl || [],
          },
       });
 

@@ -47,19 +47,21 @@ enum TicketType {
 }
 
 model Event {
-  id          String     @id @default(uuid())
-  name        String
-  description String
-  startDate   DateTime
-  endDate     DateTime
-  location    String
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  eventType   EventType
-  ticketType  TicketType
-  feedBack    FeedBack[]
-  ticket      Ticket[]
-  calendar    Calendar[]
+  id            String     @id @default(uuid())
+  name          String
+  description   String
+  startDate     DateTime
+  endDate       DateTime
+  coverImageUrl String?
+  imageUrl      String[]
+  location      String
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  eventType     EventType
+  ticketType    TicketType
+  feedBack      FeedBack[]
+  ticket        Ticket[]
+  calendar      Calendar[]
 }
 
 model FeedBack {

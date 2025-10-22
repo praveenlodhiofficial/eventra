@@ -6,3 +6,4 @@ export * from "@/components/form/ReadonlyField";
 export * from "@/components/form/SelectField";
 export * from "@/components/form/TextareaField";
 export * from "@/components/form/TextInputField";
+export * from "@/components/form/ImageTileUploadField";
