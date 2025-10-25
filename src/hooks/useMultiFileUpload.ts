@@ -51,7 +51,9 @@ export function useMultiFileUpload(
                });
 
                // Construct the full URL by combining urlEndpoint with filePath
-               const fullImageUrl = res.filePath ? `${config.env.imagekit.urlEndpoint}/${res.filePath}` : "";
+               const fullImageUrl = res.filePath
+                  ? `${config.env.imagekit.urlEndpoint}/${res.filePath}`
+                  : "";
                console.log("Generated image URL:", fullImageUrl);
                onFileDone(fullImageUrl);
                setPending((p) => p.filter((it) => it.id !== id));

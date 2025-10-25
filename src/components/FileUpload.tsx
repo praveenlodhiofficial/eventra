@@ -274,8 +274,8 @@ const FileUpload = ({
 
                   {/* Remove file overlay button */}
                   {!disabled && (
-                        <Button
-                           variant="secondary"
+                     <Button
+                        variant="secondary"
                         onClick={(e) => {
                            e.preventDefault();
                            // Clear current file and notify parent
@@ -285,10 +285,10 @@ const FileUpload = ({
                            } catch {}
                            if (onRemove) onRemove();
                         }}
-                        className="absolute top-1.5 right-1.5 size-7 rounded-full bg-white/30 hover:bg-white/40 backdrop-blur-md aspect-square text-white transition-colors duration-200"
+                        className="absolute top-1.5 right-1.5 aspect-square size-7 rounded-full bg-white/30 text-white backdrop-blur-md transition-colors duration-200 hover:bg-white/40"
                         title="Remove file"
-                        >
-                           <XIcon className="size-1 scale-400 rounded-full" />
+                     >
+                        <XIcon className="size-1 scale-400 rounded-full" />
                      </Button>
                   )}
                </div>

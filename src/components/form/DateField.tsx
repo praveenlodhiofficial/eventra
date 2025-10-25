@@ -57,16 +57,13 @@ export function DateTimeField<TFieldValues extends FieldValues, TName extends Pa
       "Nov",
       "Dec",
    ].map((month) => ({ value: month, label: month }));
-   const years = useMemo(
-      () => {
-         const currentYear = new Date().getFullYear();
-         return Array.from({ length: 20 }, (_, i) => ({
-            value: `${currentYear - 10 + i}`,
-            label: `${currentYear - 10 + i}`,
-         }));
-      },
-      []
-   );
+   const years = useMemo(() => {
+      const currentYear = new Date().getFullYear();
+      return Array.from({ length: 20 }, (_, i) => ({
+         value: `${currentYear - 10 + i}`,
+         label: `${currentYear - 10 + i}`,
+      }));
+   }, []);
 
    // Generate hours (0-23)
    const hours = useMemo(
@@ -130,28 +127,28 @@ export function DateTimeField<TFieldValues extends FieldValues, TName extends Pa
                            <WheelPickerWrapper
                               className={cn("flex w-full justify-between gap-2", pickerHeight)}
                            >
-                               <WheelPicker
-                                  options={days}
-                                  value={selectedDay}
-                                  onValueChange={(v: string) =>
-                                     handleDateTimeChange(
-                                        v,
-                                        selectedMonth,
-                                        selectedYear,
-                                        selectedHour,
-                                        selectedMinute
-                                     )
-                                  }
-                                  optionItemHeight={optionItemHeight}
-                                  visibleCount={visibleCount}
-                                  dragSensitivity={dragSensitivity}
-                                  scrollSensitivity={scrollSensitivity}
-                                  classNames={{
-                                     optionItem: "text-zinc-400 dark:text-zinc-500 text-center",
-                                     highlightWrapper:
-                                        "bg-zinc-100 text-zinc-950 dark:bg-zinc-800 dark:text-zinc-50 text-center",
-                                  }}
-                               />
+                              <WheelPicker
+                                 options={days}
+                                 value={selectedDay}
+                                 onValueChange={(v: string) =>
+                                    handleDateTimeChange(
+                                       v,
+                                       selectedMonth,
+                                       selectedYear,
+                                       selectedHour,
+                                       selectedMinute
+                                    )
+                                 }
+                                 optionItemHeight={optionItemHeight}
+                                 visibleCount={visibleCount}
+                                 dragSensitivity={dragSensitivity}
+                                 scrollSensitivity={scrollSensitivity}
+                                 classNames={{
+                                    optionItem: "text-zinc-400 dark:text-zinc-500 text-center",
+                                    highlightWrapper:
+                                       "bg-zinc-100 text-zinc-950 dark:bg-zinc-800 dark:text-zinc-50 text-center",
+                                 }}
+                              />
                               <WheelPicker
                                  options={months}
                                  value={selectedMonth}

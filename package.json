@@ -12,6 +12,7 @@
       "db:migrate": "bunx prisma migrate dev",
       "db:push": "bunx prisma db push",
       "db:reset": "bunx prisma migrate reset --force",
+      "seed:events": "bun run src/seed/seed-events.ts",
       "format": "eslint . --fix && prettier . -w && bun exec lint-staged && bunx prisma format",
       "docker:up": "docker compose up -d",
       "docker:down": "docker compose down"
@@ -47,6 +48,7 @@
       "react-icons": "^5.5.0",
       "scrypt": "^6.0.3",
       "sonner": "^2.0.7",
+      "swiper": "^12.0.3",
       "tailwind-merge": "^3.3.1",
       "zod": "^4.1.12"
    },

@@ -34,12 +34,21 @@ export default function ImageTileUpload({
       folder,
       (filePath) => {
          const currentValue = valueRef.current;
-         console.log("useMultiFileUpload callback called with:", { filePath, multiple, currentValue });
+         console.log("useMultiFileUpload callback called with:", {
+            filePath,
+            multiple,
+            currentValue,
+         });
          if (multiple) {
             // Always treat as array for multiple uploads
             const currentArray = Array.isArray(currentValue) ? currentValue : [];
             const newArray = [...currentArray, filePath];
-            console.log("Adding file to array:", { currentArray, filePath, newArray, currentValue });
+            console.log("Adding file to array:", {
+               currentArray,
+               filePath,
+               newArray,
+               currentValue,
+            });
             onChange(newArray);
          } else {
             onChange(filePath);
@@ -62,13 +71,13 @@ export default function ImageTileUpload({
       if (multiple) {
          const currentImages = Array.isArray(value) ? value : [];
          console.log("ImageTileUpload - currentImages:", currentImages);
-         
+
          return (
-            <div className={cn("w-full flex flex-wrap items-start gap-3", className)}>
+            <div className={cn("flex w-full flex-wrap items-start gap-3", className)}>
                {currentImages.map((imageUrl, index) => (
                   <div
                      key={`${imageUrl}-${index}`}
-                     className="relative aspect-video w-[300px] overflow-hidden rounded-md bg-white shadow-xs border border-dashed border-gray-400 md:w-[236px]"
+                     className="relative aspect-video w-[300px] overflow-hidden rounded-md border border-dashed border-gray-400 bg-white shadow-xs md:w-[236px]"
                   >
                      {imageUrl ? (
                         <>
@@ -80,7 +89,7 @@ export default function ImageTileUpload({
                               className="h-full w-full object-cover"
                               unoptimized
                            />
-                           <div className="absolute aspect-square bottom-1 left-1 bg-black/70 text-white text-xs px-1 rounded">
+                           <div className="absolute bottom-1 left-1 aspect-square rounded bg-black/70 px-1 text-xs text-white">
                               {index + 1}
                            </div>
                         </>
@@ -97,14 +106,14 @@ export default function ImageTileUpload({
                            const newImages = currentImages.filter((_, i) => i !== index);
                            onChange(newImages.length > 0 ? newImages : []);
                         }}
-                        className="absolute top-1.5 right-1.5 size-6 rounded-full cursor-pointer hover:bg-red-500"
+                        className="absolute top-1.5 right-1.5 size-6 cursor-pointer rounded-full hover:bg-red-500"
                         title="Remove image"
                      >
                         <XIcon className="size-3" />
                      </Button>
                   </div>
                ))}
-               
+
                {/* Show uploading progress */}
                {pending.map((item) => (
                   <div
@@ -121,7 +130,7 @@ export default function ImageTileUpload({
                      </div>
                   </div>
                ))}
-               
+
                {/* Add new image button */}
                <button
                   type="button"
@@ -129,11 +138,11 @@ export default function ImageTileUpload({
                      e.preventDefault();
                      inputRef.current?.click();
                   }}
-                  className="flex aspect-video w-[310px] border border-dashed border-gray-400 items-center justify-center rounded-md bg-gray-50 transition-all duration-200 hover:bg-gray-50/20 md:w-[236px]"
+                  className="flex aspect-video w-[310px] items-center justify-center rounded-md border border-dashed border-gray-400 bg-gray-50 transition-all duration-200 hover:bg-gray-50/20 md:w-[236px]"
                   title="Add images"
                >
                   <div className="flex items-center gap-1.5">
-               <UploadCloud className="size-5 object-contain text-black" />
+                     <UploadCloud className="size-5 object-contain text-black" />
 
                      <span className="text-muted-foreground text-[13px]">
                         {placeholder ?? "Upload media"}

@@ -111,7 +111,7 @@ export function AdminEventsTable({ events }: AdminEventsTableProps) {
                                  </span>
                               </div>
                            </TableCell>
-                                                      <TableCell>
+                           <TableCell>
                               <div className="flex items-center justify-start gap-2">
                                  <EventFormModalButton
                                     mode="update"

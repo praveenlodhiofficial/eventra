@@ -51,12 +51,14 @@ function DeleteEventDialog({
       <Dialog open={open} onOpenChange={onOpenChange}>
          <DialogContent className="sm:max-w-md">
             <DialogHeader>
-               <DialogTitle className="flex items-center gap-2 text-xl mb-1">
+               <DialogTitle className="mb-1 flex items-center gap-2 text-xl">
                   {/* <TrashIcon className="h-5 w-5 text-red-500" /> */}
                   Delete Event
                </DialogTitle>
                <DialogDescription className="text-[13px]">
-                  Are you sure you want to delete <span className="font-semibold text-black">&quot;{event.name}&quot;</span> ? This action cannot be undone.
+                  Are you sure you want to delete{" "}
+                  <span className="font-semibold text-black">&quot;{event.name}&quot;</span> ? This
+                  action cannot be undone.
                </DialogDescription>
             </DialogHeader>
             <DialogFooter className="gap-2">
@@ -174,38 +176,38 @@ function AdminEventForm({
             exit={{ opacity: 0, scale: 0.5 }}
             transition={{ duration: 0.4 }}
          >
-               <Form {...form}>
-                  <form
-                     onSubmit={form.handleSubmit(handleSubmit)}
-                     className="flex flex-col gap-6 bg-transparent p-5"
-                  >
-                     {/* Event Section */}
-                     <div className="flex flex-wrap items-center justify-between gap-2">
-                        <div className="relative flex items-end">
-                           <h1 className="absolute -bottom-2 -left-1.5 z-15 bg-gradient-to-t from-transparent via-zinc-100 to-zinc-300 bg-clip-text text-[3rem] font-semibold text-transparent md:text-[5rem]">
-                              Event
-                           </h1>
-                           <h1 className="relative z-20 text-[1.5rem] font-semibold md:text-[3rem]">
-                              Event
-                           </h1>
-                        </div>
-                        <div className="flex gap-3">
-                           <Button
-                              type="submit"
-                              disabled={!isDirty}
-                              className="hidden w-fit bg-black text-white disabled:cursor-not-allowed disabled:bg-gray-400 md:block"
-                           >
-                              {isUpdateMode ? "Update Event" : "Create Event"}
-                           </Button>
-                           <Button
-                              variant="secondary"
-                              //  className="absolute top-2 right-2"
-                              onClick={onClose}
-                           >
-                              <XIcon className="size-5" />
-                           </Button>
-                        </div>
+            <Form {...form}>
+               <form
+                  onSubmit={form.handleSubmit(handleSubmit)}
+                  className="flex flex-col gap-6 bg-transparent p-5"
+               >
+                  {/* Event Section */}
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                     <div className="relative flex items-end">
+                        <h1 className="absolute -bottom-2 -left-1.5 z-15 bg-gradient-to-t from-transparent via-zinc-100 to-zinc-300 bg-clip-text text-[3rem] font-semibold text-transparent md:text-[5rem]">
+                           Event
+                        </h1>
+                        <h1 className="relative z-20 text-[1.5rem] font-semibold md:text-[3rem]">
+                           Event
+                        </h1>
                      </div>
+                     <div className="flex gap-3">
+                        <Button
+                           type="submit"
+                           disabled={!isDirty}
+                           className="hidden w-fit bg-black text-white disabled:cursor-not-allowed disabled:bg-gray-400 md:block"
+                        >
+                           {isUpdateMode ? "Update Event" : "Create Event"}
+                        </Button>
+                        <Button
+                           variant="secondary"
+                           //  className="absolute top-2 right-2"
+                           onClick={onClose}
+                        >
+                           <XIcon className="size-5" />
+                        </Button>
+                     </div>
+                  </div>
                   {/* Event Details */}
                   <div className="scrollbar-hide grid max-h-[calc(100vh-14rem)] w-full grid-cols-1 gap-5 overflow-y-auto lg:grid-cols-[1fr_auto] lg:gap-10">
                      {/* Left Side */}
@@ -313,16 +315,16 @@ function AdminEventForm({
                      </div>
                   </div>
 
-                     {/* Mobile Submit Button */}
-                     <Button
-                        type="submit"
-                        disabled={!isDirty}
-                        className="w-full bg-black text-white disabled:cursor-not-allowed disabled:bg-gray-400 md:hidden"
-                     >
-                        {isUpdateMode ? "Update Event" : "Create Event"}
-                     </Button>
-                  </form>
-               </Form>
+                  {/* Mobile Submit Button */}
+                  <Button
+                     type="submit"
+                     disabled={!isDirty}
+                     className="w-full bg-black text-white disabled:cursor-not-allowed disabled:bg-gray-400 md:hidden"
+                  >
+                     {isUpdateMode ? "Update Event" : "Create Event"}
+                  </Button>
+               </form>
+            </Form>
          </motion.div>
       </div>
    );

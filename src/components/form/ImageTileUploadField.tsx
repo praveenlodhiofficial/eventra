@@ -56,10 +56,18 @@ export function ImageTileUploadField<
                      <ImageTileUpload
                         value={field.value}
                         onChange={(value) => {
-                           console.log("ImageTileUploadField onChange:", { value, multiple, fieldValue: field.value });
+                           console.log("ImageTileUploadField onChange:", {
+                              value,
+                              multiple,
+                              fieldValue: field.value,
+                           });
                            if (multiple) {
                               // Ensure we always pass an array for multiple uploads
-                              const arrayValue = Array.isArray(value) ? value : (value ? [value] : []);
+                              const arrayValue = Array.isArray(value)
+                                 ? value
+                                 : value
+                                   ? [value]
+                                   : [];
                               console.log("Setting array value:", arrayValue);
                               field.onChange(arrayValue);
                            } else {

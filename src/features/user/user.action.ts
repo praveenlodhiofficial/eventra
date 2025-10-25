@@ -1,6 +1,6 @@
 "use server";
 
-import { getUserFromSession } from "@/features/auth/auth.session";
+import { getUserFromSession, removeUserFromSession } from "@/features/auth/auth.session";
 import { User as PrismaUser } from "@/generated/prisma";
 import { prisma } from "@/lib/prisma";
 import { cookies } from "next/headers";
@@ -34,8 +34,15 @@ async function _getCurrentUser({ withFullUser = false, redirectIfNotFound = fals
 
    if (withFullUser) {
       const fullUser = await getUserFromDb(user.id);
-      // This should never happen
-      if (fullUser == null) throw new Error("User not found in database");
+      // Handle inconsistent state where session exists but user not in database
+      if (fullUser == null) {
+         console.error("Session exists but user not found in database for ID:", user.id);
+         // Clear the invalid session and redirect to sign-in
+         const cookieStore = await cookies();
+         await removeUserFromSession(cookieStore);
+         if (redirectIfNotFound) return redirect("/sign-in");
+         return null;
+      }
       return fullUser;
    }
 

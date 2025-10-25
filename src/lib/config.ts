@@ -14,9 +14,6 @@ const config = {
       // ********************* DATABASE *********************
       databaseURL: process.env.DATABASE_URL!,
 
-      // ********************* SEEDING DATA *********************
-      seedUserId: process.env.SEED_USER_ID!,
-
       // ********************* IMAGEKIT *********************
       imagekit: {
          publicKey: process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY!,
@@ -34,6 +31,11 @@ const config = {
       redis: {
          url: process.env.UPSTASH_REDIS_URL!,
          token: process.env.UPSTASH_REDIS_TOKEN!,
+      },
+
+      // ********************* SEED VARIABLES *********************
+      seed: {
+         userId: process.env.SEED_USER_ID!,
       },
    },
 };

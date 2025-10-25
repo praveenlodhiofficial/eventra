@@ -35,10 +35,9 @@ export default async function Navbar() {
 
          {/* Navigation Menu */}
          <div className="flex items-center justify-center gap-10 text-sm">
-            <Link href="/events">Browse Events</Link>
-            <Link href="/tickets">Tickets</Link>
-            <Link href="/community">Community</Link>
-            <Link href="/feedback">Feedback</Link>
+            <Link href="/events">Discover Events</Link>
+            <Link href="/about">About</Link>
+            <Link href="/contact">Contact</Link>
             {user?.role === "ADMIN" && (
                <Link href="/admin" className="text-blue-400">
                   Admin Panel
