@@ -64,7 +64,7 @@ export function AdminEventsTable({ events }: AdminEventsTableProps) {
                         <TableRow key={eventtId} className="hover:bg-muted/50">
                            <TableCell className="group">
                               <Link
-                                 href={`/events/${event.id}`}
+                                 href={`/events/${event.slug}`}
                                  className="group flex items-center space-x-2 pl-1"
                               >
                                  <div className="font-medium text-blue-600 hover:text-blue-700">

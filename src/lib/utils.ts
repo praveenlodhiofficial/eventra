@@ -52,3 +52,35 @@ export const formatDateTimeLocal = (date: Date) => {
    const mm = pad(date.getMinutes());
    return `${yyyy}-${MM}-${dd}T${hh}:${mm}`;
 };
+
+export const formatEventDateTime = (date: Date) => {
+   const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+   const monthNames = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+   ];
+
+   const dayName = dayNames[date.getDay()];
+   const day = date.getDate();
+   const month = monthNames[date.getMonth()];
+
+   // Format time in 12-hour format
+   let hours = date.getHours();
+   const minutes = date.getMinutes();
+   const ampm = hours >= 12 ? "PM" : "AM";
+   hours = hours % 12;
+   hours = hours ? hours : 12; // 0 should be 12
+   const minutesStr = minutes < 10 ? "0" + minutes : minutes;
+
+   return `${dayName}, ${day} ${month}, ${hours}:${minutesStr} ${ampm}`;
+};

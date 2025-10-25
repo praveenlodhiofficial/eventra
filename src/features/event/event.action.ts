@@ -2,10 +2,11 @@
 
 import { Event } from "@/generated/prisma";
 import prisma from "@/lib/prisma";
+import { generateSlug } from "@/lib/utils";
 
 export const createEvent = async (
    params: Pick<
-      Event,
+      Omit<Event, "slug">,
       | "name"
       | "description"
       | "startDate"
@@ -33,6 +34,7 @@ export const createEvent = async (
       const event = await prisma.event.create({
          data: {
             name,
+            slug: generateSlug(name),
             description,
             startDate,
             endDate,
@@ -59,20 +61,25 @@ export const createEvent = async (
    }
 };
 
-export const getEvents = async (params: Pick<Event, "id">) => {
-   const { id } = params;
-
+export const getEvent = async (slug: string) => {
    try {
       const event = await prisma.event.findUnique({
          where: {
-            id,
+            slug,
          },
       });
+
+      if (!event) {
+         return {
+            success: false,
+            message: "Event not found",
+         };
+      }
 
       return {
          success: true,
          message: "Event fetched successfully",
-         data: event,
+         event: event,
       };
    } catch (error) {
       console.error("Event fetching failed", error);

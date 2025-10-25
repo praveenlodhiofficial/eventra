@@ -49,6 +49,7 @@ enum TicketType {
 model Event {
   id            String     @id @default(uuid())
   name          String
+  slug          String     @unique
   description   String
   startDate     DateTime
   endDate       DateTime

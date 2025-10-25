@@ -1,6 +1,13 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+.font-exo2 {
+   font-family: var(--font-exo2);
+}
+.font-poppins {
+   font-family: var(--font-poppins);
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
