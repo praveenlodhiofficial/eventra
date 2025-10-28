@@ -285,7 +285,7 @@ const FileUpload = ({
                            } catch {}
                            if (onRemove) onRemove();
                         }}
-                        className="absolute top-1.5 right-1.5 aspect-square size-7 rounded-full bg-white/30 text-white backdrop-blur-md transition-colors duration-200 hover:bg-white/40"
+                        className="absolute top-1.5 right-1.5 aspect-square size-7 cursor-pointer rounded-full bg-red-600 text-white backdrop-blur-md transition-colors duration-200 hover:bg-red-500"
                         title="Remove file"
                      >
                         <XIcon className="size-1 scale-400 rounded-full" />

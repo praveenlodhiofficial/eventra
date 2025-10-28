@@ -7,7 +7,7 @@ body {
    height: 100%;
 }
 
-body {
+/* body {
    background: #fff;
    font-family:
       Helvetica Neue,
@@ -18,7 +18,7 @@ body {
    color: #000;
    margin: 0;
    padding: 0;
-}
+} */
 
 .swiper {
    width: 100%;
@@ -116,10 +116,9 @@ body {
 
 /* Event carousel specific styles */
 .mySwiper {
-   border-radius: 16px;
    overflow: hidden;
-   box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
-   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+   /* box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15); */
+   /* background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); */
 }
 
 .mySwiper .swiper-slide {

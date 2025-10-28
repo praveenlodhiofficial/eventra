@@ -21,20 +21,21 @@ export default async function Navbar() {
    // Get current user from session
    const user = await getCurrentUser({ withFullUser: true });
    return (
-      <div className="fixed top-0 right-0 left-0 z-50 flex h-16 w-full items-center justify-between bg-black px-10 py-2 text-white">
-         <Link href="/" className="flex items-end gap-2">
+      <div className="fixed top-0 right-0 left-0 z-50 flex w-full items-center justify-between border bg-gradient-to-t from-transparent to-white px-3 py-1.5 backdrop-blur-lg md:px-5 md:py-3.5 lg:px-10">
+         {/* Logo Section ---------------------------------------------------------------> */}
+         <Link href="/" className="flex items-start gap-2 md:items-end">
             <Image
                src="/icon/eventra-logo.png"
                alt="Eventra"
                width={35}
                height={35}
-               className="relative bottom-0.5 object-cover invert"
+               className="bottom-0.56 relative h-6 w-6 object-cover md:h-9 md:w-9"
             />
-            <h1 className="text-2xl font-semibold">Eventra</h1>
+            <h1 className="text-xl font-semibold md:text-2xl">Eventra</h1>
          </Link>
 
-         {/* Navigation Menu */}
-         <div className="flex items-center justify-center gap-10 text-sm">
+         {/* Navigation Menu Section ---------------------------------------------------------------> */}
+         <div className="hidden items-center justify-center gap-10 text-sm md:flex">
             <Link href="/events">Discover Events</Link>
             <Link href="/about">About</Link>
             <Link href="/contact">Contact</Link>
@@ -45,7 +46,7 @@ export default async function Navbar() {
             )}
          </div>
 
-         {/* Show this when user not logged in (no session) */}
+         {/* User Authentication Section ---------------------------------------------------------------> */}
          {!user && (
             <div className="flex items-center gap-2">
                <Button variant="secondary" className="">
@@ -57,9 +58,9 @@ export default async function Navbar() {
             </div>
          )}
 
-         {/* Show this when User is logged in (has session) */}
+         {/* User Profile Section ---------------------------------------------------------------> */}
          {user && (
-            <div className="flex items-center gap-2">
+            <div className="flex scale-90 items-center gap-2 md:scale-100">
                {/* User Profile Popover */}
                <Popover>
                   <PopoverTrigger asChild>
@@ -85,7 +86,7 @@ export default async function Navbar() {
                   </PopoverTrigger>
                   <PopoverContent className="w-80 p-0" align="end">
                      <div className="p-4">
-                        {/* User Info Section */}
+                        {/* User Info Section ---------------------------------------------------------------> */}
                         <div className="mb-4 flex items-center gap-3">
                            <Avatar className="h-10 w-10">
                               <AvatarImage
@@ -109,7 +110,7 @@ export default async function Navbar() {
 
                         <Separator className="mb-3" />
 
-                        {/* Menu Options */}
+                        {/* Menu Options Section ---------------------------------------------------------------> */}
                         <div className="space-y-1">
                            <Link href="/me">
                               <Button

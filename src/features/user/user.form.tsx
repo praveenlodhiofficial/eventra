@@ -89,7 +89,7 @@ export default function UserForm({
          <Form {...form}>
             <form
                onSubmit={form.handleSubmit(handleSubmit)}
-               className="flex flex-col gap-6 bg-transparent p-5"
+               className="flex flex-col gap-6 bg-transparent p-3 md:p-5 lg:px-10"
             >
                {/* Profile Section */}
                <div className="flex flex-wrap items-center justify-between gap-2">

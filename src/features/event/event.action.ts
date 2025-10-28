@@ -110,6 +110,31 @@ export const getAllEvents = async () => {
    }
 };
 
+export const getFeaturedEvents = async () => {
+   try {
+      const featuredEvents = await prisma.event.findMany({
+         where: {
+            startDate: {
+               gte: new Date(),
+            },
+         },
+         take: 5,
+      });
+
+      return {
+         success: true,
+         message: "Featured events fetched successfully",
+         data: featuredEvents,
+      };
+   } catch (error) {
+      console.error("Featured events fetching failed", error);
+      return {
+         success: false,
+         message: "Unable to fetch featured events",
+      };
+   }
+};
+
 export const updateEvent = async (
    params: Pick<
       Event,

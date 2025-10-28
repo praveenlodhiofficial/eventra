@@ -62,12 +62,12 @@ export function AdminEventsTable({ events }: AdminEventsTableProps) {
                      const eventtId = event.id || "";
                      return (
                         <TableRow key={eventtId} className="hover:bg-muted/50">
-                           <TableCell className="group">
+                           <TableCell className="group w-40 overflow-hidden">
                               <Link
                                  href={`/events/${event.slug}`}
                                  className="group flex items-center space-x-2 pl-1"
                               >
-                                 <div className="font-medium text-blue-600 hover:text-blue-700">
+                                 <div className="w-90 font-medium text-wrap text-blue-600 hover:text-blue-700">
                                     {event.name || "Untitled"}
                                  </div>
                                  <ArrowRight className="relative -top-2 -left-1 h-3 w-3 rotate-[-45deg] text-blue-600 transition-all duration-150 group-hover:-top-2.5 group-hover:-left-0.5 hover:text-blue-700" />
