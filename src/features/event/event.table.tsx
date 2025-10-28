@@ -16,15 +16,18 @@ import {
    TableHeader,
    TableRow,
 } from "@/components/ui/table";
-import { Event } from "@/generated/prisma";
 import { formatDate } from "@/lib/utils";
 import { ArrowRight, BadgeIcon, Calendar, MapPinIcon, Ticket } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { getAllEvents } from "./event.action";
 import { EventFormModalButton } from "./event.form";
 
+// Simple type from the actual function return
+type EventWithContributors = NonNullable<Awaited<ReturnType<typeof getAllEvents>>["data"]>[0];
+
 interface AdminEventsTableProps {
-   events: Event[];
+   events: EventWithContributors[];
 }
 
 export function AdminEventsTable({ events }: AdminEventsTableProps) {
@@ -58,7 +61,7 @@ export function AdminEventsTable({ events }: AdminEventsTableProps) {
                   </TableRow>
                </TableHeader>
                <TableBody>
-                  {paginatedData.map((event: Event) => {
+                  {paginatedData.map((event: EventWithContributors) => {
                      const eventtId = event.id || "";
                      return (
                         <TableRow key={eventtId} className="hover:bg-muted/50">
@@ -126,6 +129,7 @@ export function AdminEventsTable({ events }: AdminEventsTableProps) {
                                        ticketType: event.ticketType,
                                        coverImageUrl: event.coverImageUrl ?? undefined,
                                        imageUrl: event.imageUrl,
+                                       contributors: event.contributors || [],
                                        createdAt: event.createdAt,
                                        updatedAt: event.updatedAt,
                                     }}

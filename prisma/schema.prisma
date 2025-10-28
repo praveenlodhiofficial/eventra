@@ -15,6 +15,36 @@ enum Roles {
   SPONSOR
 }
 
+enum ContributorRole {
+  ARTIST // Singers, musicians, bands, visual artists, etc.
+  SPEAKER // Conference or session speakers
+  PERFORMER // Dancers, stage performers, stand-up comedians
+  PANELIST // Discussion or debate panel members
+  HOST // Anchors, emcees, or moderators
+  GUEST // Celebrity guests or invitees
+  DJ // DJs for concerts, fests, or parties
+  INSTRUCTOR // Teachers, mentors, or trainers for workshops
+  AUTHOR // Book launch or literary event speakers
+  CHEF // Culinary events or food fests
+  EXHIBITOR // People presenting booths or displays
+  DESIGNER // Fashion shows or creative expos
+  PRODUCER // Event production or creative contributors
+  DIRECTOR // Film, play, or video directors
+  JUDGE // For competitions or hackathons
+  OTHER // Other contributors
+}
+
+enum EventType {
+  ONLINE
+  OFFLINE
+  HYBRID
+}
+
+enum TicketType {
+  FREE
+  PAID
+}
+
 model User {
   id        String     @id @default(uuid())
   name      String
@@ -35,40 +65,42 @@ model User {
   Calendar  Calendar[]
 }
 
-enum EventType {
-  ONLINE
-  OFFLINE
-  HYBRID
-}
-
-enum TicketType {
-  FREE
-  PAID
-}
-
 model Event {
-  id            String     @id @default(uuid())
+  id            String             @id @default(uuid())
   name          String
-  slug          String     @unique
+  slug          String             @unique
   description   String
   startDate     DateTime
   endDate       DateTime
   coverImageUrl String?
   imageUrl      String[]
   location      String
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
   eventType     EventType
   ticketType    TicketType
   feedBack      FeedBack[]
   ticket        Ticket[]
   calendar      Calendar[]
+  contributors  EventContributor[]
+}
+
+model EventContributor {
+  id              String          @id @default(uuid())
+  name            String
+  imageUrl        String?
+  description     String?
+  eventId         String
+  event           Event           @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  contributorRole ContributorRole @default(ARTIST)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
 }
 
 model FeedBack {
   id        String   @id @default(uuid())
   eventId   String
-  event     Event    @relation(fields: [eventId], references: [id])
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
   userId    String
   user      User     @relation(fields: [userId], references: [id])
   feedback  String
@@ -79,7 +111,7 @@ model FeedBack {
 model Ticket {
   id         String     @id @default(uuid())
   eventId    String
-  event      Event      @relation(fields: [eventId], references: [id])
+  event      Event      @relation(fields: [eventId], references: [id], onDelete: Cascade)
   ticketType TicketType
   price      Float
   quantity   Int
@@ -90,7 +122,7 @@ model Ticket {
 model Calendar {
   id        String   @id @default(uuid())
   eventId   String
-  event     Event    @relation(fields: [eventId], references: [id])
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
   userId    String
   user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())

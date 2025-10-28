@@ -14,6 +14,7 @@ export interface ImageUploadFieldProps<
    label: string;
    folder: string;
    accept?: string;
+   aspectRatio?: "16:9" | "4:3" | "1:1" | "9:16";
    containerClassName?: string;
    labelClassName?: string;
    fileClassName?: string;
@@ -29,6 +30,7 @@ export function ImageUploadField<
    label,
    folder,
    accept = "image/*",
+   aspectRatio = "16:9",
    containerClassName,
    labelClassName,
    fileClassName,
@@ -49,20 +51,22 @@ export function ImageUploadField<
                   {label}
                </FormLabel>
                <FormControl>
-                  <div className="flex aspect-video w-full max-w-[450px] min-w-[310px] items-center rounded-md border border-dashed border-gray-400">
-                     <FileUpload
-                        type={type}
-                        accept={accept}
-                        placeholder={`Upload ${label.toLowerCase()}`}
-                        folder={folder}
-                        onFileChange={field.onChange}
-                        value={field.value}
-                        className={cn(
-                           "aspect-video h-full w-full rounded-md border-0 object-cover",
-                           fileClassName
-                        )}
-                     />
-                  </div>
+                  {/* <div className="flex aspect-video w-full max-w-[450px] min-w-[310px] items-center rounded-md border border-dashed border-gray-400"> */}
+                  <FileUpload
+                     type={type}
+                     accept={accept}
+                     placeholder={`Upload ${label.toLowerCase()}`}
+                     folder={folder}
+                     onFileChange={field.onChange}
+                     value={field.value}
+                     aspectRatio={aspectRatio}
+                     className={cn(
+                        // "aspect-video h-full max-w-[450px] min-w-[310px] rounded-md border border-dashed border-gray-400 object-cover",
+                        "aspect-video h-full max-w-[450px] min-w-[250px] rounded-md border border-dashed border-gray-400 object-cover",
+                        fileClassName
+                     )}
+                  />
+                  {/* </div> */}
                </FormControl>
                <FormMessage />
             </FormItem>

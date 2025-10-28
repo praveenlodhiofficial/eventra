@@ -12,6 +12,7 @@ import { useState } from "react";
 import { DefaultValues, FieldValues, Path, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { ZodSchema } from "zod";
+import * as motion from "motion/react-client";
 
 interface Props<T extends FieldValues> {
    schema: ZodSchema<T>;
@@ -158,7 +159,13 @@ export function AuthForm<T extends FieldValues>({
    );
 
    return (
-      <div className="bg-background flex h-full min-h-screen w-full flex-col items-center justify-center">
+      <motion.div
+         className="bg-background flex h-full min-h-screen w-full flex-col items-center justify-center"
+         initial={{ opacity: 0, scale: 0.9 }}
+         animate={{ opacity: 1, scale: 1 }}
+         exit={{ opacity: 0, scale: 0.5 }}
+         transition={{ duration: 0.4 }}
+      >
          <div
             className="absolute inset-0 opacity-80"
             style={{
@@ -172,15 +179,15 @@ export function AuthForm<T extends FieldValues>({
             className={`bg-card/5 shadow-foreground/20 border-background/30 mx-4 grid h-fit grid-cols-2 overflow-hidden rounded-3xl border shadow-lg backdrop-blur-2xl max-md:grid-cols-1 md:w-full ${isSignIn ? "max-w-4xl" : "max-w-5xl"}`}
          >
             <div className="flex h-full flex-col justify-start gap-7 rounded-lg p-4 md:w-full md:p-8 md:pl-12">
-               <div className="flex items-center gap-2">
+               <div className="flex justify-start gap-2">
                   <Image
-                     src="https://mir-s3-cdn-cf.behance.net/project_modules/fs/05cb00219052085.67abc18ca0c84.gif"
-                     alt="logo"
-                     width={30}
-                     height={50}
-                     className="object-cover"
+                     src="/icon/logo3.png"
+                     alt="Eventra"
+                     width={100}
+                     height={100}
+                     className="bottom-0.56 relative h-5 w-fit object-contain"
                   />
-                  <h1 className="text-xl font-bold">Eventra</h1>
+                  {/* <h1 className="text-xl font-bold">Eventra</h1> */}
                </div>
                <div className="">
                   <h1 className="text-2xl font-bold">
@@ -211,7 +218,8 @@ export function AuthForm<T extends FieldValues>({
 
             <div className="bg-muted hidden h-full w-full md:block">
                <Image
-                  src="https://mir-s3-cdn-cf.behance.net/project_modules/fs/05cb00219052085.67abc18ca0c84.gif"
+                  // src="https://mir-s3-cdn-cf.behance.net/project_modules/fs/05cb00219052085.67abc18ca0c84.gif"
+                  src="/images/auth.jpg"
                   alt="auth image"
                   width={1000}
                   height={1000}
@@ -229,6 +237,6 @@ export function AuthForm<T extends FieldValues>({
                {isSignIn ? "Create an account" : "Sign in"}
             </Link>
          </p>
-      </div>
+      </motion.div>
    );
 }

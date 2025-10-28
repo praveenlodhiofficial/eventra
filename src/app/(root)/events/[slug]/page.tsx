@@ -3,7 +3,7 @@ import ExpandableText from "@/components/ExpandableText";
 import { Separator } from "@/components/ui/separator";
 import { getEvent } from "@/features/event";
 import { TicketType } from "@/generated/prisma";
-import { formatDate } from "@/lib/utils";
+import { cn, formatDate } from "@/lib/utils";
 import { CalendarIcon, MapIcon, MapPinIcon } from "lucide-react";
 import Image from "next/image";
 
@@ -84,6 +84,46 @@ export default async function EventDetailsPage({ params }: { params: Promise<{ s
                   </div>
                )}
 
+               {event?.contributors && event.contributors.length > 0 && (
+                  <div className="space-y-2 md:space-y-3">
+                     <h1 className="text-lg font-semibold md:text-xl lg:text-2xl">Contributors</h1>
+                     <div className="mt-5 flex flex-wrap items-center justify-start gap-5 whitespace-pre-wrap">
+                        {event.contributors.map((contributor) => (
+                           <div
+                              key={contributor.id}
+                              className={cn(
+                                 "flex gap-3",
+                                 event.contributors.length > 1
+                                    ? "flex-col justify-center"
+                                    : "flex-row items-center"
+                              )}
+                           >
+                              {contributor.imageUrl && (
+                                 <Image
+                                    src={contributor.imageUrl}
+                                    alt={contributor.name || "Contributor Image"}
+                                    width={300}
+                                    height={300}
+                                    className="aspect-video h-37 w-37 rounded-lg object-cover md:rounded-2xl lg:aspect-square"
+                                 />
+                              )}
+                              <span
+                                 className={cn(
+                                    "text-[13px] md:text-sm lg:text-base",
+                                    event.contributors.length > 1 ? "space-y-0" : "space-y-0.5"
+                                 )}
+                              >
+                                 <h1>{contributor.name}</h1>
+                                 <p className="text-sm font-semibold text-gray-400/80">
+                                    {contributor.contributorRole}
+                                 </p>
+                              </span>
+                           </div>
+                        ))}
+                     </div>
+                  </div>
+               )}
+
                {event?.location && (
                   <div className="space-y-2 md:space-y-3">
                      <h1 className="text-lg font-semibold md:text-xl lg:text-2xl">Venue</h1>
@@ -102,7 +142,7 @@ export default async function EventDetailsPage({ params }: { params: Promise<{ s
                {event?.imageUrl && event.imageUrl.length > 0 && (
                   <div className="space-y-2 md:space-y-3">
                      <h1 className="text-lg font-semibold md:text-xl lg:text-2xl">Gallery</h1>
-                     <div className="grid grid-cols-2 gap-2 md:grid-cols-3 md:gap-3 lg:grid-cols-5 lg:gap-5">
+                     <div className="grid grid-cols-2 gap-2 md:grid-cols-3 md:gap-3 lg:grid-cols-5">
                         {event.imageUrl.map((image) => (
                            <Image
                               key={image}

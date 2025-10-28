@@ -18,22 +18,48 @@ import {
    DialogTitle,
 } from "@/components/ui/dialog";
 import { Form } from "@/components/ui/form";
-import { createEvent, deleteEvent, updateEvent } from "@/features/event";
-import {
-   eventCreateSchema,
-   EventCreateSchema,
-   eventSchema,
-   EventSchema,
-} from "@/features/event/event.schema";
+import { createEvent, deleteEvent, getAllEvents, updateEvent } from "@/features/event";
+import { ContributorRole } from "@/generated/prisma";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PencilIcon, PlusIcon, TrashIcon, XIcon } from "lucide-react";
 import * as motion from "motion/react-client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm, type Resolver } from "react-hook-form";
 import { toast } from "sonner";
+import { z } from "zod";
 
+// Simple type from the actual function return
+type EventWithContributors = NonNullable<Awaited<ReturnType<typeof getAllEvents>>["data"]>[0];
 type FormMode = "create" | "update" | "delete";
+
+// Form validation schema
+const eventFormSchema = z.object({
+   id: z.string().optional(),
+   name: z.string().min(1, "Name is required"),
+   description: z.string().min(1, "Description is required"),
+   startDate: z.date(),
+   endDate: z.date(),
+   location: z.string().min(1, "Location is required"),
+   eventType: z.enum(["ONLINE", "OFFLINE", "HYBRID"]),
+   ticketType: z.enum(["FREE", "PAID"]),
+   coverImageUrl: z.string().optional(),
+   imageUrl: z.array(z.string()).default([]),
+   contributors: z
+      .array(
+         z.object({
+            name: z.string().min(1, "Name is required"),
+            imageUrl: z.string().optional(),
+            description: z.string().optional(),
+            contributorRole: z.enum(ContributorRole),
+         })
+      )
+      .default([]),
+   createdAt: z.date().optional(),
+   updatedAt: z.date().optional(),
+});
+
+type EventFormValues = z.infer<typeof eventFormSchema>;
 
 // Delete Confirmation Dialog Component
 function DeleteEventDialog({
@@ -42,7 +68,7 @@ function DeleteEventDialog({
    onOpenChange,
    onConfirm,
 }: {
-   event: Partial<EventSchema>;
+   event: Partial<EventWithContributors>;
    open: boolean;
    onOpenChange: (open: boolean) => void;
    onConfirm: () => void;
@@ -81,16 +107,16 @@ function AdminEventForm({
    mode = "create",
 }: {
    onClose: () => void;
-   defaultValues?: Partial<EventSchema>;
-   onSubmit?: (values: EventSchema | EventCreateSchema) => Promise<void>;
+   defaultValues?: Partial<EventWithContributors>;
+   onSubmit?: (values: EventFormValues) => Promise<void>;
    mode?: FormMode;
 }) {
    const router = useRouter();
    const isUpdateMode = mode === "update";
-   const schema = isUpdateMode ? eventSchema : eventCreateSchema;
+   const schema = eventFormSchema;
 
-   const form = useForm({
-      resolver: zodResolver(schema),
+   const form = useForm<EventFormValues>({
+      resolver: zodResolver(schema) as unknown as Resolver<EventFormValues>,
       defaultValues: {
          ...(isUpdateMode && { id: defaultValues?.id ?? "" }),
          name: defaultValues?.name ?? "",
@@ -102,6 +128,15 @@ function AdminEventForm({
          ticketType: defaultValues?.ticketType ?? "FREE",
          coverImageUrl: defaultValues?.coverImageUrl ?? "",
          imageUrl: defaultValues?.imageUrl ?? [],
+         contributors:
+            defaultValues?.contributors?.map(
+               (contributor: EventWithContributors["contributors"][0]) => ({
+                  name: contributor.name,
+                  imageUrl: contributor.imageUrl || undefined,
+                  description: contributor.description || undefined,
+                  contributorRole: contributor.contributorRole,
+               })
+            ) ?? [],
          ...(isUpdateMode && {
             createdAt: defaultValues?.createdAt ?? new Date(),
             updatedAt: defaultValues?.updatedAt ?? new Date(),
@@ -109,11 +144,17 @@ function AdminEventForm({
       },
    });
 
+   const contributorsFieldArray = useFieldArray({
+      control: form.control,
+      name: "contributors",
+      keyName: "id",
+   });
+
    const { isDirty } = form.formState;
    const watchedImageUrl = form.watch("imageUrl");
    console.log("Form imageUrl value:", watchedImageUrl);
 
-   async function handleSubmit(data: EventSchema | EventCreateSchema) {
+   async function handleSubmit(data: EventFormValues) {
       if (onSubmit) {
          await onSubmit(data);
          return;
@@ -125,16 +166,19 @@ function AdminEventForm({
          if (isUpdateMode && "id" in data) {
             // Update existing event
             result = await updateEvent({
-               id: data.id,
-               name: data.name,
-               description: data.description,
-               startDate: data.startDate,
-               endDate: data.endDate,
-               location: data.location,
-               eventType: data.eventType,
-               ticketType: data.ticketType,
-               coverImageUrl: data.coverImageUrl || null,
-               imageUrl: data.imageUrl || [],
+               id: data.id!,
+               data: {
+                  name: data.name,
+                  description: data.description,
+                  startDate: data.startDate,
+                  endDate: data.endDate,
+                  location: data.location,
+                  eventType: data.eventType,
+                  ticketType: data.ticketType,
+                  coverImageUrl: data.coverImageUrl || null,
+                  imageUrl: data.imageUrl || [],
+                  contributors: data.contributors || [],
+               },
             });
          } else {
             // Create new event
@@ -148,6 +192,7 @@ function AdminEventForm({
                ticketType: data.ticketType,
                coverImageUrl: data.coverImageUrl || null,
                imageUrl: data.imageUrl || [],
+               contributors: (data as EventFormValues).contributors || [],
             });
          }
 
@@ -280,6 +325,108 @@ function AdminEventForm({
                               multiple={true}
                            />
                         </div>
+
+                        {/* Contributors Section */}
+                        <div className="mt-2 flex flex-col gap-3">
+                           <div className="flex items-center justify-between">
+                              <h3 className="text-lg font-semibold">Contributors</h3>
+                              <Button
+                                 type="button"
+                                 variant="secondary"
+                                 onClick={() =>
+                                    contributorsFieldArray.append({
+                                       name: "",
+                                       imageUrl: "",
+                                       description: "",
+                                       contributorRole: "ARTIST",
+                                    })
+                                 }
+                              >
+                                 <PlusIcon className="mr-2 size-4" /> Add Contributor
+                              </Button>
+                           </div>
+
+                           {contributorsFieldArray.fields.length === 0 ? (
+                              <p className="text-muted-foreground text-sm">
+                                 No contributors added.
+                              </p>
+                           ) : null}
+
+                           <div className="flex flex-col gap-4">
+                              {contributorsFieldArray.fields.map((field, index) => (
+                                 <div
+                                    key={field.id}
+                                    className="rounded-md border border-dashed p-3"
+                                 >
+                                    <div className="mb-2 flex items-center justify-between">
+                                       <span className="text-sm font-medium">
+                                          Contributor {index + 1}
+                                       </span>
+                                       <Button
+                                          type="button"
+                                          variant="ghost"
+                                          onClick={() => contributorsFieldArray.remove(index)}
+                                          className="size-8 hover:bg-red-50"
+                                       >
+                                          <TrashIcon className="size-4 text-red-500" />
+                                       </Button>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 gap-3 md:grid-cols-[auto_1fr] md:gap-4">
+                                       {/* Left: Large Image Area */}
+                                       <div className="rounded-md md:pr-1">
+                                          <ImageUploadField
+                                             control={form.control}
+                                             name={`contributors.${index}.imageUrl`}
+                                             label="Contributor Image"
+                                             folder="eventra/contributors"
+                                             aspectRatio="1:1"
+                                             fileClassName="h-66.5 w-full aspect-square"
+                                          />
+                                       </div>
+
+                                       {/* Right: Stacked fields */}
+                                       <div className="flex flex-col gap-3">
+                                          <TextInputField
+                                             control={form.control}
+                                             name={`contributors.${index}.name`}
+                                             label="Name"
+                                             placeholder="e.g., John Doe"
+                                          />
+
+                                          <div>
+                                             <SelectField
+                                                control={form.control}
+                                                name={`contributors.${index}.contributorRole`}
+                                                label="Role"
+                                                placeholder="Select role"
+                                                options={Object.values(ContributorRole).map(
+                                                   (r) => ({
+                                                      label: (r as string)
+                                                         .toLowerCase()
+                                                         .replace(/_/g, " ")
+                                                         .replace(/\b\w/g, (c) => c.toUpperCase()),
+                                                      value: r as string,
+                                                   })
+                                                )}
+                                             />
+                                          </div>
+
+                                          <div>
+                                             <TextareaField
+                                                control={form.control}
+                                                name={`contributors.${index}.description`}
+                                                label="Description"
+                                                placeholder="Short bio or description"
+                                                rows={6}
+                                             />
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </div>
+                              ))}
+                           </div>
+                        </div>
                      </div>
 
                      {/* Right Side */}
@@ -336,7 +483,7 @@ export function EventFormModalButton({
    buttonText,
    buttonIcon: ButtonIcon = PlusIcon,
 }: {
-   defaultValues?: Partial<EventSchema>;
+   defaultValues?: Partial<EventWithContributors>;
    mode?: FormMode;
    buttonText?: string;
    buttonIcon?: React.ComponentType<{ className?: string }>;

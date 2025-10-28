@@ -21,17 +21,17 @@ export default async function Navbar() {
    // Get current user from session
    const user = await getCurrentUser({ withFullUser: true });
    return (
-      <div className="fixed top-0 right-0 left-0 z-50 flex w-full items-center justify-between border bg-gradient-to-t from-transparent to-white px-3 py-1.5 backdrop-blur-lg md:px-5 md:py-3.5 lg:px-10">
+      <div className="fixed top-0 right-0 left-0 z-50 flex w-full items-center justify-between border bg-gradient-to-t from-transparent to-white px-3 py-1.5 backdrop-blur-lg md:px-5 md:py-3 lg:px-10">
          {/* Logo Section ---------------------------------------------------------------> */}
          <Link href="/" className="flex items-start gap-2 md:items-end">
             <Image
-               src="/icon/eventra-logo.png"
+               src="/icon/logo3.png"
                alt="Eventra"
-               width={35}
-               height={35}
-               className="bottom-0.56 relative h-6 w-6 object-cover md:h-9 md:w-9"
+               width={100}
+               height={100}
+               className="bottom-0.56 relative h-6 w-full object-cover md:h-7 md:w-full"
             />
-            <h1 className="text-xl font-semibold md:text-2xl">Eventra</h1>
+            {/* <h1 className="text-xl font-semibold md:text-2xl">Eventra</h1> */}
          </Link>
 
          {/* Navigation Menu Section ---------------------------------------------------------------> */}
@@ -40,7 +40,7 @@ export default async function Navbar() {
             <Link href="/about">About</Link>
             <Link href="/contact">Contact</Link>
             {user?.role === "ADMIN" && (
-               <Link href="/admin" className="text-blue-400">
+               <Link href="/admin" className="text-blue-700">
                   Admin Panel
                </Link>
             )}

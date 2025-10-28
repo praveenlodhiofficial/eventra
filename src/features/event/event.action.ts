@@ -1,48 +1,38 @@
 "use server";
 
-import { Event } from "@/generated/prisma";
+import { Event, Prisma } from "@/generated/prisma";
 import prisma from "@/lib/prisma";
 import { generateSlug } from "@/lib/utils";
 
+// ============================================== CREATE EVENT ==============================================
 export const createEvent = async (
-   params: Pick<
-      Omit<Event, "slug">,
-      | "name"
-      | "description"
-      | "startDate"
-      | "endDate"
-      | "location"
-      | "eventType"
-      | "ticketType"
-      | "coverImageUrl"
-      | "imageUrl"
-   >
+   params: Omit<Prisma.EventCreateInput, "id" | "slug" | "createdAt" | "updatedAt"> & {
+      contributors?: Omit<
+         Prisma.EventContributorCreateWithoutEventInput,
+         "id" | "createdAt" | "updatedAt"
+      >[];
+   }
 ) => {
-   const {
-      name,
-      description,
-      startDate,
-      endDate,
-      location,
-      eventType,
-      ticketType,
-      coverImageUrl,
-      imageUrl,
-   } = params;
+   const { contributors, ...eventData } = params;
 
    try {
       const event = await prisma.event.create({
          data: {
-            name,
-            slug: generateSlug(name),
-            description,
-            startDate,
-            endDate,
-            location,
-            eventType,
-            ticketType,
-            coverImageUrl: coverImageUrl || null,
-            imageUrl: imageUrl || [],
+            ...eventData,
+            slug: generateSlug(eventData.name),
+            contributors: contributors
+               ? {
+                    create: contributors.map((c) => ({
+                       name: c.name,
+                       imageUrl: c.imageUrl,
+                       description: c.description,
+                       contributorRole: c.contributorRole,
+                    })),
+                 }
+               : undefined,
+         },
+         include: {
+            contributors: true,
          },
       });
 
@@ -61,11 +51,15 @@ export const createEvent = async (
    }
 };
 
+// ============================================== GET EVENT ==============================================
 export const getEvent = async (slug: string) => {
    try {
       const event = await prisma.event.findUnique({
          where: {
             slug,
+         },
+         include: {
+            contributors: true,
          },
       });
 
@@ -91,9 +85,14 @@ export const getEvent = async (slug: string) => {
    }
 };
 
+// ============================================== GET ALL EVENTS ==============================================
 export const getAllEvents = async () => {
    try {
-      const events = await prisma.event.findMany();
+      const events = await prisma.event.findMany({
+         include: {
+            contributors: true,
+         },
+      });
 
       return {
          success: true,
@@ -110,6 +109,7 @@ export const getAllEvents = async () => {
    }
 };
 
+// ============================================== GET FEATURED EVENTS (CAROUSEL) ==============================================
 export const getFeaturedEvents = async () => {
    try {
       const featuredEvents = await prisma.event.findMany({
@@ -135,33 +135,19 @@ export const getFeaturedEvents = async () => {
    }
 };
 
+// ============================================== UPDATE EVENT ==============================================
 export const updateEvent = async (
-   params: Pick<
-      Event,
-      | "id"
-      | "name"
-      | "description"
-      | "startDate"
-      | "endDate"
-      | "location"
-      | "eventType"
-      | "ticketType"
-      | "coverImageUrl"
-      | "imageUrl"
-   >
+   params: Pick<Event, "id"> & {
+      data: Omit<Prisma.EventUpdateInput, "id" | "slug" | "createdAt" | "updatedAt"> & {
+         contributors?: Omit<
+            Prisma.EventContributorCreateWithoutEventInput,
+            "id" | "createdAt" | "updatedAt"
+         >[];
+      };
+   }
 ) => {
-   const {
-      id,
-      name,
-      description,
-      startDate,
-      endDate,
-      location,
-      eventType,
-      ticketType,
-      coverImageUrl,
-      imageUrl,
-   } = params;
+   const { id, data } = params;
+   const { contributors, ...eventData } = data;
 
    try {
       const doesEventExist = await prisma.event.findUnique({
@@ -182,15 +168,21 @@ export const updateEvent = async (
             id,
          },
          data: {
-            name,
-            description,
-            startDate,
-            endDate,
-            location,
-            eventType,
-            ticketType,
-            coverImageUrl: coverImageUrl || null,
-            imageUrl: imageUrl || [],
+            ...eventData,
+            contributors: contributors
+               ? {
+                    deleteMany: {}, // Delete all existing contributors (cascading deletion)
+                    create: contributors.map((c) => ({
+                       name: c.name,
+                       imageUrl: c.imageUrl,
+                       description: c.description,
+                       contributorRole: c.contributorRole,
+                    })),
+                 }
+               : undefined,
+         },
+         include: {
+            contributors: true,
          },
       });
 
@@ -209,6 +201,7 @@ export const updateEvent = async (
    }
 };
 
+// ============================================== DELETE EVENT ==============================================
 export const deleteEvent = async (params: Pick<Event, "id">) => {
    const { id } = params;
 
@@ -225,6 +218,12 @@ export const deleteEvent = async (params: Pick<Event, "id">) => {
             message: "Event not found",
          };
       }
+
+      /*
+       * Cascading deletion is handled by the onDelete: Cascade rules in the schema.
+       * This means that when an event is deleted, all related records (contributors, feedback, tickets, calendar) will also be deleted.
+       * No need to manually delete related records.
+       */
 
       const event = await prisma.event.delete({
          where: {
