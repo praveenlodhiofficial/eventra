@@ -1,9 +1,20 @@
 const config = {
    env: {
-      // ********************* API ENDPOINT *********************
+      // ********************* SITE URL (for emails/links) *********************
+      siteUrl: (() => {
+         if (process.env.NODE_ENV === "production") {
+            return process.env.NEXT_PUBLIC_PROD_API_ENDPOINT || "https://eventra.praveenlodhi.me";
+         }
+         if (process.env.VERCEL_URL) {
+            return process.env.VERCEL_URL || "https://eventra-beta.vercel.app";
+         }
+         return process.env.NEXT_PUBLIC_API_ENDPOINT || "http://localhost:3000";
+      })(),
+
+      // ********************* API ENDPOINT (for server actions) *********************
       apiEndpoint: (() => {
          if (process.env.NODE_ENV === "production") {
-            return process.env.NEXT_PUBLIC_PROD_API_ENDPOINT || "https://portfoliox-new.vercel.app";
+            return process.env.NEXT_PUBLIC_PROD_API_ENDPOINT || "https://eventra-beta.vercel.app";
          }
          return process.env.NEXT_PUBLIC_API_ENDPOINT || "http://localhost:3000";
       })(),
@@ -36,6 +47,11 @@ const config = {
       // ********************* SEED VARIABLES *********************
       seed: {
          userId: process.env.SEED_USER_ID!,
+      },
+
+      // ********************* RESEND *********************
+      resend: {
+         apiKey: process.env.RESEND_API_KEY!,
       },
    },
 };

@@ -1,10 +1,14 @@
 "use server";
 
-import { createUserSession } from "@/features/auth/auth.session";
 import { comparePasswords, generateSalt, hashPassword } from "@/features/auth/auth.passwordHasher";
+import { createUserSession } from "@/features/auth/auth.session";
+import { sendOnboardingEmail } from "@/features/email/email.action";
 import { Roles, User } from "@/generated/prisma";
+import config from "@/lib/config";
 import { prisma } from "@/lib/prisma";
 import { cookies } from "next/headers";
+
+// ========================================= SIGN UP WITH CREDENTIALS =========================================
 
 export const signUpWithCredentials = async (
    params: Pick<User, "email" | "password" | "name">
@@ -33,22 +37,17 @@ export const signUpWithCredentials = async (
          },
       });
 
-      // Create session after successful signup
-      try {
-         const cookieStore = await cookies();
-         await createUserSession(
-            {
-               id: user.id,
-               role: user.role,
-            },
-            cookieStore
-         );
-         console.log("Session created successfully for user:", user.id);
-      } catch (sessionError) {
-         console.error("Failed to create session:", sessionError);
-         // Don't fail the signup if session creation fails
-         // The user is still created in the database
-      }
+      /*
+       * No session on signup: session is created on sign-in only.
+       * Fire onboarding email on successful signup (non-blocking).
+       */
+
+      (async () => {
+         try {
+            const ctaUrl = `${config.env.siteUrl}/events`;
+            await sendOnboardingEmail({ to: user.email, name: user.name, ctaUrl });
+         } catch {}
+      })();
 
       return { success: true, data: user };
    } catch (error) {
@@ -57,6 +56,8 @@ export const signUpWithCredentials = async (
       return { success: false, error: "Sign up with credentials failed" };
    }
 };
+
+// ========================================= SIGN IN WITH CREDENTIALS =========================================
 
 export const signInWithCredentials = async (
    params: Pick<User, "email" | "password">
@@ -93,9 +94,19 @@ export const signInWithCredentials = async (
          console.log("Session created successfully for user:", user.id);
       } catch (sessionError) {
          console.error("Failed to create session:", sessionError);
-         // Don't fail the signin if session creation fails
-         // The user credentials are still valid
       }
+
+      /*
+       * No session on signup: session is created on sign-in only.
+       * Fire onboarding email on successful signup (non-blocking).
+       */
+
+      (async () => {
+         try {
+            const ctaUrl = `${config.env.siteUrl}/events`;
+            await sendOnboardingEmail({ to: user.email, name: user.name, ctaUrl });
+         } catch {}
+      })();
 
       return { success: true, data: user };
    } catch (error) {
