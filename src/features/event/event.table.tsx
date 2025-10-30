@@ -130,6 +130,7 @@ export function AdminEventsTable({ events }: AdminEventsTableProps) {
                                        coverImageUrl: event.coverImageUrl ?? undefined,
                                        imageUrl: event.imageUrl,
                                        contributors: event.contributors || [],
+                                       ticket: event.ticket || [],
                                        createdAt: event.createdAt,
                                        updatedAt: event.updatedAt,
                                     }}

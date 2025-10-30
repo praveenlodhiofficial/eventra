@@ -37,7 +37,7 @@ export default function EventGradientBackground({
       <div className="relative">
          {/* Dynamic Gradient Background */}
          <div
-            className="absolute top-0 left-0 z-0 h-[80vh] w-full"
+            className="fixed top-0 left-0 z-0 h-[80vh] w-full"
             style={{ background: gradientStyle }}
          />
          {children}

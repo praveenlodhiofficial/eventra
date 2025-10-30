@@ -40,7 +40,12 @@ export default async function Navbar() {
             <Link href="/about">About</Link>
             <Link href="/contact">Contact</Link>
             {user?.role === "ADMIN" && (
-               <Link href="/admin" className="text-blue-700">
+               <Link
+                  href="/admin"
+                  className="text-blue-700"
+                  target="_blank"
+                  rel="noopener noreferrer"
+               >
                   Admin Panel
                </Link>
             )}

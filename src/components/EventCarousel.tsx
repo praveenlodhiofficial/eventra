@@ -66,7 +66,7 @@ export default function EventCarousel() {
                   key={event.id}
                   className="flex h-full w-full items-center justify-center px-8 md:px-16 lg:px-24"
                >
-                  <div className="mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-8 lg:grid-cols-2 lg:gap-12">
+                  <div className="mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-8 pt-25 lg:grid-cols-2 lg:gap-12">
                      {/* Left Section - Event Details */}
                      <div className="space-y-6 text-center lg:text-left">
                         {/* Date */}
@@ -99,7 +99,7 @@ export default function EventCarousel() {
                      </div>
 
                      {/* Right Section - Event Poster */}
-                     <div className="flex h-[85%] justify-center lg:justify-end">
+                     <div className="flex h-full justify-center lg:justify-end">
                         <Image
                            src={event.coverImageUrl || "/placeholder-image.jpg"}
                            alt={event.name || "Event Image"}

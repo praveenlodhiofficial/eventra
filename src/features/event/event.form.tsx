@@ -1,12 +1,6 @@
 "use client";
 
-import {
-   DateField,
-   ImageUploadField,
-   SelectField,
-   TextareaField,
-   TextInputField,
-} from "@/components/form";
+import { ImageUploadField, SelectField, TextareaField, TextInputField } from "@/components/form";
 import ImageTileUploadField from "@/components/form/ImageTileUploadField";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,9 +11,17 @@ import {
    DialogHeader,
    DialogTitle,
 } from "@/components/ui/dialog";
-import { Form } from "@/components/ui/form";
+import {
+   Form,
+   FormControl,
+   FormField,
+   FormItem,
+   FormLabel,
+   FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import { createEvent, deleteEvent, getAllEvents, updateEvent } from "@/features/event";
-import { ContributorRole } from "@/generated/prisma";
+import { ContributorRole, TicketCategory, TicketType } from "@/generated/prisma";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PencilIcon, PlusIcon, TrashIcon, XIcon } from "lucide-react";
 import * as motion from "motion/react-client";
@@ -31,6 +33,7 @@ import { z } from "zod";
 
 // Simple type from the actual function return
 type EventWithContributors = NonNullable<Awaited<ReturnType<typeof getAllEvents>>["data"]>[0];
+type EventWithTickets = NonNullable<Awaited<ReturnType<typeof getAllEvents>>["data"]>[0];
 type FormMode = "create" | "update" | "delete";
 
 // Form validation schema
@@ -55,11 +58,24 @@ const eventFormSchema = z.object({
          })
       )
       .default([]),
+   tickets: z
+      .array(
+         z.object({
+            ticketType: z.enum(TicketType),
+            category: z.enum(TicketCategory),
+            guidelines: z.string().optional(),
+            price: z.coerce.number(),
+            quantity: z.coerce.number(),
+         })
+      )
+      .default([]),
    createdAt: z.date().optional(),
    updatedAt: z.date().optional(),
 });
 
 type EventFormValues = z.infer<typeof eventFormSchema>;
+type TicketFieldPath<K extends "category" | "price" | "quantity" | "guidelines"> =
+   `tickets.${number}.${K}`;
 
 // Delete Confirmation Dialog Component
 function DeleteEventDialog({
@@ -68,7 +84,7 @@ function DeleteEventDialog({
    onOpenChange,
    onConfirm,
 }: {
-   event: Partial<EventWithContributors>;
+   event: Partial<EventWithContributors & EventWithTickets>;
    open: boolean;
    onOpenChange: (open: boolean) => void;
    onConfirm: () => void;
@@ -107,13 +123,24 @@ function AdminEventForm({
    mode = "create",
 }: {
    onClose: () => void;
-   defaultValues?: Partial<EventWithContributors>;
+   defaultValues?: Partial<EventWithContributors & EventWithTickets>;
    onSubmit?: (values: EventFormValues) => Promise<void>;
    mode?: FormMode;
 }) {
    const router = useRouter();
    const isUpdateMode = mode === "update";
    const schema = eventFormSchema;
+
+   const formatDateTimeLocal = (date: Date | undefined) => {
+      const d = date ? new Date(date) : new Date();
+      const pad = (n: number) => n.toString().padStart(2, "0");
+      const yyyy = d.getFullYear();
+      const mm = pad(d.getMonth() + 1);
+      const dd = pad(d.getDate());
+      const hh = pad(d.getHours());
+      const mi = pad(d.getMinutes());
+      return `${yyyy}-${mm}-${dd}T${hh}:${mi}`;
+   };
 
    const form = useForm<EventFormValues>({
       resolver: zodResolver(schema) as unknown as Resolver<EventFormValues>,
@@ -137,6 +164,14 @@ function AdminEventForm({
                   contributorRole: contributor.contributorRole,
                })
             ) ?? [],
+         tickets:
+            defaultValues?.ticket?.map((ticket: EventWithTickets["ticket"][0]) => ({
+               ticketType: ticket.ticketType,
+               category: ticket.category,
+               guidelines: ticket.guidelines || undefined,
+               price: ticket.price,
+               quantity: ticket.quantity,
+            })) ?? [],
          ...(isUpdateMode && {
             createdAt: defaultValues?.createdAt ?? new Date(),
             updatedAt: defaultValues?.updatedAt ?? new Date(),
@@ -150,8 +185,15 @@ function AdminEventForm({
       keyName: "id",
    });
 
+   const ticketsFieldArray = useFieldArray({
+      control: form.control,
+      name: "tickets",
+      keyName: "id",
+   });
+
    const { isDirty } = form.formState;
    const watchedImageUrl = form.watch("imageUrl");
+   const watchedTicketType = form.watch("ticketType");
    console.log("Form imageUrl value:", watchedImageUrl);
 
    async function handleSubmit(data: EventFormValues) {
@@ -178,6 +220,7 @@ function AdminEventForm({
                   coverImageUrl: data.coverImageUrl || null,
                   imageUrl: data.imageUrl || [],
                   contributors: data.contributors || [],
+                  tickets: data.tickets || [],
                },
             });
          } else {
@@ -193,6 +236,7 @@ function AdminEventForm({
                coverImageUrl: data.coverImageUrl || null,
                imageUrl: data.imageUrl || [],
                contributors: (data as EventFormValues).contributors || [],
+               tickets: (data as EventFormValues).tickets || [],
             });
          }
 
@@ -326,8 +370,179 @@ function AdminEventForm({
                            />
                         </div>
 
+                        {watchedTicketType === "PAID" && (
+                           <div className="mt-2 flex flex-col gap-3">
+                              <div className="flex items-center justify-between">
+                                 <h3 className="text-lg font-semibold">Tickets</h3>
+                                 <Button
+                                    type="button"
+                                    variant="secondary"
+                                    onClick={() =>
+                                       ticketsFieldArray.append({
+                                          ticketType: "PAID",
+                                          category: "REGULAR",
+                                          guidelines: "",
+                                          price: 0,
+                                          quantity: 0,
+                                       })
+                                    }
+                                 >
+                                    <PlusIcon className="mr-2 size-4" /> Add Ticket
+                                 </Button>
+                              </div>
+
+                              {ticketsFieldArray.fields.length === 0 ? (
+                                 <p className="text-muted-foreground text-sm">No tickets added.</p>
+                              ) : null}
+
+                              <div className="flex flex-col gap-4">
+                                 {ticketsFieldArray.fields.map((field, index) => (
+                                    <div
+                                       key={field.id}
+                                       className="rounded-md border border-dashed p-3"
+                                    >
+                                       <div className="mb-2 flex items-center justify-between">
+                                          <span className="text-sm font-medium">
+                                             Ticket {index + 1}
+                                          </span>
+                                          <Button
+                                             type="button"
+                                             variant="ghost"
+                                             onClick={() => ticketsFieldArray.remove(index)}
+                                             className="size-8 hover:bg-red-50"
+                                          >
+                                             <TrashIcon className="size-4 text-red-500" />
+                                          </Button>
+                                       </div>
+
+                                       <div className="flex flex-col gap-3">
+                                          <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+                                             <SelectField
+                                                control={form.control}
+                                                name={
+                                                   `tickets.${index}.category` as TicketFieldPath<"category">
+                                                }
+                                                label="Category"
+                                                placeholder="Select category"
+                                                options={Object.values(TicketCategory).map((c) => ({
+                                                   label: (c as string)
+                                                      .toLowerCase()
+                                                      .replace(/_/g, " ")
+                                                      .replace(/\b\w/g, (ch) => ch.toUpperCase()),
+                                                   value: c as string,
+                                                }))}
+                                             />
+                                             <TextInputField
+                                                control={form.control}
+                                                name={
+                                                   `tickets.${index}.price` as TicketFieldPath<"price">
+                                                }
+                                                label="Price"
+                                                type="number"
+                                                placeholder="0.00"
+                                             />
+                                             <TextInputField
+                                                control={form.control}
+                                                name={
+                                                   `tickets.${index}.quantity` as TicketFieldPath<"quantity">
+                                                }
+                                                label="Quantity"
+                                                type="number"
+                                                placeholder="0"
+                                             />
+                                          </div>
+
+                                          <TextareaField
+                                             control={form.control}
+                                             name={
+                                                `tickets.${index}.guidelines` as TicketFieldPath<"guidelines">
+                                             }
+                                             label="Guidelines"
+                                             placeholder="Any ticket guidelines"
+                                             rows={4}
+                                             textareaClassName="w-full rounded-md border border-dashed border-gray-400 bg-transparent px-3 py-2 text-sm transition-all duration-200 focus-visible:ring-0 focus-visible:ring-offset-0 active:ring-0 active:ring-offset-0"
+                                          />
+                                       </div>
+                                    </div>
+                                 ))}
+                              </div>
+                           </div>
+                        )}
+                     </div>
+
+                     {/* Right Side */}
+                     <div className="flex w-full flex-col space-y-5 md:flex-row lg:w-[450px] lg:flex-col">
+                        {/* Cover Image Upload */}
+                        <ImageUploadField
+                           control={form.control}
+                           name="coverImageUrl"
+                           label="Upload Cover Image"
+                           folder="eventra/events"
+                           fileClassName="w-full h-fit rounded-md text-sm transition-all duration-200"
+                        />
+
+                        <div className="space-y-5">
+                           {/* Start Date */}
+                           {/* <DateField
+                              control={form.control}
+                              name={"startDate"}
+                              label="Start Date and Time"
+                              dragSensitivity={20}
+                              scrollSensitivity={20}
+                           /> */}
+
+                           <FormField
+                              control={form.control}
+                              name={"startDate"}
+                              render={({ field }) => (
+                                 <FormItem>
+                                    <FormLabel>Start Date and Time</FormLabel>
+                                    <FormControl>
+                                       <Input
+                                          type="datetime-local"
+                                          value={
+                                             field.value ? formatDateTimeLocal(field.value) : ""
+                                          }
+                                          onChange={(e) => field.onChange(new Date(e.target.value))}
+                                       />
+                                    </FormControl>
+                                    <FormMessage />
+                                 </FormItem>
+                              )}
+                           />
+
+                           {/* End Date */}
+                           {/* <DateField
+                              control={form.control}
+                              name={"endDate"}
+                              label="End Date and Time"
+                              dragSensitivity={20}
+                              scrollSensitivity={15}
+                           /> */}
+
+                           <FormField
+                              control={form.control}
+                              name={"endDate"}
+                              render={({ field }) => (
+                                 <FormItem>
+                                    <FormLabel>End Date and Time</FormLabel>
+                                    <FormControl>
+                                       <Input
+                                          type="datetime-local"
+                                          value={
+                                             field.value ? formatDateTimeLocal(field.value) : ""
+                                          }
+                                          onChange={(e) => field.onChange(new Date(e.target.value))}
+                                       />
+                                    </FormControl>
+                                    <FormMessage />
+                                 </FormItem>
+                              )}
+                           />
+                        </div>
+
                         {/* Contributors Section */}
-                        <div className="mt-2 flex flex-col gap-3">
+                        <div className="mt-10 flex flex-col gap-3">
                            <div className="flex items-center justify-between">
                               <h3 className="text-lg font-semibold">Contributors</h3>
                               <Button
@@ -372,16 +587,16 @@ function AdminEventForm({
                                        </Button>
                                     </div>
 
-                                    <div className="grid grid-cols-1 gap-3 md:grid-cols-[auto_1fr] md:gap-4">
+                                    <div className="grid grid-cols-[auto_1fr] gap-3 md:gap-4">
                                        {/* Left: Large Image Area */}
                                        <div className="rounded-md md:pr-1">
                                           <ImageUploadField
                                              control={form.control}
                                              name={`contributors.${index}.imageUrl`}
-                                             label="Contributor Image"
+                                             label="Image"
                                              folder="eventra/contributors"
                                              aspectRatio="1:1"
-                                             fileClassName="h-66.5 w-full aspect-square"
+                                             fileClassName="aspect-square w-26.5"
                                           />
                                        </div>
 
@@ -394,70 +609,24 @@ function AdminEventForm({
                                              placeholder="e.g., John Doe"
                                           />
 
-                                          <div>
-                                             <SelectField
-                                                control={form.control}
-                                                name={`contributors.${index}.contributorRole`}
-                                                label="Role"
-                                                placeholder="Select role"
-                                                options={Object.values(ContributorRole).map(
-                                                   (r) => ({
-                                                      label: (r as string)
-                                                         .toLowerCase()
-                                                         .replace(/_/g, " ")
-                                                         .replace(/\b\w/g, (c) => c.toUpperCase()),
-                                                      value: r as string,
-                                                   })
-                                                )}
-                                             />
-                                          </div>
-
-                                          <div>
-                                             <TextareaField
-                                                control={form.control}
-                                                name={`contributors.${index}.description`}
-                                                label="Description"
-                                                placeholder="Short bio or description"
-                                                rows={6}
-                                             />
-                                          </div>
+                                          <SelectField
+                                             control={form.control}
+                                             name={`contributors.${index}.contributorRole`}
+                                             label="Role"
+                                             placeholder="Select role"
+                                             options={Object.values(ContributorRole).map((r) => ({
+                                                label: (r as string)
+                                                   .toLowerCase()
+                                                   .replace(/_/g, " ")
+                                                   .replace(/\b\w/g, (c) => c.toUpperCase()),
+                                                value: r as string,
+                                             }))}
+                                          />
                                        </div>
                                     </div>
                                  </div>
                               ))}
                            </div>
-                        </div>
-                     </div>
-
-                     {/* Right Side */}
-                     <div className="flex w-full flex-col gap-5 md:flex-row lg:w-[450px] lg:flex-col">
-                        {/* Cover Image Upload */}
-                        <ImageUploadField
-                           control={form.control}
-                           name="coverImageUrl"
-                           label="Cover Image"
-                           folder="eventra/events"
-                           fileClassName="w-full rounded-md text-sm transition-all duration-200"
-                        />
-
-                        <div className="space-y-5">
-                           {/* Start Date */}
-                           <DateField
-                              control={form.control}
-                              name={"startDate"}
-                              label="Start Date and Time"
-                              dragSensitivity={20}
-                              scrollSensitivity={15}
-                           />
-
-                           {/* End Date */}
-                           <DateField
-                              control={form.control}
-                              name={"endDate"}
-                              label="End Date and Time"
-                              dragSensitivity={20}
-                              scrollSensitivity={15}
-                           />
                         </div>
                      </div>
                   </div>
@@ -483,7 +652,7 @@ export function EventFormModalButton({
    buttonText,
    buttonIcon: ButtonIcon = PlusIcon,
 }: {
-   defaultValues?: Partial<EventWithContributors>;
+   defaultValues?: Partial<EventWithContributors & EventWithTickets>;
    mode?: FormMode;
    buttonText?: string;
    buttonIcon?: React.ComponentType<{ className?: string }>;

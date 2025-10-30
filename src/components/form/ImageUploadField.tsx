@@ -11,7 +11,7 @@ export interface ImageUploadFieldProps<
 > {
    control: Control<TFieldValues>;
    name: TName;
-   label: string;
+   label?: string;
    folder: string;
    accept?: string;
    aspectRatio?: "16:9" | "4:3" | "1:1" | "9:16";
@@ -27,7 +27,7 @@ export function ImageUploadField<
 >({
    control,
    name,
-   label,
+   label = "",
    folder,
    accept = "image/*",
    aspectRatio = "16:9",
@@ -55,14 +55,14 @@ export function ImageUploadField<
                   <FileUpload
                      type={type}
                      accept={accept}
-                     placeholder={`Upload ${label.toLowerCase()}`}
+                     placeholder={`${label.toLowerCase()}`}
                      folder={folder}
                      onFileChange={field.onChange}
                      value={field.value}
                      aspectRatio={aspectRatio}
                      className={cn(
                         // "aspect-video h-full max-w-[450px] min-w-[310px] rounded-md border border-dashed border-gray-400 object-cover",
-                        "aspect-video h-full max-w-[450px] min-w-[250px] rounded-md border border-dashed border-gray-400 object-cover",
+                        "aspect-video h-full rounded-md border border-dashed border-gray-400 object-cover capitalize",
                         fileClassName
                      )}
                   />

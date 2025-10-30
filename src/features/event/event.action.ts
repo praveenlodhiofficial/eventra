@@ -11,9 +11,10 @@ export const createEvent = async (
          Prisma.EventContributorCreateWithoutEventInput,
          "id" | "createdAt" | "updatedAt"
       >[];
+      tickets?: Omit<Prisma.TicketCreateWithoutEventInput, "id" | "createdAt" | "updatedAt">[];
    }
 ) => {
-   const { contributors, ...eventData } = params;
+   const { contributors, tickets, ...eventData } = params;
 
    try {
       const event = await prisma.event.create({
@@ -30,9 +31,21 @@ export const createEvent = async (
                     })),
                  }
                : undefined,
+            ticket: tickets
+               ? {
+                    create: tickets.map((t) => ({
+                       ticketType: t.ticketType,
+                       category: t.category,
+                       guidelines: t.guidelines || undefined,
+                       price: t.price,
+                       quantity: t.quantity,
+                    })),
+                 }
+               : undefined,
          },
          include: {
             contributors: true,
+            ticket: true,
          },
       });
 
@@ -43,7 +56,13 @@ export const createEvent = async (
       };
    } catch (error) {
       console.error("Event creation failed", error);
-
+      // Prisma unique constraint violation (e.g., slug)
+      if ((error as { code?: string })?.code === "P2002") {
+         return {
+            success: false,
+            message: "An event with a similar name already exists. Please use a different name.",
+         };
+      }
       return {
          success: false,
          message: "Event creation failed",
@@ -60,6 +79,7 @@ export const getEvent = async (slug: string) => {
          },
          include: {
             contributors: true,
+            ticket: true,
          },
       });
 
@@ -91,6 +111,7 @@ export const getAllEvents = async () => {
       const events = await prisma.event.findMany({
          include: {
             contributors: true,
+            ticket: true,
          },
       });
 
@@ -143,11 +164,12 @@ export const updateEvent = async (
             Prisma.EventContributorCreateWithoutEventInput,
             "id" | "createdAt" | "updatedAt"
          >[];
+         tickets?: Omit<Prisma.TicketCreateWithoutEventInput, "id" | "createdAt" | "updatedAt">[];
       };
    }
 ) => {
    const { id, data } = params;
-   const { contributors, ...eventData } = data;
+   const { contributors, tickets, ...eventData } = data;
 
    try {
       const doesEventExist = await prisma.event.findUnique({
@@ -180,9 +202,22 @@ export const updateEvent = async (
                     })),
                  }
                : undefined,
+            ticket: tickets
+               ? {
+                    deleteMany: {}, // Delete all existing tickets (cascading deletion)
+                    create: tickets.map((t) => ({
+                       ticketType: t.ticketType,
+                       category: t.category,
+                       guidelines: t.guidelines || undefined,
+                       price: t.price,
+                       quantity: t.quantity,
+                    })),
+                 }
+               : undefined,
          },
          include: {
             contributors: true,
+            ticket: true,
          },
       });
 
