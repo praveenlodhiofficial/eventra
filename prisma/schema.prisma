@@ -57,6 +57,80 @@ enum TicketCategory {
   STUDENT
 }
 
+enum EventCategory {
+  ENTERTAINMENT_MUSIC
+  PROFESSIONAL_BUSINESS
+  EDUCATION_LEARNING
+  COMMUNITY_SOCIAL
+  LIFESTYLE_WELLNESS
+  SPORTS_ADVENTURE
+  EXHIBITIONS_TRADE
+  TECHNOLOGY_INNOVATION
+  ACADEMIC_INSTITUTIONAL
+}
+
+enum EventSubCategory {
+  // Entertainment & Music
+  CONCERTS
+  FESTIVALS
+  COMEDY
+  THEATRE
+  MOVIE_SCREENINGS
+  // Professional & Business
+  CONFERENCES
+  WORKSHOPS
+  SEMINARS
+  NETWORKING
+  PRODUCT_LAUNCHES
+  CAREER_FAIRS
+  // Education & Learning
+  WEBINARS
+  TECH_TALKS
+  HACKATHON
+  ACADEMIC_CONFERENCE
+  LECTURES
+  STUDENT_ACTIVITIES_CLUB
+  // Community & Social
+  MEETUPS
+  CHARITY_FUNDRAISERS
+  RELIGIOUS_SPIRITUAL_GATHERING
+  CULTURAL_EVENTS
+  SOCIAL_MIXERS
+  // Lifestyle & Wellness
+  FITNESS
+  HEALTHCAMPS
+  AWARENESS_PROGRAMS
+  RETREATS
+  FASHION
+  BEAUTY
+  // Sports & Adventure
+  TOURNAMENTS
+  MARATHONS
+  ADVENTURE_TRIPS
+  ESPORTS
+  // Exhibitions & Trade
+  TRADE_SHOW
+  EXPO
+  ART_CRAFT_EXHIBITION
+  FOOD_FESTIVAL
+  STARTUP_INNOVATION_FAIR
+  // Technology & Innovation
+  AI_ML_CONFERENCE
+  STARTUP_PITCH_EVENT
+  DEVELOPER_SUMMIT
+  PRODUCT_LAUNCH
+  BLOCKCHAIN_WEB3_MEETUP
+  // Academic / Institutional
+  COLLEGE_FEST
+  ANNUAL_FUNCTION
+  WORKSHOP_LECTURE
+  GUEST_LECTURE
+  PAPER_PRESENTATION
+  PROJECT_EXHIBITION
+  // Other
+  OTHER
+}
+
 model User {
   id        String     @id @default(uuid())
   name      String
@@ -78,24 +152,27 @@ model User {
 }
 
 model Event {
-  id            String             @id @default(uuid())
-  name          String
-  slug          String             @unique
-  description   String
-  tags          String[]         @default([])
-  startDate     DateTime
-  endDate       DateTime
-  coverImageUrl String?
-  imageUrl      String[]
-  location      String
-  createdAt     DateTime           @default(now())
-  updatedAt     DateTime           @updatedAt
-  eventType     EventType
-  ticketType    TicketType
-  feedBack      FeedBack[]
-  ticket        Ticket[]
-  calendar      Calendar[]
-  contributors  EventContributor[]
+  id               String             @id @default(uuid())
+  name             String
+  slug             String             @unique
+  description      String
+  tags             String[]           @default([])
+  startDate        DateTime
+  endDate          DateTime
+  coverImageUrl    String?
+  imageUrl         String[]
+  location         String
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  eventType        EventType
+  ticketType       TicketType
+  category         EventCategory?
+  subCategory      EventSubCategory?
+  otherSubCategory String? // Custom subcategory when subCategory is OTHER
+  feedBack         FeedBack[]
+  ticket           Ticket[]
+  calendar         Calendar[]
+  contributors     EventContributor[]
 }
 
 model EventContributor {

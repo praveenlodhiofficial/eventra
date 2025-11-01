@@ -97,7 +97,7 @@ export function TagInput({
 
    return (
       <div
-         className={`min-h-10 w-full rounded-md border border-gray-200 px-2 py-1 text-[13px] ${
+         className={`w-full rounded-md border border-dashed border-gray-400 p-1 text-[13px] ${
             className ?? ""
          }`}
          onClick={() => inputRef.current?.focus()}

@@ -1,6 +1,12 @@
 "use client";
 
-import { ImageUploadField, SelectField, TextareaField, TextInputField } from "@/components/form";
+import {
+   ImageUploadField,
+   SelectField,
+   TagInputField,
+   TextareaField,
+   TextInputField,
+} from "@/components/form";
 import ImageTileUploadField from "@/components/form/ImageTileUploadField";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,9 +26,19 @@ import {
    FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { TagInput } from "@/components/ui/tag-input";
 import { createEvent, deleteEvent, getAllEvents, updateEvent } from "@/features/event";
-import { ContributorRole, TicketCategory, TicketType } from "@/generated/prisma";
+import {
+   ContributorRole,
+   EventCategory,
+   EventSubCategory,
+   TicketCategory,
+   TicketType,
+} from "@/generated/prisma";
+import {
+   categoryLabels,
+   getSubCategoriesForCategory,
+   subCategoryLabels,
+} from "@/lib/event-categories";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PencilIcon, PlusIcon, TrashIcon, XIcon } from "lucide-react";
 import * as motion from "motion/react-client";
@@ -38,42 +54,58 @@ type EventWithTickets = NonNullable<Awaited<ReturnType<typeof getAllEvents>>["da
 type FormMode = "create" | "update" | "delete";
 
 // Form validation schema
-const eventFormSchema = z.object({
-   id: z.string().optional(),
-   name: z.string().min(1, "Name is required"),
-   description: z.string().min(1, "Description is required"),
-   tags: z.array(z.string()).default([]),
-   startDate: z.date(),
-   endDate: z.date(),
-   location: z.string().min(1, "Location is required"),
-   eventType: z.enum(["ONLINE", "OFFLINE", "HYBRID"]),
-   ticketType: z.enum(["FREE", "PAID"]),
-   coverImageUrl: z.string().optional(),
-   imageUrl: z.array(z.string()).default([]),
-   contributors: z
-      .array(
-         z.object({
-            name: z.string().min(1, "Name is required"),
-            imageUrl: z.string().optional(),
-            description: z.string().optional(),
-            contributorRole: z.enum(ContributorRole),
-         })
-      )
-      .default([]),
-   tickets: z
-      .array(
-         z.object({
-            ticketType: z.enum(TicketType),
-            category: z.enum(TicketCategory),
-            guidelines: z.string().optional(),
-            price: z.coerce.number(),
-            quantity: z.coerce.number(),
-         })
-      )
-      .default([]),
-   createdAt: z.date().optional(),
-   updatedAt: z.date().optional(),
-});
+const eventFormSchema = z
+   .object({
+      id: z.string().optional(),
+      name: z.string().min(1, "Name is required"),
+      description: z.string().min(1, "Description is required"),
+      tags: z.array(z.string()).default([]),
+      startDate: z.date(),
+      endDate: z.date(),
+      location: z.string().min(1, "Location is required"),
+      eventType: z.enum(["ONLINE", "OFFLINE", "HYBRID"]),
+      ticketType: z.enum(["FREE", "PAID"]),
+      coverImageUrl: z.string().optional(),
+      imageUrl: z.array(z.string()).default([]),
+      category: z.nativeEnum(EventCategory).optional(),
+      subCategory: z.nativeEnum(EventSubCategory).optional(),
+      otherSubCategory: z.string().optional(),
+      contributors: z
+         .array(
+            z.object({
+               name: z.string().min(1, "Name is required"),
+               imageUrl: z.string().optional(),
+               description: z.string().optional(),
+               contributorRole: z.enum(ContributorRole),
+            })
+         )
+         .default([]),
+      tickets: z
+         .array(
+            z.object({
+               ticketType: z.enum(TicketType),
+               category: z.enum(TicketCategory),
+               guidelines: z.string().optional(),
+               price: z.coerce.number(),
+               quantity: z.coerce.number(),
+            })
+         )
+         .default([]),
+      createdAt: z.date().optional(),
+      updatedAt: z.date().optional(),
+   })
+   .refine(
+      (data) => {
+         if (data.subCategory === EventSubCategory.OTHER && !data.otherSubCategory?.trim()) {
+            return false;
+         }
+         return true;
+      },
+      {
+         message: "Please specify the custom subcategory",
+         path: ["otherSubCategory"],
+      }
+   );
 
 type EventFormValues = z.infer<typeof eventFormSchema>;
 type TicketFieldPath<K extends "category" | "price" | "quantity" | "guidelines"> =
@@ -156,6 +188,9 @@ function AdminEventForm({
          location: defaultValues?.location ?? "",
          eventType: defaultValues?.eventType ?? "ONLINE",
          ticketType: defaultValues?.ticketType ?? "FREE",
+         category: defaultValues?.category ?? undefined,
+         subCategory: defaultValues?.subCategory ?? undefined,
+         otherSubCategory: defaultValues?.otherSubCategory ?? "",
          coverImageUrl: defaultValues?.coverImageUrl ?? "",
          imageUrl: defaultValues?.imageUrl ?? [],
          contributors:
@@ -197,7 +232,14 @@ function AdminEventForm({
    const { isDirty } = form.formState;
    const watchedImageUrl = form.watch("imageUrl");
    const watchedTicketType = form.watch("ticketType");
+   const watchedCategory = form.watch("category");
+   const watchedSubCategory = form.watch("subCategory");
    console.log("Form imageUrl value:", watchedImageUrl);
+
+   // Get available subcategories based on selected category
+   const availableSubCategories = watchedCategory
+      ? getSubCategoriesForCategory(watchedCategory)
+      : [];
 
    async function handleSubmit(data: EventFormValues) {
       if (onSubmit) {
@@ -221,6 +263,9 @@ function AdminEventForm({
                   location: data.location,
                   eventType: data.eventType,
                   ticketType: data.ticketType,
+                  category: data.category || null,
+                  subCategory: data.subCategory || null,
+                  otherSubCategory: data.otherSubCategory || null,
                   coverImageUrl: data.coverImageUrl || null,
                   imageUrl: data.imageUrl || [],
                   contributors: data.contributors || [],
@@ -238,6 +283,9 @@ function AdminEventForm({
                location: data.location,
                eventType: data.eventType,
                ticketType: data.ticketType,
+               category: data.category || null,
+               subCategory: data.subCategory || null,
+               otherSubCategory: data.otherSubCategory || null,
                coverImageUrl: data.coverImageUrl || null,
                imageUrl: data.imageUrl || [],
                contributors: (data as EventFormValues).contributors || [],
@@ -316,23 +364,12 @@ function AdminEventForm({
                         />
 
                         {/* Tags */}
-                        <FormField
+                        <TagInputField
                            control={form.control}
-                           name="tags"
-                           render={({ field }) => (
-                              <FormItem>
-                                 <FormLabel>Tags</FormLabel>
-                                 <FormControl>
-                                    <TagInput
-                                       value={field.value ?? []}
-                                       onChange={field.onChange}
-                                       placeholder="Add tags (press Enter or comma)"
-                                       className="w-full"
-                                    />
-                                 </FormControl>
-                                 <FormMessage />
-                              </FormItem>
-                           )}
+                           name={"tags"}
+                           label="Tags"
+                           placeholder="Add tags (press Enter or comma)"
+                           className="w-full"
                         />
 
                         <div className="grid w-full grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr]">
@@ -371,6 +408,54 @@ function AdminEventForm({
                               ]}
                               selectClassName="w-full rounded-md border border-dashed border-gray-400 px-3 py-2 text-sm transition-all duration-200"
                            />
+                        </div>
+
+                        {/* Category and Subcategory */}
+                        <div className="grid w-full grid-cols-1 gap-5 md:grid-cols-3">
+                           {/* Category */}
+                           <SelectField
+                              control={form.control}
+                              name={"category"}
+                              label="Category"
+                              placeholder="Select category"
+                              options={Object.values(EventCategory).map((c) => ({
+                                 label: categoryLabels[c],
+                                 value: c as string,
+                              }))}
+                              selectClassName="w-full rounded-md border border-dashed border-gray-400 px-3 py-2 text-sm transition-all duration-200"
+                              onChange={() => {
+                                 // Reset subcategory when category changes
+                                 form.setValue("subCategory", undefined);
+                                 form.setValue("otherSubCategory", "");
+                              }}
+                           />
+
+                           {/* Subcategory */}
+                           <SelectField
+                              control={form.control}
+                              name={"subCategory"}
+                              label="Subcategory"
+                              placeholder={
+                                 watchedCategory ? "Select subcategory" : "Select category first"
+                              }
+                              disabled={!watchedCategory}
+                              options={availableSubCategories.map((sc) => ({
+                                 label: subCategoryLabels[sc],
+                                 value: sc as string,
+                              }))}
+                              selectClassName="w-full rounded-md border border-dashed border-gray-400 px-3 py-2 text-sm transition-all duration-200"
+                           />
+
+                           {/* Other Subcategory (shown when OTHER is selected) */}
+                           {watchedSubCategory === EventSubCategory.OTHER && (
+                              <TextInputField
+                                 control={form.control}
+                                 name={"otherSubCategory"}
+                                 label="Custom Subcategory"
+                                 placeholder="Enter subcategory"
+                                 inputClassName="w-full rounded-md border border-dashed border-gray-400 px-3 py-2 text-sm transition-all duration-200"
+                              />
+                           )}
                         </div>
 
                         {/* Description */}

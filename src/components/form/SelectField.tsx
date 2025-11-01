@@ -23,6 +23,8 @@ export interface SelectFieldProps<
    itemClassName?: string;
    labelClassName?: string;
    selectClassName?: string;
+   disabled?: boolean;
+   onChange?: (value: string) => void;
 }
 
 export function SelectField<TFieldValues extends FieldValues, TName extends Path<TFieldValues>>({
@@ -34,6 +36,8 @@ export function SelectField<TFieldValues extends FieldValues, TName extends Path
    itemClassName,
    labelClassName,
    selectClassName,
+   disabled = false,
+   onChange,
 }: SelectFieldProps<TFieldValues, TName>) {
    return (
       <FormField
@@ -49,12 +53,20 @@ export function SelectField<TFieldValues extends FieldValues, TName extends Path
                >
                   {label}
                </FormLabel>
-               <Select onValueChange={field.onChange} value={field.value}>
+               <Select
+                  onValueChange={(value) => {
+                     field.onChange(value);
+                     onChange?.(value);
+                  }}
+                  value={field.value}
+                  disabled={disabled}
+               >
                   <FormControl>
                      <SelectTrigger
                         className={cn(
                            "w-full rounded-md border border-dashed border-gray-400 px-3 py-2 text-sm transition-all duration-200",
-                           selectClassName
+                           selectClassName,
+                           disabled && "disabled:cursor-not-allowed disabled:bg-gray-100"
                         )}
                      >
                         <SelectValue placeholder={placeholder ?? `Select ${label.toLowerCase()}`} />

@@ -130,6 +130,35 @@ export const getAllEvents = async () => {
    }
 };
 
+// ============================================== GET EVENTS BY CATEGORY ==============================================
+export const getEventsByCategory = async (category: Event["category"]) => {
+   try {
+      const events = await prisma.event.findMany({
+         where: {
+            category: category,
+         },
+         include: {
+            contributors: true,
+            ticket: true,
+         },
+      });
+
+      return {
+         success: true,
+         message: "Events fetched successfully",
+         data: events,
+      };
+   } catch (error) {
+      console.error("Events fetching by category failed", error);
+
+      return {
+         success: false,
+         message: "Events fetching by category failed",
+         data: [],
+      };
+   }
+};
+
 // ============================================== GET FEATURED EVENTS (CAROUSEL) ==============================================
 export const getFeaturedEvents = async () => {
    try {
@@ -138,6 +167,9 @@ export const getFeaturedEvents = async () => {
             startDate: {
                gte: new Date(),
             },
+         },
+         orderBy: {
+            startDate: "asc",
          },
          take: 5,
       });
@@ -152,6 +184,7 @@ export const getFeaturedEvents = async () => {
       return {
          success: false,
          message: "Unable to fetch featured events",
+         data: [],
       };
    }
 };

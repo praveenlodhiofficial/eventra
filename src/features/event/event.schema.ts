@@ -1,4 +1,4 @@
-import { EventType, TicketType } from "@/generated/prisma";
+import { EventCategory, EventSubCategory, EventType, TicketType } from "@/generated/prisma";
 import { z } from "zod";
 
 // ======================================= EVENT SCHEMA =======================================
@@ -17,6 +17,9 @@ export const eventSchema = z.object({
    updatedAt: z.date({ message: "Invalid date" }),
    eventType: z.enum(EventType, { message: "Invalid event type" }),
    ticketType: z.enum(TicketType, { message: "Invalid ticket type" }),
+   category: z.enum(EventCategory).optional(),
+   subCategory: z.enum(EventSubCategory).optional(),
+   otherSubCategory: z.string().optional(),
 });
 
 export type EventSchema = z.infer<typeof eventSchema>;

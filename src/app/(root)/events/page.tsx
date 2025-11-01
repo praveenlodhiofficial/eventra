@@ -1,7 +1,8 @@
+import EventCard from "@/components/EventCard";
 import EventCarousel from "@/components/EventCarousel";
 import { Button } from "@/components/ui/button";
 import { getAllEvents } from "@/features/event";
-import { formatEventDateTime } from "@/lib/utils";
+import { categoryToSubCategories } from "@/lib/event-categories";
 import Image from "next/image";
 import Link from "next/link";
 import { PiSlidersHorizontalBold } from "react-icons/pi";
@@ -14,8 +15,57 @@ export default async function EventsPage() {
    return (
       <>
          <EventCarousel />
-         <div className="w-full space-y-10 p-3 md:p-5 lg:px-10">
-            <div></div>
+         <div className="mt-15 w-full space-y-15 p-3 md:p-5 lg:px-10">
+            {/* ==================================================== Explore Events Categories Section ==================================================== */}
+            <div className="space-y-5">
+               <h1 className="text-2xl font-semibold capitalize md:text-3xl">Explore Events</h1>
+
+               <div className="flex w-full flex-wrap gap-3 md:gap-5">
+                  {Object.entries(categoryToSubCategories).map(([category]) => (
+                     <Link
+                        href={`/events/categories/${category.toLowerCase()}`}
+                        key={category.toLowerCase()}
+                        className="flex h-55 w-43 flex-col items-center justify-center overflow-hidden rounded-lg border bg-gray-100 p-4 transition-all duration-300 hover:shadow-lg md:rounded-2xl"
+                     >
+                        <h1 className="text-center text-lg capitalize">
+                           {category.toLowerCase().replace("_", " ")}
+                        </h1>
+                     </Link>
+                  ))}
+               </div>
+            </div>
+
+            {/* ==================================================== Event Contributors Section ==================================================== */}
+            <div className="space-y-5">
+               <h1 className="text-2xl font-semibold capitalize md:text-3xl">Explore Artists</h1>
+
+               <div className="scrollbar-hide flex w-full gap-3 overflow-x-auto pb-2 md:gap-5">
+                  {events
+                     .flatMap((event) => event.contributors)
+                     .map((contributor) => (
+                        <Link
+                           href={`/events/contributors/${contributor.id}`}
+                           key={contributor.id}
+                           className="flex flex-shrink-0 flex-col items-center gap-2"
+                        >
+                           <div className="relative overflow-hidden rounded-full">
+                              <Image
+                                 src={contributor.imageUrl || ""}
+                                 alt={contributor.name || "Contributor Image"}
+                                 width={300}
+                                 height={300}
+                                 className="h-30 w-30 rounded-full object-cover md:h-40 md:w-40 lg:h-50 lg:w-50"
+                              />
+                           </div>
+                           <h1 className="text-center text-sm whitespace-nowrap text-black md:text-base">
+                              {contributor.name}
+                           </h1>
+                        </Link>
+                     ))}
+               </div>
+            </div>
+
+            {/* ==================================================== ALL EVENTS SECTION ==================================================== */}
             <div className="space-y-5">
                <h1 className="text-2xl font-semibold capitalize md:text-3xl">All Events</h1>
 
@@ -47,30 +97,7 @@ export default async function EventsPage() {
                {/* All Events Section ---------------------------------------------------------------> */}
                <div className="grid w-full grid-cols-2 gap-3 md:grid-cols-3 md:gap-5 lg:grid-cols-4 lg:gap-10">
                   {events.map((event) => (
-                     <Link
-                        href={`/events/${event.slug}`}
-                        key={event.id}
-                        className="overflow-hidden rounded-lg border bg-gray-50 md:rounded-2xl"
-                     >
-                        <Image
-                           src={event.coverImageUrl || ""}
-                           alt={event.name || "Event Image"}
-                           width={1000}
-                           height={1000}
-                           className="aspect-auto h-[20vh] w-full object-cover md:h-[22vh] lg:h-[50vh]"
-                        />
-
-                        <div className="space-y-0.5 p-2 text-[11px] text-gray-500 md:p-4 md:text-[13px]">
-                           <p className="text-[#8B8123]">
-                              {formatEventDateTime(new Date(event.startDate || new Date()))}
-                           </p>
-                           <h1 className="line-clamp-2 text-sm font-semibold text-black capitalize md:text-base lg:text-lg">
-                              {event.name}
-                           </h1>
-                           <p className="line-clamp-1">{event.location}</p>
-                           <p className="line-clamp-1">₹3000 onwards</p>
-                        </div>
-                     </Link>
+                     <EventCard key={event.id} event={event} />
                   ))}
                </div>
             </div>

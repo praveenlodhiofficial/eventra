@@ -11,18 +11,27 @@ import { getFeaturedEvents } from "@/features/event";
 import { Event } from "@/generated/prisma";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
-import Link from "next/link";
 
 export default function EventCarousel() {
    const [featuredEvents, setFeaturedEvents] = useState<Event[]>([]);
+   const [isLoading, setIsLoading] = useState(true);
 
    useEffect(() => {
       const fetchFeaturedEvents = async () => {
-         const { data, success } = await getFeaturedEvents();
-         if (success) {
-            setFeaturedEvents(data || []);
+         setIsLoading(true);
+         try {
+            const { data, success } = await getFeaturedEvents();
+            if (success) {
+               setFeaturedEvents(data || []);
+            }
+         } catch (error) {
+            console.error("Failed to fetch featured events:", error);
+            setFeaturedEvents([]);
+         } finally {
+            setIsLoading(false);
          }
       };
 
@@ -39,6 +48,19 @@ export default function EventCarousel() {
          hour12: true,
       }).format(new Date(date));
    };
+
+   // Don't render if loading or no events
+   if (isLoading) {
+      return (
+         <div className="relative flex h-[60vh] w-full items-center justify-center md:h-[70vh] lg:h-[85vh]">
+            <div className="text-gray-500">Loading featured events...</div>
+         </div>
+      );
+   }
+
+   if (!featuredEvents || featuredEvents.length === 0) {
+      return null; // Don't render carousel if there are no events
+   }
 
    return (
       <div className="relative h-[60vh] w-full md:h-[70vh] lg:h-[85vh]">
@@ -61,7 +83,7 @@ export default function EventCarousel() {
             modules={[Autoplay, Pagination, Navigation]}
             className="mySwiper h-full"
          >
-            {featuredEvents?.map((event) => (
+            {featuredEvents.map((event) => (
                <SwiperSlide
                   key={event.id}
                   className="flex h-full w-full items-center justify-center px-8 md:px-16 lg:px-24"
