@@ -20,6 +20,7 @@ import {
    FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { TagInput } from "@/components/ui/tag-input";
 import { createEvent, deleteEvent, getAllEvents, updateEvent } from "@/features/event";
 import { ContributorRole, TicketCategory, TicketType } from "@/generated/prisma";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -41,6 +42,7 @@ const eventFormSchema = z.object({
    id: z.string().optional(),
    name: z.string().min(1, "Name is required"),
    description: z.string().min(1, "Description is required"),
+   tags: z.array(z.string()).default([]),
    startDate: z.date(),
    endDate: z.date(),
    location: z.string().min(1, "Location is required"),
@@ -148,6 +150,7 @@ function AdminEventForm({
          ...(isUpdateMode && { id: defaultValues?.id ?? "" }),
          name: defaultValues?.name ?? "",
          description: defaultValues?.description ?? "",
+         tags: defaultValues?.tags ?? [],
          startDate: defaultValues?.startDate ?? new Date(),
          endDate: defaultValues?.endDate ?? new Date(),
          location: defaultValues?.location ?? "",
@@ -212,6 +215,7 @@ function AdminEventForm({
                data: {
                   name: data.name,
                   description: data.description,
+                  tags: data.tags,
                   startDate: data.startDate,
                   endDate: data.endDate,
                   location: data.location,
@@ -228,6 +232,7 @@ function AdminEventForm({
             result = await createEvent({
                name: data.name,
                description: data.description,
+               tags: data.tags,
                startDate: data.startDate,
                endDate: data.endDate,
                location: data.location,
@@ -308,6 +313,26 @@ function AdminEventForm({
                            label="Name"
                            placeholder="Name"
                            inputClassName="w-full rounded-md border border-dashed border-gray-400 bg-transparent px-3 py-2 text-sm transition-all duration-200 focus-visible:ring-0 focus-visible:ring-offset-0 active:ring-0 active:ring-offset-0"
+                        />
+
+                        {/* Tags */}
+                        <FormField
+                           control={form.control}
+                           name="tags"
+                           render={({ field }) => (
+                              <FormItem>
+                                 <FormLabel>Tags</FormLabel>
+                                 <FormControl>
+                                    <TagInput
+                                       value={field.value ?? []}
+                                       onChange={field.onChange}
+                                       placeholder="Add tags (press Enter or comma)"
+                                       className="w-full"
+                                    />
+                                 </FormControl>
+                                 <FormMessage />
+                              </FormItem>
+                           )}
                         />
 
                         <div className="grid w-full grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr]">
@@ -481,7 +506,7 @@ function AdminEventForm({
                            fileClassName="w-full h-fit rounded-md text-sm transition-all duration-200"
                         />
 
-                        <div className="space-y-5">
+                        <div className="flex items-center justify-between gap-5">
                            {/* Start Date */}
                            {/* <DateField
                               control={form.control}
@@ -495,8 +520,10 @@ function AdminEventForm({
                               control={form.control}
                               name={"startDate"}
                               render={({ field }) => (
-                                 <FormItem>
-                                    <FormLabel>Start Date and Time</FormLabel>
+                                 <FormItem className="w-full">
+                                    <FormLabel className="text-xs font-medium text-gray-700 capitalize">
+                                       Start Date and Time
+                                    </FormLabel>
                                     <FormControl>
                                        <Input
                                           type="datetime-local"
@@ -524,8 +551,10 @@ function AdminEventForm({
                               control={form.control}
                               name={"endDate"}
                               render={({ field }) => (
-                                 <FormItem>
-                                    <FormLabel>End Date and Time</FormLabel>
+                                 <FormItem className="w-full">
+                                    <FormLabel className="text-xs font-medium text-gray-700 capitalize">
+                                       End Date and Time
+                                    </FormLabel>
                                     <FormControl>
                                        <Input
                                           type="datetime-local"

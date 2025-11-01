@@ -82,6 +82,7 @@ model Event {
   name          String
   slug          String             @unique
   description   String
+  tags          String[]         @default([])
   startDate     DateTime
   endDate       DateTime
   coverImageUrl String?

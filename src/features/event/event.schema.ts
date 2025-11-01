@@ -7,6 +7,7 @@ export const eventSchema = z.object({
    id: z.string({ message: "Invalid id" }),
    name: z.string({ message: "Invalid name" }),
    description: z.string({ message: "Invalid description" }),
+   tags: z.array(z.string({ message: "Invalid tag" })).default([]),
    startDate: z.date({ message: "Invalid start date" }),
    endDate: z.date({ message: "Invalid end date" }),
    coverImageUrl: z.string({ message: "Invalid cover image url" }).optional(),

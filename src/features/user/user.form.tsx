@@ -11,7 +11,9 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { updateCurrentUser, UserSchema, userSchema } from "@/features/user";
 import { Roles } from "@/generated/prisma";
+import { useLocation } from "@/hooks/use-location";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { MapPin } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -43,6 +45,39 @@ export default function UserForm({
    });
 
    const { isDirty } = form.formState;
+   const {
+      isLoading: isLocationLoading,
+      error: locationError,
+      detectLocation,
+      clearError,
+   } = useLocation();
+
+   async function handleDetectLocation() {
+      clearError();
+      const locationData = await detectLocation();
+
+      if (locationData) {
+         // Populate form fields with detected location data
+         if (locationData.address) {
+            form.setValue("address", locationData.address, { shouldDirty: true });
+         }
+         if (locationData.city) {
+            form.setValue("city", locationData.city, { shouldDirty: true });
+         }
+         if (locationData.state) {
+            form.setValue("state", locationData.state, { shouldDirty: true });
+         }
+         if (locationData.country) {
+            form.setValue("country", locationData.country, { shouldDirty: true });
+         }
+         if (locationData.pinCode) {
+            form.setValue("pinCode", locationData.pinCode, { shouldDirty: true });
+         }
+         toast.success("Location detected and address fields updated!");
+      } else if (locationError) {
+         toast.error(locationError);
+      }
+   }
 
    async function handleSubmit(data: UserSchema) {
       if (onSubmit) {
@@ -85,7 +120,7 @@ export default function UserForm({
    }
 
    return (
-      <div className="w-full overflow-hidden">
+      <div className="mt-15 w-full overflow-hidden">
          <Form {...form}>
             <form
                onSubmit={form.handleSubmit(handleSubmit)}
@@ -101,14 +136,31 @@ export default function UserForm({
                         Profile
                      </h1>
                   </div>
-                  {/* Submit Button */}
-                  <Button
-                     type="submit"
-                     disabled={!isDirty}
-                     className="hidden w-fit bg-black text-white disabled:cursor-not-allowed disabled:bg-gray-400 md:block"
-                  >
-                     Update Profile
-                  </Button>
+
+                  <div className="flex gap-5">
+                     <div className="flex items-center justify-between">
+                        <Button
+                           type="button"
+                           variant="outline"
+                           size="sm"
+                           onClick={handleDetectLocation}
+                           disabled={isLocationLoading}
+                           loading={isLocationLoading}
+                           className="gap-1.5 p-4.5"
+                        >
+                           <MapPin className="size-3.5" />
+                           {isLocationLoading ? "Detecting..." : "Detect Location"}
+                        </Button>
+                     </div>
+                     {/* Submit Button */}
+                     <Button
+                        type="submit"
+                        disabled={!isDirty}
+                        className="hidden w-fit bg-black text-white disabled:cursor-not-allowed disabled:bg-gray-400 md:block"
+                     >
+                        Update Profile
+                     </Button>
+                  </div>
                </div>
 
                {/* Profile Details */}
@@ -186,18 +238,24 @@ export default function UserForm({
                      </div>
 
                      {/* Address */}
-                     <TextareaField
-                        control={form.control}
-                        name={"address"}
-                        label="Address"
-                        placeholder="Address"
-                        rows={10}
-                        textareaClassName="w-full rounded-md border border-dashed border-gray-400 bg-transparent px-3 py-2 text-sm transition-all duration-200 focus-visible:ring-0 focus-visible:ring-offset-0 active:ring-0 active:ring-offset-0"
-                     />
+                     <div className="relative flex flex-col gap-2">
+                        <label className="text-sm font-medium">Address</label>
+
+                        <TextareaField
+                           control={form.control}
+                           name={"address"}
+                           label=""
+                           placeholder="Address"
+                           rows={10}
+                           labelClassName="hidden"
+                           textareaClassName="w-full rounded-md border border-dashed border-gray-400 bg-transparent px-3 py-2 text-sm transition-all duration-200 focus-visible:ring-0 focus-visible:ring-offset-0 active:ring-0 active:ring-offset-0"
+                        />
+                        {locationError && <p className="text-xs text-red-500">{locationError}</p>}
+                     </div>
                   </div>
 
                   {/* Right Side */}
-                  <div className="flex w-full flex-col gap-5 md:flex-row lg:w-[450px] lg:flex-col">
+                  <div className="flex h-fit w-full flex-col gap-5 md:flex-row lg:w-[450px] lg:flex-col">
                      {/* Profile Image */}
                      <ImageUploadField
                         control={form.control}
