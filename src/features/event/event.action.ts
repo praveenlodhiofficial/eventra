@@ -1,6 +1,6 @@
 "use server";
 
-import { Event, Prisma } from "@/generated/prisma";
+import { Event, EventSubCategory, Prisma } from "@/generated/prisma";
 import prisma from "@/lib/prisma";
 import { generateSlug } from "@/lib/utils";
 
@@ -310,6 +310,126 @@ export const deleteEvent = async (params: Pick<Event, "id">) => {
       return {
          success: false,
          message: "Event deletion failed",
+      };
+   }
+};
+
+// ============================================== FILTER EVENTS ==============================================
+export interface FilterEventsParams {
+   sortOptions?: string[]; // Array of sort option IDs (e.g., ["date-newest", "price-low"])
+   subCategories?: EventSubCategory[]; // Array of subcategories to filter by
+}
+
+export const filterEvents = async (params: FilterEventsParams = {}) => {
+   const { sortOptions = [], subCategories = [] } = params;
+
+   try {
+      // Build where clause for subcategory filtering
+      const where: Prisma.EventWhereInput = {};
+      if (subCategories.length > 0) {
+         where.subCategory = {
+            in: subCategories,
+         };
+      }
+
+      // Build orderBy clause based on sort options
+      // If multiple sort options are selected, use the first one
+      const primarySortOption = sortOptions[0];
+      let orderBy:
+         | Prisma.EventOrderByWithRelationInput
+         | Prisma.EventOrderByWithRelationInput[]
+         | undefined = undefined;
+      let needsInMemorySort = false;
+
+      switch (primarySortOption) {
+         case "date-newest":
+            orderBy = { startDate: "desc" };
+            break;
+         case "date-oldest":
+            orderBy = { startDate: "asc" };
+            break;
+         case "name-asc":
+            orderBy = { name: "asc" };
+            break;
+         case "name-desc":
+            orderBy = { name: "desc" };
+            break;
+         case "popularity":
+            // Sort by feedback count (most feedback = most popular)
+            // We'll need to fetch events and sort them in memory for this
+            needsInMemorySort = true;
+            break;
+         case "price-low":
+         case "price-high":
+            // Price sorting requires getting min/max from tickets
+            // We'll handle this in memory after fetching
+            needsInMemorySort = true;
+            break;
+         default:
+            // Default to newest first
+            orderBy = { startDate: "desc" };
+      }
+
+      // Fetch events with all necessary relations
+      let events = await prisma.event.findMany({
+         where,
+         include: {
+            contributors: true,
+            ticket: true,
+            feedBack: {
+               select: {
+                  id: true,
+               },
+            },
+         },
+         orderBy: orderBy || { startDate: "desc" },
+      });
+
+      // Handle sorting that requires in-memory processing
+      if (
+         needsInMemorySort &&
+         (primarySortOption === "price-low" || primarySortOption === "price-high")
+      ) {
+         events = events.sort((a, b) => {
+            // Get minimum price from tickets (or 0 if no tickets)
+            const getMinPrice = (event: (typeof events)[0]) => {
+               if (!event.ticket || event.ticket.length === 0) return 0;
+               return Math.min(...event.ticket.map((t) => t.price));
+            };
+
+            const priceA = getMinPrice(a);
+            const priceB = getMinPrice(b);
+
+            if (primarySortOption === "price-low") {
+               return priceA - priceB;
+            } else {
+               return priceB - priceA;
+            }
+         });
+      } else if (needsInMemorySort && primarySortOption === "popularity") {
+         events = events.sort((a, b) => {
+            const feedbackCountA = a.feedBack?.length || 0;
+            const feedbackCountB = b.feedBack?.length || 0;
+            return feedbackCountB - feedbackCountA; // Descending (most popular first)
+         });
+      }
+
+      // Remove feedBack from the response (we only needed it for sorting)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const eventsWithoutFeedback = events.map(({ feedBack: _feedBack, ...event }) => event);
+
+      return {
+         success: true,
+         message: "Events filtered successfully",
+         data: eventsWithoutFeedback,
+      };
+   } catch (error) {
+      console.error("Event filtering failed", error);
+
+      return {
+         success: false,
+         message: "Event filtering failed",
+         data: [],
       };
    }
 };
