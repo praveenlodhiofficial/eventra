@@ -24,21 +24,19 @@ model User {
   updatedAt DateTime @updatedAt
 }
 
-enum EventCategory {
-  MUSIC
-  COMEDY
-  SPORTS
-  THEATRE
-  CONFERENCE
-  FITNESS
-  EXHIBITION
-  FEST
-  SOCIAL
+model EventCategory {
+  id     String  @id @default(cuid())
+  name   String  @unique
+
+  events Event[] @relation("EventCategories")
+
+  createdAt DateTime @default(now())
 }
 
 model EventImage {
   id       String @id @default(cuid())
   url      String
+  
   eventId  String
   event    Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
@@ -54,7 +52,7 @@ model Event {
   coverImage  String
   images       EventImage[]
 
-  category EventCategory
+  categories  EventCategory[] @relation("EventCategories")
   city     String
 
 
