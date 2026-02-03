@@ -75,7 +75,7 @@ export function ArtistSpotlight() {
   return (
     <div
       ref={scrollRef}
-      className="no-scrollbar flex gap-10 overflow-x-auto p-2.5"
+      className="no-scrollbar flex gap-10 overflow-x-auto overflow-y-hidden p-2.5"
     >
       {artistSpotlight.map((artist, index) => (
         <motion.div

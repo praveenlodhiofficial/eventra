@@ -1,5 +1,6 @@
 import { ArtistSpotlight } from "@/components/ArtistSpotlight";
 import { Carousel } from "@/components/Carousel";
+import { EventCard } from "@/components/EventCard";
 import { EventCategories } from "@/components/EventCategories";
 import { Container } from "@/components/ui/container";
 
@@ -32,6 +33,14 @@ export default function Home() {
           <h1 className="text-3xl font-semibold">Artist Spotlight</h1>
           <div className="flex gap-5">
             <ArtistSpotlight />
+          </div>
+        </section>
+
+        {/* =============================== Popular Events =============================== */}
+        <section className="mx-auto w-full max-w-7xl space-y-8">
+          <h1 className="text-3xl font-semibold">Popular Events</h1>
+          <div className="flex gap-5">
+            <EventCard />
           </div>
         </section>
       </Container>

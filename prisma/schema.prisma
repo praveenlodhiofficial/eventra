@@ -13,12 +13,90 @@ enum Role {
 }
 
 model User {
-  id          String  @id @default(uuid())
+  id          String  @id @default(cuid())
   name        String?
   email       String  @unique
   password    String
   phoneNumber String?
   role        Role    @default(USER)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum EventCategory {
+  MUSIC
+  COMEDY
+  SPORTS
+  THEATRE
+  CONFERENCE
+  FITNESS
+  EXHIBITION
+  FEST
+  SOCIAL
+}
+
+model EventImage {
+  id       String @id @default(cuid())
+  url      String
+  eventId  String
+  event    Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+}
+
+model Event {
+  id          String @id @default(cuid())
+  name        String
+  slug        String @unique
+  description String
+  
+  coverImage  String
+  images       EventImage[]
+
+  category EventCategory
+  city     String
+
+
+  performers Performer[] @relation("EventPerformers")
+
+  startDate DateTime
+  endDate   DateTime
+
+  price Decimal @db.Decimal(10, 2)
+
+  venueId String
+  venue   Venue  @relation(fields: [venueId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([startDate])
+  @@index([venueId])
+}
+
+model Performer {
+  id    String  @id @default(cuid())
+  name  String
+  image String
+  bio   String?
+
+  events Event[] @relation("EventPerformers")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Venue {
+  id      String @id @default(cuid())
+  name    String
+  address String
+  city    String
+  state   String
+  country String
+  pincode String
+
+  events Event[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
