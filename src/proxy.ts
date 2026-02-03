@@ -1,38 +1,42 @@
+// src/proxy.ts
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 import { decrypt } from "@/features/auth/auth.session";
 
-const protectedRoutes = ["/accounts"];
+// These are the actual URL paths, not the folder names.
+// Route groups like (auth) don't appear in the URL.
+const publicRoutes = ["/", "/sign-in", "/sign-up"];
 const adminRoutes = ["/admin"];
-const authRoutes = ["/sign-in", "/sign-up"];
 
 export default async function proxy(req: NextRequest) {
   const path = req.nextUrl.pathname;
 
-  const isProtectedRoute = protectedRoutes.some((route) =>
-    path.startsWith(route)
-  );
+  const isPublicRoute = publicRoutes.includes(path);
   const isAdminRoute = adminRoutes.some((route) => path.startsWith(route));
-  const isAuthRoute = authRoutes.some((route) => path.startsWith(route));
+  // Everything that isn't public and isn't admin is a user route
+  const isUserRoute = !isPublicRoute && !isAdminRoute;
 
   const cookieStore = await cookies();
   const cookie = cookieStore.get("session")?.value;
-  const session = await decrypt(cookie);
+  const session = cookie ? await decrypt(cookie) : null; // ← fixes your JWSInvalid error
 
-  // Redirect to login if accessing protected route without session
-  if ((isProtectedRoute || isAdminRoute) && !session?.userId) {
+  // 1. User is NOT logged in and hitting a protected route → send to sign-in
+  if ((isUserRoute || isAdminRoute) && !session?.userId) {
     return NextResponse.redirect(new URL("/sign-in", req.nextUrl));
   }
 
-  // Redirect to dashboard if accessing auth pages while logged in
-  if (isAuthRoute && session?.userId) {
-    return NextResponse.redirect(new URL("/", req.nextUrl));
+  // 2. User IS logged in and hitting sign-in or sign-up → send to dashboard
+  if ((path === "/sign-in" || path === "/sign-up") && session?.userId) {
+    return NextResponse.redirect(new URL("/dashboard", req.nextUrl));
   }
 
-  // For admin routes, we do optimistic check here, but
-  // verify admin role in the actual page/action for security
+  // 3. User is logged in but NOT admin and hitting an admin route → forbidden
+  if (isAdminRoute && session?.role !== "ADMIN") {
+    return NextResponse.redirect(new URL("/dashboard", req.nextUrl));
+  }
 
+  // 4. Everything else passes through
   return NextResponse.next();
 }
 
