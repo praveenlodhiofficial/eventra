@@ -12,6 +12,7 @@ import { toast } from "sonner";
 
 import { ActionButton2 } from "@/components/ui/action-button";
 import { Button } from "@/components/ui/button";
+import { Container } from "@/components/ui/container";
 import {
   Form,
   FormControl,
@@ -50,11 +51,11 @@ export default function SignIn() {
   }
 
   return (
-    <div className="relative mx-auto h-screen">
+    <Container className="flex h-screen items-center justify-center">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="border-primary absolute top-1/2 left-1/2 w-sm -translate-x-1/2 -translate-y-1/2 space-y-4 rounded-xl border border-r-7 border-b-7 px-10 py-20"
+          className="border-primary w-full space-y-4 rounded-xl border border-r-7 border-b-7 px-10 py-20 md:w-sm"
         >
           <div className="space-y-1 py-5">
             <h1 className="text-center text-2xl font-semibold uppercase">
@@ -129,6 +130,6 @@ export default function SignIn() {
           </p>
         </form>
       </Form>
-    </div>
+    </Container>
   );
 }

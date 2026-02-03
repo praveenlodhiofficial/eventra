@@ -12,6 +12,11 @@ import {
   SignUpInput,
   SignUpSchema,
 } from "./auth.schema";
+import { createSession } from "./auth.session";
+
+/* -------------------------------------------------------------------------- */
+/*                          Sign Up Action                                    */
+/* -------------------------------------------------------------------------- */
 
 export const SignUpAction = async (input: SignUpInput) => {
   try {
@@ -62,7 +67,7 @@ export const SignUpAction = async (input: SignUpInput) => {
     return {
       success: true,
       status: 201,
-      message: "User created successfully",
+      message: "User signed-up successfully",
       data: {
         email: user.email,
         role: user.role,
@@ -77,6 +82,10 @@ export const SignUpAction = async (input: SignUpInput) => {
     };
   }
 };
+
+/* -------------------------------------------------------------------------- */
+/*                          Sign In Action                                    */
+/* -------------------------------------------------------------------------- */
 
 export const SignInAction = async (input: SignInInput) => {
   try {
@@ -96,6 +105,7 @@ export const SignInAction = async (input: SignInInput) => {
         email: parsed.data.email,
       },
       select: {
+        id: true,
         email: true,
         role: true,
         password: true,
@@ -123,13 +133,15 @@ export const SignInAction = async (input: SignInInput) => {
       };
     }
 
+    await createSession(user.id, user.role);
+
     return {
       success: true,
       status: 200,
-      message: "User signed in successfully",
+      message: "User signed-in successfully",
       data: {
         email: user.email,
-        role: user.email,
+        role: user.role,
       },
     };
   } catch (error) {
