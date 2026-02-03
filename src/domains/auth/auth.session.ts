@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import { jwtVerify, SignJWT } from "jose";
 import "server-only";
 
-import { SessionPayload } from "@/features/auth/auth.schema";
+import { SessionPayload } from "@/domains/auth/auth.schema";
 import { config } from "@/lib/config";
 
 const encodedKey = new TextEncoder().encode(config.session.secret);

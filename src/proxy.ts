@@ -2,7 +2,7 @@
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
-import { decrypt } from "@/features/auth/auth.session";
+import { decrypt } from "@/domains/auth/auth.session";
 
 // These are the actual URL paths, not the folder names.
 // Route groups like (auth) don't appear in the URL.

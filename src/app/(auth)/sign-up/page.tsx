@@ -21,8 +21,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { SignUpAction } from "@/features/auth/auth.action";
-import { SignUpInput, SignUpSchema } from "@/features/auth/auth.schema";
+import { SignUpAction } from "@/domains/auth/auth.actions";
+import { SignUpInput, SignUpSchema } from "@/domains/auth/auth.schema";
 
 export default function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
