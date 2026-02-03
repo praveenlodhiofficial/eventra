@@ -2,11 +2,13 @@ import { ArtistSpotlight } from "@/components/ArtistSpotlight";
 import { Carousel } from "@/components/Carousel";
 import { EventCard } from "@/components/EventCard";
 import { EventCategories } from "@/components/EventCategories";
+import { CreateEventModal } from "@/components/modals/events/create-event-modal";
 import { Container } from "@/components/ui/container";
 
 export default function Home() {
   return (
     <div className="space-y-15">
+      <CreateEventModal />
       {/* =============================== Event Carousel =============================== */}
       <div className="relative w-full">
         <Carousel
