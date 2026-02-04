@@ -18,6 +18,7 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -64,19 +65,47 @@ export function CreateEventModal() {
 
   const form = useForm<EventInput>({
     resolver: zodResolver(EventSchema),
+    // defaultValues: {
+    //   name: "",
+    //   slug: "",
+    //   description: "",
+    //   coverImage: "",
+    //   category: [],
+    //   city: "",
+    //   performerIds: [],
+    //   startDate: new Date(),
+    //   endDate: new Date(),
+    //   price: 0,
+    //   venueId: "",
+    //   imageUrls: [],
+    // },
     defaultValues: {
-      name: "",
-      slug: "",
-      description: "",
-      coverImage: "",
-      category: [],
-      city: "",
-      performerIds: [],
-      startDate: new Date(),
-      endDate: new Date(),
-      price: undefined,
-      venueId: "",
-      imageUrls: [],
+      name: "Sunburn Goa 2026",
+      slug: "sunburn-goa-2026",
+      description:
+        "Asia’s biggest electronic music festival returns to Goa with world-class DJs, immersive stages, and an unforgettable beachside experience.",
+
+      coverImage:
+        "https://images.unsplash.com/photo-1506157786151-b8491531f063",
+
+      category: ["MUSIC", "FEST"],
+
+      city: "Goa",
+
+      performerIds: ["perf_alanwalker", "perf_martingarrix", "perf_djchetas"],
+
+      startDate: new Date("2026-12-27T16:00:00"),
+      endDate: new Date("2026-12-29T23:00:00"),
+
+      price: 4999,
+
+      venueId: "venue_baga_beach",
+
+      imageUrls: [
+        "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3",
+        "https://images.unsplash.com/photo-1507874457470-272b3c8d8ee2",
+        "https://images.unsplash.com/photo-1492684223066-81342ee5ff30",
+      ],
     },
   });
 
@@ -97,16 +126,23 @@ export function CreateEventModal() {
 
   return (
     <Dialog>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <DialogTrigger asChild>
-            <Button variant="outline">Create Event</Button>
-          </DialogTrigger>
-          <DialogContent className="flex h-[calc(100vh-10rem)] flex-col gap-4 overflow-hidden overflow-y-scroll md:max-w-3xl lg:max-w-5xl lg:rounded-3xl">
+      <DialogTrigger asChild>
+        <Button variant="outline">Create Event</Button>
+      </DialogTrigger>
+      <DialogContent className="h-[calc(100vh-10rem)] md:max-w-3xl lg:max-w-5xl lg:rounded-3xl">
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="flex flex-col gap-4 overflow-hidden overflow-y-scroll"
+          >
             <DialogHeader className="flex h-fit items-center justify-center">
               <DialogTitle className="border-primary w-fit border-y-2 px-5 py-1 text-center text-xl font-semibold uppercase">
                 Create Event
               </DialogTitle>
+              <DialogDescription className="sr-only">
+                Provide the required information to list a new event on the
+                platform.
+              </DialogDescription>
             </DialogHeader>
             <FieldGroup className="grid md:grid-cols-[2fr_1fr]">
               <FieldGroup>
@@ -164,6 +200,7 @@ export function CreateEventModal() {
                           <textarea
                             placeholder="Event Description"
                             rows={5}
+                            aria-multiline="true"
                             className="rounded-lg border border-zinc-200 bg-white/10 p-3 text-sm font-light shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
                             {...field}
                           />
@@ -200,7 +237,7 @@ export function CreateEventModal() {
                       return (
                         <FormItem>
                           <FormControl>
-                            <div className="grid grid-cols-2 gap-3">
+                            <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
                               {EventCategoryEnum.options.map((category) => {
                                 const isChecked = selected.includes(category);
 
@@ -418,9 +455,9 @@ export function CreateEventModal() {
               </DialogClose>
               <ActionButton2 type="submit">Save changes</ActionButton2>
             </DialogFooter>
-          </DialogContent>
-        </form>
-      </Form>
+          </form>
+        </Form>
+      </DialogContent>
     </Dialog>
   );
 }
