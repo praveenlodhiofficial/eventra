@@ -65,20 +65,6 @@ export function CreateEventModal() {
 
   const form = useForm<EventInput>({
     resolver: zodResolver(EventSchema),
-    // defaultValues: {
-    //   name: "",
-    //   slug: "",
-    //   description: "",
-    //   coverImage: "",
-    //   category: [],
-    //   city: "",
-    //   performerIds: [],
-    //   startDate: new Date(),
-    //   endDate: new Date(),
-    //   price: 0,
-    //   venueId: "",
-    //   imageUrls: [],
-    // },
     defaultValues: {
       name: "Sunburn Goa 2026",
       slug: "sunburn-goa-2026",

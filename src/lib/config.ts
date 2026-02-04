@@ -14,4 +14,7 @@ export const config = {
     public_key: process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY!,
     url_endpoint: process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT!,
   },
+  mapbox: {
+    access_token: process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!,
+  },
 };

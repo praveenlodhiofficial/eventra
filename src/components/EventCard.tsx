@@ -84,7 +84,7 @@ export function EventCard() {
               )}
 
               {/* =========================== Event Title =========================== */}
-              <div className="text-[14px] leading-snug font-semibold md:text-[16px]">
+              <div className="line-clamp-2 text-[14px] leading-snug font-semibold md:text-[16px]">
                 {event.label}
               </div>
 
