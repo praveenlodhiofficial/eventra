@@ -34,7 +34,7 @@ export const eventCards = [
   {
     label: "EDM Festival 2026 | Bangalore",
     image:
-      "https://media.insider.in/image/upload/c_crop,g_custom/v1768801587/ixwzvqwsal2jfx7yjrul.jpg",
+      "https://media.insider.in/image/upload/w_800/v1760685563/xthylybyrruskmwrb58p.jpg",
     price: 2499,
     location: "Nice Grounds, Madavara, Bangalore",
     startDate: "Sat, 1 Feb",
@@ -55,47 +55,47 @@ export const eventCards = [
 
 export function EventCard() {
   return (
-    <div className="grid h-full w-full grid-cols-4 gap-5">
+    <div className="grid h-full w-full grid-cols-2 gap-3 md:gap-5 lg:grid-cols-4">
       {eventCards.map((event) => {
         return (
           <div
             key={event.label}
-            className="h-[65vh] overflow-hidden rounded-3xl border"
+            className="h-fit overflow-hidden rounded-3xl border lg:h-[65vh]"
           >
             <Image
               src={event.image}
               alt={event.label}
               width={500}
               height={500}
-              className="aspect-10/11 h-[72%] object-cover"
+              className="aspect-10/11 h-fit object-cover lg:h-[72%]"
             />
             <div className="h-fit w-full space-y-1.5 p-3">
               {/* =========================== Event Date & Time =========================== */}
               {event.startDate &&
               event.endDate &&
               event.startDate === event.endDate ? (
-                <div className="text-[13px] text-amber-600">
+                <div className="line-clamp-1 text-xs text-amber-600 md:line-clamp-none md:text-[13px]">
                   {event.startDate}, {event.time}
                 </div>
               ) : (
-                <div className="text-[13px] text-amber-600">
+                <div className="line-clamp-1 text-xs text-amber-600 md:line-clamp-none md:text-[13px]">
                   {event.startDate} - {event.endDate}, {event.time}
                 </div>
               )}
 
               {/* =========================== Event Title =========================== */}
-              <div className="text-[16px] leading-snug font-semibold">
+              <div className="text-[14px] leading-snug font-semibold md:text-[16px]">
                 {event.label}
               </div>
 
-              <div>
+              <div className="space-y-1 md:space-y-0">
                 {/* =========================== Event Location =========================== */}
                 <div className="text-muted-foreground line-clamp-1 text-xs">
                   {event.location}
                 </div>
 
                 {/* =========================== Event Price =========================== */}
-                <div className="text-muted-foreground text-[13px]">
+                <div className="text-muted-foreground text-xs md:text-[13px]">
                   ₹{event.price} onwards
                 </div>
               </div>

@@ -75,13 +75,13 @@ export function ArtistSpotlight() {
   return (
     <div
       ref={scrollRef}
-      className="no-scrollbar flex gap-10 overflow-x-auto overflow-y-hidden p-2.5"
+      className="no-scrollbar flex gap-3 overflow-x-auto overflow-y-hidden md:gap-5 md:p-2.5 lg:gap-10"
     >
       {artistSpotlight.map((artist, index) => (
         <motion.div
           key={artist.label}
-          className="flex w-44 shrink-0 flex-col items-center gap-3"
-          initial={{ opacity: 0, y: 30 }}
+          className="flex w-28 shrink-0 flex-col items-center gap-3 md:w-44"
+          initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{
             duration: 0.3,
@@ -92,7 +92,7 @@ export function ArtistSpotlight() {
         >
           <motion.div
             transition={{ type: "spring", stiffness: 200 }}
-            className="h-44 w-44 overflow-hidden rounded-full"
+            className="size-28 overflow-hidden rounded-full md:size-44"
           >
             <Image
               src={artist.image}
@@ -103,7 +103,9 @@ export function ArtistSpotlight() {
             />
           </motion.div>
 
-          <p className="text-center text-lg font-semibold">{artist.label}</p>
+          <p className="text-center text-sm font-medium md:text-lg md:font-semibold">
+            {artist.label}
+          </p>
         </motion.div>
       ))}
     </div>

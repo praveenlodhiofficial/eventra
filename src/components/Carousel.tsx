@@ -25,9 +25,12 @@ export function Carousel({ productImageUrls }: { productImageUrls: string[] }) {
   }, [index, x]);
 
   return (
-    <div className="mx-auto h-full w-full">
+    <div className="mx-auto h-fit w-full lg:h-full">
       <div className="flex flex-col gap-3">
-        <div className="relative h-screen overflow-hidden" ref={containerRef}>
+        <div
+          className="relative h-fit overflow-hidden lg:h-screen"
+          ref={containerRef}
+        >
           <motion.div className="flex" style={{ x }}>
             {productImageUrls.map((item) => (
               <div
@@ -39,7 +42,7 @@ export function Carousel({ productImageUrls }: { productImageUrls: string[] }) {
                   height={2000}
                   src={item}
                   alt={item}
-                  className="pointer-events-none h-full w-full object-cover select-none"
+                  className="pointer-events-none h-fit w-full object-cover select-none lg:h-full"
                   draggable={false}
                 />
               </div>
@@ -77,14 +80,14 @@ export function Carousel({ productImageUrls }: { productImageUrls: string[] }) {
             onClick={() =>
               setIndex((i) => Math.min(productImageUrls.length - 1, i + 1))
             }
-            className={`absolute top-1/2 right-4 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full shadow-lg transition-transform ${
+            className={`absolute top-1/2 right-4 z-10 flex size-8 -translate-y-1/2 items-center justify-center rounded-full shadow-lg transition-transform md:size-10 ${
               index === productImageUrls.length - 1
                 ? "cursor-not-allowed opacity-40"
                 : "bg-white opacity-70 hover:scale-110 hover:opacity-100"
             }`}
           >
             <svg
-              className="h-6 w-6"
+              className="size-5 md:size-6"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -98,13 +101,15 @@ export function Carousel({ productImageUrls }: { productImageUrls: string[] }) {
             </svg>
           </motion.button>
           {/* Progress Indicator */}
-          <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2 rounded-xl border border-white/30 bg-white/20 p-2">
+          <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2 rounded-xl border border-white/30 bg-white/20 p-1.5 md:p-2">
             {productImageUrls.map((_, i) => (
               <button
                 key={i}
                 onClick={() => setIndex(i)}
-                className={`h-2 rounded-full transition-all ${
-                  i === index ? "w-8 bg-white" : "w-2 bg-white/50"
+                className={`h-1.5 rounded-full transition-all md:h-2 ${
+                  i === index
+                    ? "w-5 bg-white md:w-8"
+                    : "w-1.5 bg-white/50 md:w-2"
                 }`}
               />
             ))}
