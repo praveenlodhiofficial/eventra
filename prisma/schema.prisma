@@ -49,7 +49,7 @@ model Event {
   slug        String @unique
   description String
   
-  coverImage  String
+  coverImage  String?
   images       EventImage[]
 
   categories  EventCategory[] @relation("EventCategories")
@@ -76,7 +76,7 @@ model Event {
 model Performer {
   id    String  @id @default(cuid())
   name  String
-  image String
+  image String?
   bio   String?
 
   events Event[] @relation("EventPerformers")
