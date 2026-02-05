@@ -6,6 +6,10 @@ import prisma from "@/lib/prisma";
 
 import { PerformerInput, PerformerSchema } from "./performer.schema";
 
+/* -------------------------------------------------------------------------- */
+/*                            Add Performer Action                            */
+/* -------------------------------------------------------------------------- */
+
 export const AddPerformerAction = async (input: PerformerInput) => {
   try {
     const parsed = PerformerSchema.safeParse(input);
@@ -41,4 +45,67 @@ export const AddPerformerAction = async (input: PerformerInput) => {
       message: "Internal server error",
     };
   }
+};
+
+/* -------------------------------------------------------------------------- */
+/*                            Get All Performers Action                       */
+/* -------------------------------------------------------------------------- */
+
+export const GetAllPerformersAction = async () => {
+  try {
+    const performers = await prisma.performer.findMany();
+    return {
+      success: true,
+      status: 200,
+      message: "Performers fetched successfully",
+      performers: performers.map((performer) => ({
+        name: performer.name,
+        id: performer.id,
+        image: performer.image,
+      })),
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      success: false,
+      status: 500,
+      message: "Internal server error",
+    };
+  }
+};
+
+/* -------------------------------------------------------------------------- */
+/*                            Search Performers Action                        */
+/* -------------------------------------------------------------------------- */
+
+export type PerformerSearchResult = {
+  id: string;
+  name: string;
+  image: string;
+};
+
+export const SearchPerformersAction = async (
+  query: string
+): Promise<PerformerSearchResult[]> => {
+  if (!query || query.trim().length < 2) return [];
+
+  const q = query.trim();
+
+  const performers = await prisma.performer.findMany({
+    where: {
+      name: {
+        contains: q,
+        mode: "insensitive",
+      },
+    },
+    take: 10,
+    select: {
+      id: true,
+      name: true,
+      image: true,
+      bio: true,
+    },
+  });
+
+  return performers;
 };

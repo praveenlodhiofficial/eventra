@@ -2,19 +2,11 @@ import { ArtistSpotlight } from "@/components/ArtistSpotlight";
 import { Carousel } from "@/components/Carousel";
 import { EventCard } from "@/components/EventCard";
 import { EventCategories } from "@/components/EventCategories";
-import { CreateEventModal } from "@/components/modals/events/create-event-modal";
-import { AddPerformerModal } from "@/components/modals/performer/add-performer-modal";
-import { AddVenueModal } from "@/components/modals/venue/add-venue-modal";
 import { Container } from "@/components/ui/container";
 
 export default function Home() {
   return (
     <div className="space-y-15 md:space-y-20">
-      <div className="flex gap-5">
-        <CreateEventModal />
-        <AddVenueModal />
-        <AddPerformerModal />
-      </div>
       {/* =============================== Event Carousel =============================== */}
       <div className="relative h-fit w-full lg:h-full">
         <Carousel
