@@ -1,6 +1,7 @@
 import { CreateEventModal } from "@/components/modals/events/create-event-modal";
-import { AddPerformerModal } from "@/components/modals/performer/add-performer-modal";
+import { PerformerModal } from "@/components/modals/performer/performer-modal";
 import { AddVenueModal } from "@/components/modals/venue/add-venue-modal";
+import { Container } from "@/components/ui/container";
 import { GetAllPerformersAction } from "@/domains/performer/performer.actions";
 
 export default async function AdminPage() {
@@ -10,13 +11,30 @@ export default async function AdminPage() {
     return <div>Error fetching performers data</div>;
   }
 
+  const performers = res.performers;
+
+  if (!performers) {
+    return <div>No performers found</div>;
+  }
+
   return (
-    <div className="flex h-screen w-full items-center justify-center">
-      <div className="border-primary z-50 flex max-w-md flex-col gap-5 border-2 bg-amber-500">
+    <Container>
+      <div className="flex w-full items-center justify-center gap-3">
         <CreateEventModal />
         <AddVenueModal />
-        <AddPerformerModal />
+        <PerformerModal type="create" />
       </div>
-    </div>
+      <div className="grid gap-5">
+        {performers.map((performer) => (
+          <div
+            key={performer.id}
+            className="bg-muted-foreground/10 flex items-center justify-between rounded-lg px-3 py-2"
+          >
+            <h1 className="text-lg font-medium">{performer.name}</h1>
+            <PerformerModal type="update" performer={performer} />
+          </div>
+        ))}
+      </div>
+    </Container>
   );
 }

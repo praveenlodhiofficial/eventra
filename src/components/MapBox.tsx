@@ -9,6 +9,7 @@ import mapboxgl, { IControl } from "mapbox-gl";
 
 import { config } from "@/lib/config";
 import { cn } from "@/lib/utils";
+import "@/styles/mapbox.css";
 
 mapboxgl.accessToken = config.mapbox.access_token;
 
@@ -54,6 +55,7 @@ export function MapBox({ onLocationSelect, className }: MapBoxProps) {
       style: "mapbox://styles/mapbox/streets-v12",
       center: [78.9629, 20.5937],
       zoom: 4,
+      attributionControl: false,
     });
 
     mapInstance.current = map;
@@ -116,6 +118,9 @@ export function MapBox({ onLocationSelect, className }: MapBoxProps) {
   }, [onLocationSelect]);
 
   return (
-    <div ref={mapRef} className={cn("h-80 w-full rounded-xl", className)} />
+    <div
+      ref={mapRef}
+      className={cn("z-[-1] h-fit w-full rounded-xl", className)}
+    />
   );
 }

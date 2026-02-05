@@ -37,7 +37,7 @@ export function PerformerPicker({ value, onChange }: Props) {
 
   // Derive selected performers from results + value
   const selected = useMemo(
-    () => results.filter((r) => value.includes(r.id)),
+    () => results.filter((performer) => value.includes(performer.id)),
     [results, value]
   );
 
@@ -53,11 +53,11 @@ export function PerformerPicker({ value, onChange }: Props) {
     }, 300);
   };
 
-  const togglePerformer = (p: PerformerSearchResult) => {
-    if (value.includes(p.id)) {
-      onChange(value.filter((id) => id !== p.id));
+  const togglePerformer = (performer: PerformerSearchResult) => {
+    if (value.includes(performer.id)) {
+      onChange(value.filter((id) => id !== performer.id));
     } else {
-      onChange([...value, p.id]);
+      onChange([...value, performer.id]);
     }
   };
 
@@ -65,16 +65,16 @@ export function PerformerPicker({ value, onChange }: Props) {
     <div className="space-y-3">
       {/* ======================= Selected Performers ======================= */}
       <div className="flex flex-wrap gap-2">
-        {selected.map((p) => (
+        {selected.map((performer) => (
           <Badge
-            key={p.id}
+            key={performer.id}
             variant="secondary"
             className="flex items-center gap-2"
           >
-            {p.name}
+            {performer.name}
             <X
               className="h-3 w-3 cursor-pointer"
-              onClick={() => togglePerformer(p)}
+              onClick={() => togglePerformer(performer)}
             />
           </Badge>
         ))}
@@ -101,23 +101,23 @@ export function PerformerPicker({ value, onChange }: Props) {
             </CommandEmpty>
 
             <CommandGroup className="max-h-52 overflow-y-auto">
-              {results.map((p) => (
+              {results.map((performer) => (
                 <CommandItem
-                  key={p.id}
+                  key={performer.id}
                   onSelect={() => {
-                    togglePerformer(p);
+                    togglePerformer(performer);
                     setOpen(false);
                   }}
                   className="flex items-center gap-3"
                 >
                   <Image
-                    src={p.image}
-                    alt={p.name}
+                    src={performer.image}
+                    alt={performer.name}
                     width={32}
                     height={32}
                     className="aspect-square rounded-full object-cover"
                   />
-                  {p.name}
+                  {performer.name}
                 </CommandItem>
               ))}
             </CommandGroup>

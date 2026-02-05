@@ -1,6 +1,6 @@
 "use client";
 
-import { startTransition } from "react";
+import { startTransition, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { useRouter } from "next/navigation";
@@ -30,27 +30,46 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { CoverImageUpload } from "@/components/upload/CoverImageUpload";
-import { AddPerformerAction } from "@/domains/performer/performer.actions";
+import {
+  AddPerformerAction,
+  UpdatePerformerAction,
+} from "@/domains/performer/performer.actions";
 import {
   PerformerInput,
   PerformerSchema,
 } from "@/domains/performer/performer.schema";
 
-export function AddPerformerModal() {
+type Performer = {
+  id: string;
+  name: string;
+  image: string;
+  bio: string;
+};
+
+type Props = { type: "create" } | { type: "update"; performer: Performer };
+
+export function PerformerModal(props: Props) {
   const router = useRouter();
+  const [isOpen, setIsOpen] = useState(false);
+  const isUpdate = props.type === "update";
+  const performer = isUpdate
+    ? props.performer
+    : { id: "", name: "", image: "", bio: "" };
 
   const form = useForm<PerformerInput>({
     resolver: zodResolver(PerformerSchema),
     defaultValues: {
-      name: "",
-      image: "",
-      bio: "",
+      name: performer?.name ?? "",
+      image: performer?.image ?? "",
+      bio: performer?.bio ?? "",
     },
   });
 
-  function onSubmit(data: PerformerInput) {
+  async function onSubmit(data: PerformerInput) {
     startTransition(async () => {
-      const result = await AddPerformerAction(data);
+      const result = isUpdate
+        ? await UpdatePerformerAction(performer!.id, data)
+        : await AddPerformerAction(data);
 
       if (!result.success) {
         toast.error(result.message);
@@ -58,34 +77,35 @@ export function AddPerformerModal() {
       }
 
       toast.success(result.message);
-      router.refresh();
+      router.push("/admin");
       form.reset();
+      setIsOpen(false);
     });
-    router.refresh();
   }
 
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">Add Performer</Button>
+        <Button variant="outline">{isUpdate ? "Edit" : "Add Performer"}</Button>
       </DialogTrigger>
-      <DialogContent className="h-[calc(100vh-10rem)] md:max-w-xl lg:rounded-3xl">
-        <Form {...form}>
+
+      <DialogContent className="h-[calc(100vh-7rem)] md:max-w-xl lg:rounded-3xl">
+        <Form {...form} key={isUpdate ? performer.id : "create"}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="no-scrollbar flex flex-col gap-4 overflow-hidden overflow-y-scroll"
+            className="no-scrollbar relative flex flex-col gap-4 overflow-hidden overflow-y-scroll"
           >
-            <DialogHeader className="flex h-fit items-center justify-center">
-              <DialogTitle className="border-primary w-fit border-y-2 px-5 py-1 text-center text-xl font-semibold uppercase">
-                Add Performer
+            <DialogHeader className="bg-background sticky top-0 items-center justify-center">
+              <DialogTitle className="border-y-2 px-5 py-1 text-xl font-semibold uppercase">
+                {isUpdate ? "Update Performer" : "Add Performer"}
               </DialogTitle>
               <DialogDescription className="sr-only">
-                Add a new performer to the platform by providing the required
-                information.
+                Performer form
               </DialogDescription>
             </DialogHeader>
+
             <FieldGroup>
-              {/* ================================== Performer Image Upload ================================== */}
+              {/* Image */}
               <Field>
                 <FieldLabel>Performer Image</FieldLabel>
                 <FormField
@@ -96,6 +116,7 @@ export function AddPerformerModal() {
                       <FormControl>
                         <CoverImageUpload
                           folder="eventra/performers"
+                          defaultImage={performer?.image}
                           onUploaded={(url) => field.onChange(url)}
                         />
                       </FormControl>
@@ -105,7 +126,7 @@ export function AddPerformerModal() {
                 />
               </Field>
 
-              {/* ================================== Name Input ================================== */}
+              {/* Name */}
               <Field>
                 <FieldLabel>Performer Name</FieldLabel>
                 <FormField
@@ -126,7 +147,7 @@ export function AddPerformerModal() {
                 />
               </Field>
 
-              {/* ================================== Bio Input ================================== */}
+              {/* Bio */}
               <Field>
                 <FieldLabel>Performer Bio</FieldLabel>
                 <FormField
@@ -136,9 +157,8 @@ export function AddPerformerModal() {
                     <FormItem>
                       <FormControl>
                         <textarea
+                          rows={10}
                           placeholder="Performer Bio"
-                          rows={7}
-                          aria-multiline="true"
                           className="rounded-lg border border-zinc-200 bg-white/10 p-3 text-sm font-light shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
                           {...field}
                         />
@@ -150,11 +170,14 @@ export function AddPerformerModal() {
               </Field>
             </FieldGroup>
 
-            <DialogFooter className="grid grid-cols-2 gap-5">
+            <DialogFooter className="bg-background sticky bottom-0 grid grid-cols-2 gap-5">
               <DialogClose asChild>
                 <ActionButton2 variant="outline">Cancel</ActionButton2>
               </DialogClose>
-              <ActionButton2 type="submit">Add Performer</ActionButton2>
+
+              <ActionButton2 type="submit">
+                {isUpdate ? "Update Performer" : "Add Performer"}
+              </ActionButton2>
             </DialogFooter>
           </form>
         </Form>

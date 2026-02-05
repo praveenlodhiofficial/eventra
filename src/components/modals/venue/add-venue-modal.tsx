@@ -73,9 +73,9 @@ export function AddVenueModal() {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="no-scrollbar flex flex-col gap-4 overflow-hidden overflow-y-scroll"
+            className="no-scrollbar relative flex flex-col gap-4 overflow-hidden overflow-y-scroll"
           >
-            <DialogHeader className="flex h-fit items-center justify-center">
+            <DialogHeader className="bg-background sticky top-0 flex h-fit items-center justify-center">
               <DialogTitle className="border-primary w-fit border-y-2 px-5 py-1 text-xl font-semibold uppercase">
                 Add Venue
               </DialogTitle>
@@ -139,9 +139,9 @@ export function AddVenueModal() {
               </FieldGroup>
 
               {/* ================= Right: Map Picker ================= */}
-              <div className="relative h-[520px] w-full">
+              <div className="!mapboxgl-map order-first h-[400px] w-full md:order-last md:h-full">
                 <MapBox
-                  className="h-full w-full rounded-xl"
+                  className="flex h-full w-full rounded-xl"
                   onLocationSelect={(data) => {
                     form.setValue("address", data.address, {
                       shouldValidate: true,
@@ -161,7 +161,7 @@ export function AddVenueModal() {
               </div>
             </FieldGroup>
 
-            <DialogFooter className="grid grid-cols-2 gap-5">
+            <DialogFooter className="bg-background sticky bottom-0 grid grid-cols-2 gap-5">
               <DialogClose asChild>
                 <ActionButton2 variant="outline">Cancel</ActionButton2>
               </DialogClose>

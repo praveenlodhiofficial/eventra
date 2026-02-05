@@ -9,18 +9,18 @@ import { Progress } from "@/components/ui/progress";
 import { config } from "@/lib/config";
 import { deleteFromImageKit, uploadToImageKit } from "@/lib/imagekit";
 
-import { Button } from "../ui/button";
-
 export function CoverImageUpload({
   folder,
   onUploaded,
+  defaultImage,
 }: {
   folder: string;
   onUploaded: (url: string) => void;
+  defaultImage?: string;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const [preview, setPreview] = useState<string | null>(null);
+  const [preview, setPreview] = useState<string | null>(defaultImage ?? null);
   const [progress, setProgress] = useState(0);
   const [fileId, setFileId] = useState<string | null>(null);
 
@@ -47,12 +47,12 @@ export function CoverImageUpload({
     <div className="flex w-full flex-col gap-2">
       <div
         onClick={() => inputRef.current?.click()}
-        className="relative flex aspect-video w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl border border-zinc-200"
+        className="relative z-[-1] flex aspect-video w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl border border-zinc-200"
       >
         <Progress
           value={progress}
           max={100}
-          className="pointer-events-none absolute inset-0 z-10 h-full rounded-none"
+          className="pointer-events-none absolute inset-0 h-full rounded-none"
           indicatorClassName="bg-green-500/50"
         />
 
