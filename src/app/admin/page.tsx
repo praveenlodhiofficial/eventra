@@ -19,7 +19,7 @@ export default async function AdminPage() {
 
   return (
     <Container>
-      <div className="flex w-full items-center justify-center gap-3">
+      <div className="flex w-full flex-wrap items-center justify-center gap-3">
         <CreateEventModal />
         <AddVenueModal />
         <PerformerModal type="create" />
@@ -30,7 +30,9 @@ export default async function AdminPage() {
             key={performer.id}
             className="bg-muted-foreground/10 flex items-center justify-between rounded-lg px-3 py-2"
           >
-            <h1 className="text-lg font-medium">{performer.name}</h1>
+            <h1 className="text-base font-medium md:text-lg">
+              {performer.name}
+            </h1>
             <PerformerModal type="update" performer={performer} />
           </div>
         ))}

@@ -9,6 +9,8 @@ import { Progress } from "@/components/ui/progress";
 import { config } from "@/lib/config";
 import { deleteFromImageKit, uploadToImageKit } from "@/lib/imagekit";
 
+import { Button } from "../ui/button";
+
 export function CoverImageUpload({
   folder,
   onUploaded,
@@ -87,6 +89,14 @@ export function CoverImageUpload({
           e.target.value = "";
         }}
       />
+
+      <Button
+        type="button"
+        className="block w-full rounded-lg md:hidden"
+        onClick={() => inputRef.current?.click()}
+      >
+        Choose file
+      </Button>
     </div>
   );
 }

@@ -76,7 +76,7 @@ export function AddVenueModal() {
             className="no-scrollbar relative flex flex-col gap-4 overflow-hidden overflow-y-scroll"
           >
             <DialogHeader className="bg-background sticky top-0 flex h-fit items-center justify-center">
-              <DialogTitle className="border-primary w-fit border-y-2 px-5 py-1 text-xl font-semibold uppercase">
+              <DialogTitle className="border-primary w-fit border-y-2 px-5 py-1 text-base font-semibold uppercase md:text-lg lg:text-xl">
                 Add Venue
               </DialogTitle>
             </DialogHeader>

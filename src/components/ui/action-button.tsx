@@ -45,7 +45,7 @@ function IconTrack({ icon }: { icon: ReactNode }) {
 }
 
 /* -------------------------------------------------------------------------- */
-/*                            Action Button (Link)                            */
+/*                            Action Button 1 (Link)                            */
 /* -------------------------------------------------------------------------- */
 
 type ActionButtonLinkProps = ButtonProps & {
@@ -84,7 +84,7 @@ export function ActionButton1({
 }
 
 /* -------------------------------------------------------------------------- */
-/*                         Action Button (Submit / Normal)                    */
+/*                         Action Button 2 (Submit / Normal)                    */
 /* -------------------------------------------------------------------------- */
 
 type ActionButtonProps = ButtonProps & {
@@ -101,9 +101,9 @@ export function ActionButton2({
 
   return (
     <Button
-      size={isMobile ? "md" : size}
+      size={isMobile ? "sm" : size}
       className={cn(
-        "group relative flex h-14 w-full items-center justify-center overflow-hidden rounded-xl uppercase",
+        "group relative flex h-10 w-full items-center justify-center overflow-hidden rounded-lg text-xs uppercase md:h-12 md:rounded-xl md:text-sm lg:h-14 lg:text-base",
         className
       )}
       {...props}
