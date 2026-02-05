@@ -6,6 +6,10 @@ import prisma from "@/lib/prisma";
 
 import { VenueInput, VenueSchema } from "./venue.schema";
 
+/* -------------------------------------------------------------------------- */
+/*                            Add Venue Action                             */
+/* -------------------------------------------------------------------------- */
+
 export const AddVenueAction = async (input: VenueInput) => {
   try {
     const parsed = VenueSchema.safeParse(input);
@@ -35,6 +39,29 @@ export const AddVenueAction = async (input: VenueInput) => {
       status: 201,
       message: "Venue created successfully",
       data: venue,
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      success: false,
+      status: 500,
+      message: "Internal server error",
+    };
+  }
+};
+
+/* -------------------------------------------------------------------------- */
+/*                            Get All Venues Action                         */
+/* -------------------------------------------------------------------------- */
+
+export const GetAllVenuesAction = async () => {
+  try {
+    const venues = await prisma.venue.findMany();
+    return {
+      success: true,
+      status: 200,
+      message: "Venues fetched successfully",
+      data: venues,
     };
   } catch (error) {
     console.log(error);

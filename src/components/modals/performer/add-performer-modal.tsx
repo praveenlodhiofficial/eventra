@@ -58,7 +58,7 @@ export function AddPerformerModal() {
       }
 
       toast.success(result.message);
-      router.push("/performers");
+      router.refresh();
       form.reset();
     });
     router.refresh();
@@ -69,11 +69,11 @@ export function AddPerformerModal() {
       <DialogTrigger asChild>
         <Button variant="outline">Add Performer</Button>
       </DialogTrigger>
-      <DialogContent className="h-[calc(100vh-10rem)] md:max-w-3xl lg:max-w-5xl lg:rounded-3xl">
+      <DialogContent className="h-[calc(100vh-10rem)] md:max-w-xl lg:rounded-3xl">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="flex flex-col gap-4 overflow-hidden overflow-y-scroll"
+            className="no-scrollbar flex flex-col gap-4 overflow-hidden overflow-y-scroll"
           >
             <DialogHeader className="flex h-fit items-center justify-center">
               <DialogTitle className="border-primary w-fit border-y-2 px-5 py-1 text-center text-xl font-semibold uppercase">
@@ -84,74 +84,70 @@ export function AddPerformerModal() {
                 information.
               </DialogDescription>
             </DialogHeader>
-            <FieldGroup className="grid border-5 border-red-500 md:grid-cols-[2fr_1fr]">
-              <FieldGroup>
-                {/* ================================== Name Input ================================== */}
-                <Field>
-                  <FieldLabel>Performer Name</FieldLabel>
-                  <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input
-                            placeholder="Performer Name"
-                            className="rounded-lg border border-zinc-200 bg-white/10 px-3 py-6 text-sm font-light shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </Field>
+            <FieldGroup>
+              {/* ================================== Performer Image Upload ================================== */}
+              <Field>
+                <FieldLabel>Performer Image</FieldLabel>
+                <FormField
+                  control={form.control}
+                  name="image"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <CoverImageUpload
+                          folder="eventra/performers"
+                          onUploaded={(url) => field.onChange(url)}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </Field>
 
-                {/* ================================== Bio Input ================================== */}
-                <Field>
-                  <FieldLabel>Performer Bio</FieldLabel>
-                  <FormField
-                    control={form.control}
-                    name="bio"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <textarea
-                            placeholder="Performer Bio"
-                            rows={5}
-                            aria-multiline="true"
-                            className="rounded-lg border border-zinc-200 bg-white/10 p-3 text-sm font-light shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </Field>
-              </FieldGroup>
+              {/* ================================== Name Input ================================== */}
+              <Field>
+                <FieldLabel>Performer Name</FieldLabel>
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input
+                          placeholder="Performer Name"
+                          className="rounded-lg border border-zinc-200 bg-white/10 px-3 py-6 text-sm font-light shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </Field>
 
-              <FieldGroup>
-                {/* ================================== Performer Image Upload ================================== */}
-                <Field>
-                  <FieldLabel>Performer Image</FieldLabel>
-                  <FormField
-                    control={form.control}
-                    name="image"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <CoverImageUpload
-                            folder="eventra/performers"
-                            onUploaded={(url) => field.onChange(url)}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </Field>
-              </FieldGroup>
+              {/* ================================== Bio Input ================================== */}
+              <Field>
+                <FieldLabel>Performer Bio</FieldLabel>
+                <FormField
+                  control={form.control}
+                  name="bio"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <textarea
+                          placeholder="Performer Bio"
+                          rows={7}
+                          aria-multiline="true"
+                          className="rounded-lg border border-zinc-200 bg-white/10 p-3 text-sm font-light shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </Field>
             </FieldGroup>
 
             <DialogFooter className="grid grid-cols-2 gap-5">

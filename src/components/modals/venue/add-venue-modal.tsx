@@ -69,11 +69,11 @@ export function AddVenueModal() {
         <Button variant="outline">Add Venue</Button>
       </DialogTrigger>
 
-      <DialogContent className="h-[calc(100vh-10rem)] md:max-w-3xl lg:max-w-5xl lg:rounded-3xl">
+      <DialogContent className="h-[calc(100vh-7rem)] md:max-w-3xl lg:max-w-5xl lg:rounded-3xl">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="flex flex-col gap-4 overflow-hidden overflow-y-scroll"
+            className="no-scrollbar flex flex-col gap-4 overflow-hidden overflow-y-scroll"
           >
             <DialogHeader className="flex h-fit items-center justify-center">
               <DialogTitle className="border-primary w-fit border-y-2 px-5 py-1 text-xl font-semibold uppercase">
@@ -139,7 +139,7 @@ export function AddVenueModal() {
               </FieldGroup>
 
               {/* ================= Right: Map Picker ================= */}
-              <div className="h-[520px] w-full">
+              <div className="relative h-[520px] w-full">
                 <MapBox
                   className="h-full w-full rounded-xl"
                   onLocationSelect={(data) => {

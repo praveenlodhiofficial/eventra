@@ -10,6 +10,7 @@ import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { toast } from "sonner";
 
+import { PerformerPicker } from "@/components/modals/performer/pick-performer";
 import { ActionButton2 } from "@/components/ui/action-button";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -65,33 +66,20 @@ export function CreateEventModal() {
 
   const form = useForm<EventInput>({
     resolver: zodResolver(EventSchema),
+
     defaultValues: {
-      name: "Sunburn Goa 2026",
-      slug: "sunburn-goa-2026",
-      description:
-        "Asia’s biggest electronic music festival returns to Goa with world-class DJs, immersive stages, and an unforgettable beachside experience.",
-
-      coverImage:
-        "https://images.unsplash.com/photo-1506157786151-b8491531f063",
-
-      category: ["MUSIC", "FEST"],
-
-      city: "Goa",
-
-      performerIds: ["perf_alanwalker", "perf_martingarrix", "perf_djchetas"],
-
-      startDate: new Date("2026-12-27T16:00:00"),
-      endDate: new Date("2026-12-29T23:00:00"),
-
-      price: 4999,
-
-      venueId: "venue_baga_beach",
-
-      imageUrls: [
-        "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3",
-        "https://images.unsplash.com/photo-1507874457470-272b3c8d8ee2",
-        "https://images.unsplash.com/photo-1492684223066-81342ee5ff30",
-      ],
+      name: "",
+      slug: "",
+      description: "",
+      coverImage: "",
+      category: [],
+      city: "",
+      performerIds: [],
+      startDate: new Date(),
+      endDate: new Date(),
+      price: 0,
+      venueId: "",
+      imageUrls: [],
     },
   });
 
@@ -119,7 +107,7 @@ export function CreateEventModal() {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="flex flex-col gap-4 overflow-hidden overflow-y-scroll"
+            className="no-scrollbar flex flex-col gap-4 overflow-hidden overflow-y-scroll"
           >
             <DialogHeader className="flex h-fit items-center justify-center">
               <DialogTitle className="border-primary w-fit border-y-2 px-5 py-1 text-center text-xl font-semibold uppercase">
@@ -281,92 +269,64 @@ export function CreateEventModal() {
                   />
                 </Field>
 
-                {/* ==================================== Start Date Input ==================================== */}
-                <Field>
-                  <FieldLabel>Event Start Date</FieldLabel>
+                {/* ==================================== Start Date and End Date Input ==================================== */}
+                <FieldGroup className="grid md:grid-cols-2">
+                  {[
+                    {
+                      name: "startDate",
+                      label: "Event Start Date",
+                      placeholder: "Select start date",
+                    },
+                    {
+                      name: "endDate",
+                      label: "Event End Date",
+                    },
+                  ].map((fieldData) => (
+                    <Field key={fieldData.name}>
+                      <FieldLabel>{fieldData.label}</FieldLabel>
 
-                  <FormField
-                    control={form.control}
-                    name="startDate"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col">
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <FormControl>
-                              <Button
-                                variant="outline"
-                                className="justify-start rounded-lg border border-zinc-200 bg-white/10 px-3 py-6 text-left text-sm font-light shadow-none"
+                      <FormField
+                        control={form.control}
+                        name={fieldData.name as keyof EventInput}
+                        render={({ field }) => (
+                          <FormItem className="flex flex-col">
+                            <Popover>
+                              <PopoverTrigger asChild>
+                                <FormControl>
+                                  <Button
+                                    variant="outline"
+                                    className="justify-start rounded-lg border border-zinc-200 bg-white/10 px-3 py-6 text-left text-sm font-light shadow-none"
+                                  >
+                                    {field.value ? (
+                                      format(field.value as Date, "PPP")
+                                    ) : (
+                                      <span>{fieldData.placeholder}</span>
+                                    )}
+                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                  </Button>
+                                </FormControl>
+                              </PopoverTrigger>
+
+                              <PopoverContent
+                                className="w-auto p-0"
+                                align="start"
                               >
-                                {field.value ? (
-                                  format(field.value, "PPP")
-                                ) : (
-                                  <span>Select start date</span>
-                                )}
-                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                              </Button>
-                            </FormControl>
-                          </PopoverTrigger>
+                                <Calendar
+                                  mode="single"
+                                  selected={field.value as Date}
+                                  onSelect={field.onChange}
+                                  initialFocus
+                                />
+                              </PopoverContent>
+                            </Popover>
 
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                              mode="single"
-                              selected={field.value}
-                              onSelect={field.onChange}
-                              initialFocus
-                            />
-                          </PopoverContent>
-                        </Popover>
-
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </Field>
-
-                {/* ==================================== End Date Input ==================================== */}
-                <Field>
-                  <FieldLabel>Event End Date</FieldLabel>
-
-                  <FormField
-                    control={form.control}
-                    name="endDate"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col">
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <FormControl>
-                              <Button
-                                variant="outline"
-                                className="justify-start rounded-lg border border-zinc-200 bg-white/10 px-3 py-6 text-left text-sm font-light shadow-none"
-                              >
-                                {field.value ? (
-                                  format(field.value, "PPP")
-                                ) : (
-                                  <span>Select end date</span>
-                                )}
-                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                              </Button>
-                            </FormControl>
-                          </PopoverTrigger>
-
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                              mode="single"
-                              selected={field.value}
-                              onSelect={field.onChange}
-                              disabled={(date) =>
-                                date < form.getValues("startDate")
-                              }
-                              initialFocus
-                            />
-                          </PopoverContent>
-                        </Popover>
-
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </Field>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </Field>
+                  ))}
+                </FieldGroup>
 
                 {/* ==================================== Price Input ==================================== */}
                 <Field>
@@ -403,6 +363,27 @@ export function CreateEventModal() {
                           <CoverImageUpload
                             folder="eventra/events"
                             onUploaded={(url) => field.onChange(url)}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </Field>
+
+                {/* ==================================== Select Performer Input ==================================== */}
+                <Field>
+                  <FieldLabel>Event Performers</FieldLabel>
+
+                  <FormField
+                    control={form.control}
+                    name="performerIds"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <PerformerPicker
+                            value={field.value}
+                            onChange={field.onChange}
                           />
                         </FormControl>
                         <FormMessage />

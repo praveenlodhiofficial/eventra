@@ -12,8 +12,8 @@ export const EventImageSchema = z.object({
 export type EventImageInput = z.input<typeof EventImageSchema>;
 export type EventImage = z.output<typeof EventImageSchema>;
 
-// -------------------------------------------------------------------------- */
-/*                            Event Category Enum                              */
+/* -------------------------------------------------------------------------- */
+/*                 Approved Event Categories Enum Constants                   */
 /* -------------------------------------------------------------------------- */
 
 export const ApprovedEventCategories = [
