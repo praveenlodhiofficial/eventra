@@ -103,7 +103,7 @@ export function ActionButton2({
     <Button
       size={isMobile ? "sm" : size}
       className={cn(
-        "group relative flex h-10 w-full items-center justify-center overflow-hidden rounded-lg text-xs uppercase md:h-12 md:rounded-xl md:text-sm lg:h-14 lg:text-base",
+        "group relative flex h-10 w-full items-center justify-center overflow-hidden rounded-lg text-xs uppercase md:h-12 md:text-sm",
         className
       )}
       {...props}

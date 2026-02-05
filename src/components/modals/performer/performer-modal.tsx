@@ -95,8 +95,8 @@ export function PerformerModal(props: Props) {
             onSubmit={form.handleSubmit(onSubmit)}
             className="no-scrollbar relative flex flex-col gap-4 overflow-hidden overflow-y-scroll"
           >
-            <DialogHeader className="bg-background sticky top-0 items-center justify-center">
-              <DialogTitle className="border-y-2 px-5 py-1 text-xl font-semibold uppercase">
+            <DialogHeader className="bg-background sticky top-0 z-5 items-center justify-center">
+              <DialogTitle className="border-primary border-y-2 px-5 py-1 text-xl font-semibold uppercase">
                 {isUpdate ? "Update Performer" : "Add Performer"}
               </DialogTitle>
               <DialogDescription className="sr-only">
@@ -116,8 +116,16 @@ export function PerformerModal(props: Props) {
                       <FormControl>
                         <CoverImageUpload
                           folder="eventra/performers"
-                          defaultImage={performer?.image}
                           onUploaded={(url) => field.onChange(url)}
+                          onRemoved={() =>
+                            form.setValue("image", "", {
+                              shouldValidate: false,
+                              shouldDirty: false,
+                              shouldTouch: false,
+                            })
+                          }
+                          defaultImage={performer?.image}
+                          quality={80}
                         />
                       </FormControl>
                       <FormMessage />

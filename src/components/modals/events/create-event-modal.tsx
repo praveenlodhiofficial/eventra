@@ -103,14 +103,14 @@ export function CreateEventModal() {
       <DialogTrigger asChild>
         <Button variant="outline">Create Event</Button>
       </DialogTrigger>
-      <DialogContent className="h-[calc(100vh-7rem)] md:max-w-3xl lg:max-w-5xl lg:rounded-3xl">
+      <DialogContent className="h-[calc(100vh-2rem)] md:h-[calc(100vh-7rem)] md:max-w-3xl lg:max-w-5xl lg:rounded-3xl">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
             className="no-scrollbar relative flex flex-col gap-4 overflow-hidden overflow-y-scroll"
           >
-            <DialogHeader className="bg-background sticky top-0 flex h-fit items-center justify-center">
-              <DialogTitle className="border-primary w-fit border-y-2 px-5 py-1 text-center text-xl font-semibold uppercase">
+            <DialogHeader className="bg-background sticky top-0 z-5 flex h-fit items-center justify-center">
+              <DialogTitle className="border-primary border-y-2 px-5 py-1 text-center text-base font-semibold uppercase md:text-lg lg:text-xl">
                 Create Event
               </DialogTitle>
               <DialogDescription className="sr-only">
@@ -364,6 +364,13 @@ export function CreateEventModal() {
                           <CoverImageUpload
                             folder="eventra/events"
                             onUploaded={(url) => field.onChange(url)}
+                            onRemoved={() =>
+                              form.setValue("coverImage", "", {
+                                shouldValidate: false,
+                                shouldDirty: false,
+                                shouldTouch: false,
+                              })
+                            }
                           />
                         </FormControl>
                         <FormMessage />
@@ -417,7 +424,7 @@ export function CreateEventModal() {
               </FieldGroup>
             </FieldGroup>
 
-            <DialogFooter className="bg-background sticky bottom-0 grid grid-cols-2 gap-5">
+            <DialogFooter className="bg-background sticky bottom-0 z-5 grid grid-cols-2 gap-5">
               <DialogClose asChild>
                 <ActionButton2 variant="outline">Cancel</ActionButton2>
               </DialogClose>

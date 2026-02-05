@@ -7,6 +7,7 @@ import { decrypt } from "@/domains/auth/auth.session";
 // These are the actual URL paths, not the folder names.
 // Route groups like (auth) don't appear in the URL.
 const publicRoutes = ["/", "/sign-in", "/sign-up"];
+// const adminRoutes = ["/admin"];
 const adminRoutes = ["/admin"];
 
 export default async function proxy(req: NextRequest) {

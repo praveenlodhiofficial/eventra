@@ -2,10 +2,15 @@
 import { useRef, useState } from "react";
 
 import { Image } from "@imagekit/next";
-import { UploadIcon } from "lucide-react";
+import { UploadIcon, XIcon } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { config } from "@/lib/config";
 import { deleteFromImageKit, uploadToImageKit } from "@/lib/imagekit";
 
@@ -73,36 +78,51 @@ export function GalleryImageUpload({
             <Progress
               value={f.progress}
               max={100}
-              className="pointer-events-none absolute inset-0 z-10 h-full rounded-none"
+              className="pointer-events-none absolute inset-0 h-full rounded-none"
               indicatorClassName="bg-green-500/50"
             />
-            {f.url ? (
-              <Image
-                urlEndpoint={config.imagekit.url_endpoint}
-                src={f.url}
-                alt=""
-                fill
-                className="z-10 object-cover text-center text-sm"
-                quality={30}
-                transformation={[{ quality: 80 }]}
-              />
-            ) : (
-              <div className="z-10 flex h-full w-full flex-col items-center justify-center gap-1">
-                <UploadIcon className="text-muted-foreground size-4.5 border" />
-                <p className="text-muted-foreground text-center text-sm">
-                  Upload Gallery Image
-                </p>
-              </div>
-            )}
 
-            <button
-              onClick={() => remove(f.fileId)}
-              className="absolute top-1 right-1 rounded-md bg-black/60 px-2 py-1 text-xs text-white"
-            >
-              ✕
-            </button>
+            <Image
+              urlEndpoint={config.imagekit.url_endpoint}
+              src={f.url}
+              alt="Gallery Images"
+              fill
+              className="object-cover text-center text-sm"
+              quality={30}
+              transformation={[{ quality: 80 }]}
+            />
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  type="button" // 🔑 prevents form submit
+                  variant="default"
+                  size="icon"
+                  onClick={(e) => {
+                    e.stopPropagation(); // 🔑 prevents bubbling
+                    remove(f.fileId);
+                  }}
+                  className="absolute top-0 right-0 scale-80 rounded-full"
+                >
+                  <XIcon className="size-5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Remove Image</p>
+              </TooltipContent>
+            </Tooltip>
           </div>
         ))}
+
+        <Button
+          variant="secondary"
+          type="button"
+          onClick={() => inputRef.current?.click()}
+          className="bg-secondary group text-muted-foreground aspect-video h-full w-full cursor-pointer flex-col items-center justify-center text-sm font-normal hover:text-black"
+        >
+          <UploadIcon className="text-muted-foreground size-4 group-hover:text-black" />
+          Add Images
+        </Button>
       </div>
 
       <Input
@@ -116,10 +136,6 @@ export function GalleryImageUpload({
           e.target.value = "";
         }}
       />
-
-      <Button type="button" onClick={() => inputRef.current?.click()}>
-        Add Images
-      </Button>
     </div>
   );
 }
