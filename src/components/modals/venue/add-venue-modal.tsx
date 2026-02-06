@@ -57,7 +57,7 @@ export function AddVenueModal() {
       }
 
       toast.success(result.message);
-      router.push("/venues");
+      router.push("/admin/venues");
       form.reset();
     });
     router.refresh();

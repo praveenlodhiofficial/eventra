@@ -15,3 +15,16 @@ export const VenueSchema = z.object({
 
 export type VenueInput = z.input<typeof VenueSchema>;
 export type Venue = z.output<typeof VenueSchema>;
+
+export const VenueDataTableSchema = VenueSchema.pick({
+  name: true,
+  city: true,
+  state: true,
+  country: true,
+  pincode: true,
+}).extend({
+  id: z.string(),
+});
+
+export type VenueDataTable = z.input<typeof VenueDataTableSchema>;
+export type VenueDataTableOutput = z.output<typeof VenueDataTableSchema>;

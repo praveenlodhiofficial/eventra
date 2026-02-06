@@ -118,9 +118,6 @@ export function MapBox({ onLocationSelect, className }: MapBoxProps) {
   }, [onLocationSelect]);
 
   return (
-    <div
-      ref={mapRef}
-      className={cn("z-[-1] h-fit w-full rounded-xl", className)}
-    />
+    <div ref={mapRef} className={cn("h-fit w-full rounded-xl", className)} />
   );
 }
