@@ -1,7 +1,5 @@
+import { PerformerCard } from "@/components/admin/PerformerCard";
 import { getPerformersAction } from "@/domains/performer/performer.actions";
-
-import { columns } from "./performer-columns";
-import { DataTable } from "./performer-data-table";
 
 export default async function AdminPerformersPage() {
   const res = await getPerformersAction();
@@ -17,8 +15,15 @@ export default async function AdminPerformersPage() {
   }
 
   return (
-    <div className="mx-auto w-full px-5">
-      <DataTable columns={columns} data={performers} />
+    <div className="grid grid-cols-2 gap-4 px-5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+      {performers.map((performer) => (
+        <PerformerCard
+          key={performer.id}
+          href={`/performers/${performer.id}`}
+          name={performer.name}
+          image={performer.image}
+        />
+      ))}
     </div>
   );
 }

@@ -14,17 +14,15 @@ export type PerformerInput = z.input<typeof PerformerSchema>;
 export type Performer = z.output<typeof PerformerSchema>;
 
 /* -------------------------------------------------------------------------- */
-/*                            Venue DataTable Schema                          */
+/*                        Performer Summary Schema                          */
 /* -------------------------------------------------------------------------- */
 
-export const PerformerDataTableSchema = PerformerSchema.pick({
+export const PerformerSummarySchema = PerformerSchema.pick({
   name: true,
   image: true,
 }).extend({
   id: z.string(),
 });
 
-export type PerformerDataTable = z.input<typeof PerformerDataTableSchema>;
-export type PerformerDataTableOutput = z.output<
-  typeof PerformerDataTableSchema
->;
+export type PerformerSummary = z.input<typeof PerformerSummarySchema>;
+export type PerformerSummaryOutput = z.output<typeof PerformerSummarySchema>;

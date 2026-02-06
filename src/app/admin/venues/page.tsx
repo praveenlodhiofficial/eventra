@@ -1,10 +1,10 @@
-import { getAllVenues } from "@/data-access-layer/venue.dal";
+import { getVenuesAction } from "@/domains/venue/venue.actions";
 
 import { columns } from "./venue-columns";
-import { DataTable } from "./venue-data-table";
+import { VenueDataTable } from "./venue-data-table";
 
 export default async function VenuesPage() {
-  const res = await getAllVenues();
+  const res = await getVenuesAction();
 
   if (!res.success) {
     return <div>Error fetching venues data</div>;
@@ -18,7 +18,7 @@ export default async function VenuesPage() {
 
   return (
     <div className="mx-auto w-full px-5">
-      <DataTable columns={columns} data={venues} />
+      <VenueDataTable columns={columns} data={venues} />
     </div>
   );
 }

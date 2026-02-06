@@ -19,25 +19,24 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import {
-  PerformerSearchResult,
-  SearchPerformersAction,
-} from "@/domains/performer/performer.actions";
+import { searchPerformersAction } from "@/domains/performer/performer.actions";
+import { PerformerSummaryOutput } from "@/domains/performer/performer.schema";
 
 type Props = {
-  value: string[];
-  onChange: (ids: string[]) => void;
+  value: PerformerSummaryOutput[];
+  onChange: (performers: PerformerSummaryOutput[]) => void;
 };
 
 export function PerformerPicker({ value, onChange }: Props) {
-  const [results, setResults] = useState<PerformerSearchResult[]>([]);
+  const [results, setResults] = useState<PerformerSummaryOutput[]>([]);
   const [open, setOpen] = useState(false);
 
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Derive selected performers from results + value
   const selected = useMemo(
-    () => results.filter((performer) => value.includes(performer.id)),
+    () =>
+      results.filter((performer) => value.some((v) => v.id === performer.id)),
     [results, value]
   );
 
@@ -47,17 +46,17 @@ export function PerformerPicker({ value, onChange }: Props) {
     timeoutRef.current = setTimeout(async () => {
       if (search.length < 2) return;
 
-      const data = await SearchPerformersAction(search);
+      const data = await searchPerformersAction(search);
       setResults(data);
       setOpen(true);
     }, 300);
   };
 
-  const togglePerformer = (performer: PerformerSearchResult) => {
-    if (value.includes(performer.id)) {
-      onChange(value.filter((id) => id !== performer.id));
+  const togglePerformer = (performer: PerformerSummaryOutput) => {
+    if (value.some((v) => v.id === performer.id)) {
+      onChange(value.filter((v) => v.id !== performer.id));
     } else {
-      onChange([...value, performer.id]);
+      onChange([...value, performer]);
     }
   };
 

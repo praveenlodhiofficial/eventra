@@ -5,6 +5,7 @@ import { z } from "zod";
 import {
   getAllPerformers,
   getPerformerById,
+  searchPerformersByName,
 } from "@/data-access-layer/performer.dal";
 import prisma from "@/lib/prisma";
 
@@ -150,34 +151,13 @@ export const getPerformerAction = async (id: string) => {
 /*                            Search Performers Action                        */
 /* -------------------------------------------------------------------------- */
 
-export type PerformerSearchResult = {
-  id: string;
-  name: string;
-  image: string;
-};
-
-export const SearchPerformersAction = async (
-  query: string
-): Promise<PerformerSearchResult[]> => {
+export const searchPerformersAction = async (query: string) => {
   if (!query || query.trim().length < 2) return [];
 
-  const q = query.trim();
-
-  const performers = await prisma.performer.findMany({
-    where: {
-      name: {
-        contains: q,
-        mode: "insensitive",
-      },
-    },
-    take: 10,
-    select: {
-      id: true,
-      name: true,
-      image: true,
-      bio: true,
-    },
-  });
-
-  return performers;
+  try {
+    return await searchPerformersByName(query.trim());
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
 };

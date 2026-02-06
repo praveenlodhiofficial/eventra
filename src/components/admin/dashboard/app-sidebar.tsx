@@ -21,10 +21,10 @@ import {
   IconUser,
 } from "@tabler/icons-react";
 
-import { NavEvents } from "@/components/admin/nav-events";
-import { NavMain } from "@/components/admin/nav-main";
-import { NavSecondary } from "@/components/admin/nav-secondary";
-import { NavUser } from "@/components/admin/nav-user";
+import { NavEvents } from "@/components/admin/dashboard/nav-events";
+import { NavMain } from "@/components/admin/dashboard/nav-main";
+import { NavSecondary } from "@/components/admin/dashboard/nav-secondary";
+import { NavUser } from "@/components/admin/dashboard/nav-user";
 import {
   Sidebar,
   SidebarContent,

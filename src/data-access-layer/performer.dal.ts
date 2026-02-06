@@ -1,5 +1,6 @@
 "use server";
 
+import { PerformerSummaryOutput } from "@/domains/performer/performer.schema";
 import prisma from "@/lib/prisma";
 
 export const getPerformerById = async (id: string) => {
@@ -13,6 +14,26 @@ export const getAllPerformers = async () => {
     orderBy: {
       name: "asc",
     },
+    select: {
+      id: true,
+      name: true,
+      image: true,
+    },
+  });
+};
+
+export const searchPerformersByName = async (
+  query: string,
+  limit = 10
+): Promise<PerformerSummaryOutput[]> => {
+  return prisma.performer.findMany({
+    where: {
+      name: {
+        contains: query,
+        mode: "insensitive",
+      },
+    },
+    take: limit,
     select: {
       id: true,
       name: true,

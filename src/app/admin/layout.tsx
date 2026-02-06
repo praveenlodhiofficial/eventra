@@ -1,5 +1,5 @@
-import { AppSidebar } from "@/components/admin/app-sidebar";
-import { SiteHeader } from "@/components/admin/site-header";
+import { AppSidebar } from "@/components/admin/dashboard/app-sidebar";
+import { SiteHeader } from "@/components/admin/dashboard/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 export default function Page({ children }: { children: React.ReactNode }) {
