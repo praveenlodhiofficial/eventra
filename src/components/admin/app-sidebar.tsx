@@ -3,24 +3,25 @@
 import * as React from "react";
 
 import {
+  IconBuilding,
+  IconCalendarEvent,
   IconCamera,
-  IconChartBar,
+  IconClockHour7,
   IconDashboard,
   IconDatabase,
+  IconFile,
   IconFileAi,
   IconFileDescription,
   IconFileWord,
-  IconFolder,
   IconHelp,
   IconInnerShadowTop,
-  IconListDetails,
   IconReport,
   IconSearch,
   IconSettings,
-  IconUsers,
+  IconUser,
 } from "@tabler/icons-react";
 
-import { NavDocuments } from "@/components/admin/nav-documents";
+import { NavEvents } from "@/components/admin/nav-events";
 import { NavMain } from "@/components/admin/nav-main";
 import { NavSecondary } from "@/components/admin/nav-secondary";
 import { NavUser } from "@/components/admin/nav-user";
@@ -43,8 +44,18 @@ const data = {
   navMain: [
     {
       title: "Dashboard",
-      url: "#",
+      url: "/admin",
       icon: IconDashboard,
+    },
+    {
+      title: "Venues",
+      url: "/admin/venues",
+      icon: IconBuilding,
+    },
+    {
+      title: "Performers",
+      url: "/admin/performers",
+      icon: IconUser,
     },
   ],
   navClouds: [
@@ -119,19 +130,19 @@ const data = {
       icon: IconDatabase,
     },
     {
-      name: "Drafts",
+      name: "Drafts Events",
       url: "#",
-      icon: IconReport,
+      icon: IconFile,
     },
     {
-      name: "Upcoming",
+      name: "Upcoming Events",
       url: "#",
-      icon: IconFileWord,
+      icon: IconCalendarEvent,
     },
     {
-      name: "Past",
+      name: "Past Events",
       url: "#",
-      icon: IconFileWord,
+      icon: IconClockHour7,
     },
   ],
 };
@@ -156,7 +167,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavDocuments items={data.events} />
+        <NavEvents items={data.events} />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
