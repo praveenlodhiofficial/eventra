@@ -2,6 +2,10 @@
 
 import { z } from "zod";
 
+import {
+  getAllPerformers,
+  getPerformerById,
+} from "@/data-access-layer/performer.dal";
 import prisma from "@/lib/prisma";
 
 import { PerformerInput, PerformerSchema } from "./performer.schema";
@@ -95,22 +99,42 @@ export const UpdatePerformerAction = async (
 };
 
 /* -------------------------------------------------------------------------- */
-/*                            Get All Performers Action                       */
+/*                              Get All Performers Action                         */
 /* -------------------------------------------------------------------------- */
 
-export const GetAllPerformersAction = async () => {
+export const getPerformersAction = async () => {
   try {
-    const performers = await prisma.performer.findMany();
+    const performers = await getAllPerformers();
+
     return {
       success: true,
       status: 200,
       message: "Performers fetched successfully",
-      performers: performers.map((performer) => ({
-        name: performer.name,
-        id: performer.id,
-        image: performer.image,
-        bio: performer.bio,
-      })),
+      data: performers,
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      success: false,
+      status: 500,
+      message: "Internal server error",
+    };
+  }
+};
+
+/* -------------------------------------------------------------------------- */
+/*                             Get Performer By Id Action                         */
+/* -------------------------------------------------------------------------- */
+
+export const getPerformerAction = async (id: string) => {
+  try {
+    const performer = await getPerformerById(id);
+
+    return {
+      success: true,
+      status: 200,
+      message: "Performer fetched successfully",
+      data: performer,
     };
   } catch (error) {
     console.log(error);

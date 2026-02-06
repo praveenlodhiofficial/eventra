@@ -2,6 +2,7 @@
 
 import { z } from "zod";
 
+import { getAllVenues, getVenueById } from "@/data-access-layer/venue.dal";
 import prisma from "@/lib/prisma";
 
 import { VenueInput, VenueSchema } from "./venue.schema";
@@ -51,17 +52,42 @@ export const AddVenueAction = async (input: VenueInput) => {
 };
 
 /* -------------------------------------------------------------------------- */
-/*                            Get All Venues Action                         */
+/*                              Get All Venues Action                         */
 /* -------------------------------------------------------------------------- */
 
-export const GetAllVenuesAction = async () => {
+export const getVenuesAction = async () => {
   try {
-    const venues = await prisma.venue.findMany();
+    const venues = await getAllVenues();
+
     return {
       success: true,
       status: 200,
       message: "Venues fetched successfully",
       data: venues,
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      success: false,
+      status: 500,
+      message: "Internal server error",
+    };
+  }
+};
+
+/* -------------------------------------------------------------------------- */
+/*                             Get Venue By Id Action                         */
+/* -------------------------------------------------------------------------- */
+
+export const getVenueAction = async (id: string) => {
+  try {
+    const venue = await getVenueById(id);
+
+    return {
+      success: true,
+      status: 200,
+      message: "Venue fetched successfully",
+      data: venue,
     };
   } catch (error) {
     console.log(error);

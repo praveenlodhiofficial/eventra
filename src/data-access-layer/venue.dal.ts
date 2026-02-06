@@ -2,22 +2,25 @@
 
 import prisma from "@/lib/prisma";
 
+export const getVenueById = async (id: string) => {
+  return prisma.venue.findUnique({
+    where: { id },
+  });
+};
+
 export const getAllVenues = async () => {
-  try {
-    const venues = await prisma.venue.findMany();
-    console.log(`venues fetched successfully: ${venues.length}`);
-    return {
-      success: true,
-      status: 200,
-      message: "Venues fetched successfully",
-      data: venues,
-    };
-  } catch (error) {
-    console.log(error);
-    return {
-      success: false,
-      status: 500,
-      message: "Internal server error",
-    };
-  }
+  return prisma.venue.findMany({
+    orderBy: {
+      name: "asc",
+    },
+    select: {
+      id: true,
+      name: true,
+      address: true,
+      city: true,
+      state: true,
+      country: true,
+      pincode: true,
+    },
+  });
 };

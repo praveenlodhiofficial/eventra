@@ -12,3 +12,19 @@ export const PerformerSchema = z.object({
 
 export type PerformerInput = z.input<typeof PerformerSchema>;
 export type Performer = z.output<typeof PerformerSchema>;
+
+/* -------------------------------------------------------------------------- */
+/*                            Venue DataTable Schema                          */
+/* -------------------------------------------------------------------------- */
+
+export const PerformerDataTableSchema = PerformerSchema.pick({
+  name: true,
+  image: true,
+}).extend({
+  id: z.string(),
+});
+
+export type PerformerDataTable = z.input<typeof PerformerDataTableSchema>;
+export type PerformerDataTableOutput = z.output<
+  typeof PerformerDataTableSchema
+>;
