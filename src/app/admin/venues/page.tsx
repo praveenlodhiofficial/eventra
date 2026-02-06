@@ -17,7 +17,7 @@ export default async function VenuesPage() {
   }
 
   return (
-    <div className="mx-auto w-full px-5">
+    <div className="mx-auto w-full">
       <VenueDataTable columns={columns} data={venues} />
     </div>
   );

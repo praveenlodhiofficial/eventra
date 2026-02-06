@@ -390,7 +390,11 @@ export function CreateEventModal() {
                       <FormItem>
                         <FormControl>
                           <PerformerPicker
-                            value={field.value}
+                            value={field.value.map((id) => ({
+                              id,
+                              name: "",
+                              image: "",
+                            }))}
                             onChange={field.onChange}
                           />
                         </FormControl>

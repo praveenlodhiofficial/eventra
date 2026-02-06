@@ -77,7 +77,7 @@ export function PerformerModal(props: Props) {
       }
 
       toast.success(result.message);
-      router.push("/admin");
+      router.push(`/admin/performers/${result.data?.id}`);
       form.reset();
       setIsOpen(false);
     });
@@ -86,7 +86,9 @@ export function PerformerModal(props: Props) {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">{isUpdate ? "Edit" : "Add Performer"}</Button>
+        <Button variant="outline">
+          {isUpdate ? "Edit Details" : "Add Performer"}
+        </Button>
       </DialogTrigger>
 
       <DialogContent className="h-[calc(100vh-7rem)] md:max-w-xl lg:rounded-3xl">

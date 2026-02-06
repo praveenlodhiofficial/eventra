@@ -28,7 +28,7 @@ export function PerformerCard({ href = "#", name, image }: PerformerCardProps) {
           className="object-cover transition-transform duration-300"
         />
 
-        <div className="absolute top-2 right-2">
+        {/* <div className="absolute top-2 right-2">
           <div className="flex flex-col gap-1.5">
             <Tooltip>
               <TooltipTrigger asChild>
@@ -51,7 +51,7 @@ export function PerformerCard({ href = "#", name, image }: PerformerCardProps) {
               </TooltipContent>
             </Tooltip>
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* Name */}

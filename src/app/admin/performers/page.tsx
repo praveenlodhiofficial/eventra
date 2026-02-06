@@ -19,7 +19,7 @@ export default async function AdminPerformersPage() {
       {performers.map((performer) => (
         <PerformerCard
           key={performer.id}
-          href={`/performers/${performer.id}`}
+          href={`/admin/performers/${performer.id}`}
           name={performer.name}
           image={performer.image}
         />
