@@ -10,7 +10,7 @@ import {
   VisibilityState,
 } from "@tanstack/react-table";
 
-import { AddVenueModal } from "@/components/modals/venue/add-venue-modal";
+import { CreateEventModal } from "@/components/modals/events/create-event-modal";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -28,15 +28,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-interface VenueDataTableProps<TData, TValue> {
+interface EventDataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
 }
 
-export function VenueDataTable<TData, TValue>({
+export function DataTable<TData, TValue>({
   columns,
   data,
-}: VenueDataTableProps<TData, TValue>) {
+}: EventDataTableProps<TData, TValue>) {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
@@ -57,7 +57,7 @@ export function VenueDataTable<TData, TValue>({
     <div>
       <div className="flex items-center py-4">
         <Input
-          placeholder="Search Venues..."
+          placeholder="Search Events..."
           value={table.getColumn("name")?.getFilterValue() as string}
           onChange={(event) =>
             table.getColumn("name")?.setFilterValue(event.target.value)
@@ -91,7 +91,7 @@ export function VenueDataTable<TData, TValue>({
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
-          <AddVenueModal />
+          <CreateEventModal />
         </div>
       </div>
       <div className="overflow-hidden rounded-md border">

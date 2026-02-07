@@ -114,7 +114,7 @@ export const getVenueAction = async (id: string) => {
 };
 
 /* -------------------------------------------------------------------------- */
-/*                            List Venues                                     */
+/*                            List All Venues                                 */
 /* -------------------------------------------------------------------------- */
 
 export const listVenuesAction = async () => {

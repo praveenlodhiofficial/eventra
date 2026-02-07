@@ -43,7 +43,6 @@ export const findAllVenues = async () => {
     select: {
       id: true,
       name: true,
-      address: true,
       city: true,
       state: true,
       country: true,

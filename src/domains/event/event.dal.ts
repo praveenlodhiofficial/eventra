@@ -5,7 +5,7 @@ import { slugify } from "@/utils/slugify";
 import { Event } from "./event.schema";
 
 /* -------------------------------------------------------------------------- */
-/*                                   Create                                   */
+/*                            Create Event                                    */
 /* -------------------------------------------------------------------------- */
 export const createEvent = async (data: Event) => {
   return prisma.event.create({
@@ -41,7 +41,7 @@ export const createEvent = async (data: Event) => {
 };
 
 /* -------------------------------------------------------------------------- */
-/*                                    Read                                    */
+/*                           find Events By Filter                            */
 /* -------------------------------------------------------------------------- */
 
 export const findEvents = async (filters?: {
@@ -68,6 +68,10 @@ export const findEvents = async (filters?: {
   });
 };
 
+/* -------------------------------------------------------------------------- */
+/*                             find Event By Id                                */
+/* -------------------------------------------------------------------------- */
+
 export const findEventById = async (id: string) => {
   return prisma.event.findUnique({
     where: { id },
@@ -79,6 +83,10 @@ export const findEventById = async (id: string) => {
     },
   });
 };
+
+/* -------------------------------------------------------------------------- */
+/*                             find Event By Slug                              */
+/* -------------------------------------------------------------------------- */
 
 export const findEventBySlug = async (slug: string) => {
   return prisma.event.findUnique({
@@ -93,7 +101,7 @@ export const findEventBySlug = async (slug: string) => {
 };
 
 /* -------------------------------------------------------------------------- */
-/*                                   Update                                   */
+/*                             update Event By Id                              */
 /* -------------------------------------------------------------------------- */
 
 export const updateEventById = async (id: string, data: Partial<Event>) => {
@@ -129,7 +137,7 @@ export const updateEventById = async (id: string, data: Partial<Event>) => {
 };
 
 /* -------------------------------------------------------------------------- */
-/*                                   Delete                                   */
+/*                             delete Event By Id                              */
 /* -------------------------------------------------------------------------- */
 
 export const deleteEventById = async (id: string) => {
@@ -139,7 +147,7 @@ export const deleteEventById = async (id: string) => {
 };
 
 /* -------------------------------------------------------------------------- */
-/*                                 Upcoming                                   */
+/*                             find Upcoming Events                            */
 /* -------------------------------------------------------------------------- */
 
 export const findUpcomingEvents = async (limit?: number) => {
@@ -154,5 +162,30 @@ export const findUpcomingEvents = async (limit?: number) => {
     },
     orderBy: { startDate: "asc" },
     ...(limit && { take: limit }),
+  });
+};
+
+/* -------------------------------------------------------------------------- */
+/*                            Find All Events                                 */
+/* -------------------------------------------------------------------------- */
+
+export const findAllEvents = async () => {
+  return prisma.event.findMany({
+    orderBy: { startDate: "asc" },
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      startDate: true,
+      endDate: true,
+      price: true,
+      venue: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+      city: true,
+    },
   });
 };

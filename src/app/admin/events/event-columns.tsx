@@ -1,7 +1,9 @@
 "use client";
 
+import Link from "next/link";
+
 import { ColumnDef } from "@tanstack/react-table";
-import { Link, MoreHorizontal } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -13,9 +15,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { VenueSummary } from "@/domains/venue/venue.schema";
+import { EventSummary } from "@/domains/event/event.schema";
 
-export const columns: ColumnDef<VenueSummary>[] = [
+export const columns: ColumnDef<EventSummary>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -43,26 +45,49 @@ export const columns: ColumnDef<VenueSummary>[] = [
     header: "Name",
   },
   {
+    accessorKey: "venueId",
+    header: "Venue",
+  },
+  {
     accessorKey: "city",
     header: "City",
   },
   {
-    accessorKey: "state",
-    header: "State",
+    accessorKey: "startDate",
+    header: "Start Date & Time",
+    cell: ({ row }) => {
+      const date = new Date(row.original.startDate);
+      return date.toLocaleString("en-IN", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    },
   },
   {
-    accessorKey: "country",
-    header: "Country",
+    accessorKey: "endDate",
+    header: "End Date & Time",
+    cell: ({ row }) => {
+      const date = new Date(row.original.endDate);
+      return date.toLocaleString("en-IN", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    },
   },
+
   {
-    accessorKey: "pincode",
-    header: "Pincode",
+    accessorKey: "price",
+    header: "Price",
   },
   {
     id: "actions",
     cell: ({ row }) => {
-      const payment = row.original;
-
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -74,12 +99,14 @@ export const columns: ColumnDef<VenueSummary>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem asChild>
-              <Link href={`/admin/venues/${row.original.id}`}>View Venue</Link>
+              <Link href={`/admin/events/${row.original.slug}`}>
+                View Event
+              </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Edit Venue</DropdownMenuItem>
+            <DropdownMenuItem>Edit Event</DropdownMenuItem>
             <DropdownMenuItem variant="destructive">
-              Delete Venue
+              Delete Event
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

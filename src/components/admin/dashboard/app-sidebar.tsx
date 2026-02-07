@@ -126,7 +126,7 @@ const data = {
   events: [
     {
       name: "All Events",
-      url: "#",
+      url: "/admin/events",
       icon: IconDatabase,
     },
     {

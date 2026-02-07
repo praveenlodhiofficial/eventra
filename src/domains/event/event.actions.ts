@@ -5,6 +5,7 @@ import { z } from "zod";
 import {
   createEvent,
   deleteEventById,
+  findAllEvents,
   findEventById,
   findEventBySlug,
   findEvents,
@@ -130,5 +131,32 @@ export const getEventsByCategoryAction = async (category: string) => {
   } catch (error) {
     console.log(error);
     return { success: false, status: 500, message: "Internal server error" };
+  }
+};
+
+/* -------------------------------------------------------------------------- */
+/*                            List All Events                                 */
+/* -------------------------------------------------------------------------- */
+
+export const listEventsAction = async () => {
+  try {
+    const events = await findAllEvents();
+
+    return {
+      success: true,
+      status: 200,
+      message: "Events fetched successfully",
+      data: events.map((event) => ({
+        ...event,
+        venue: event.venue.name,
+      })),
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      success: false,
+      status: 500,
+      message: "Internal server error",
+    };
   }
 };

@@ -1,7 +1,7 @@
+import { DataTable } from "@/components/admin/DataTable";
 import { listVenuesAction } from "@/domains/venue/venue.actions";
 
 import { columns } from "./venue-columns";
-import { VenueDataTable } from "./venue-data-table";
 
 export default async function VenuesPage() {
   const res = await listVenuesAction();
@@ -18,7 +18,7 @@ export default async function VenuesPage() {
 
   return (
     <div className="mx-auto w-full">
-      <VenueDataTable columns={columns} data={venues} />
+      <DataTable columns={columns} data={venues} />
     </div>
   );
 }

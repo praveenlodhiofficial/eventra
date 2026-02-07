@@ -17,7 +17,7 @@ export type VenueInput = z.input<typeof VenueSchema>;
 export type Venue = z.output<typeof VenueSchema>;
 
 /* -------------------------------------------------------------------------- */
-/*                            Venue DataTable Schema                          */
+/*                            Venue Summary Schema                            */
 /* -------------------------------------------------------------------------- */
 
 export const VenueSummarySchema = VenueSchema.pick({
