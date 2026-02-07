@@ -2,16 +2,19 @@
 
 import { z } from "zod";
 
-import { getAllVenues, getVenueById } from "@/domains/venue/venue.dal";
-import prisma from "@/lib/prisma";
-
+import {
+  createVenue,
+  findAllVenues,
+  findVenueById,
+  updateVenueById,
+} from "./venue.dal";
 import { VenueInput, VenueSchema } from "./venue.schema";
 
 /* -------------------------------------------------------------------------- */
-/*                            Add Venue Action                             */
+/*                            Create Venue                                    */
 /* -------------------------------------------------------------------------- */
 
-export const AddVenueAction = async (input: VenueInput) => {
+export const createVenueAction = async (input: VenueInput) => {
   try {
     const parsed = VenueSchema.safeParse(input);
 
@@ -24,16 +27,7 @@ export const AddVenueAction = async (input: VenueInput) => {
       };
     }
 
-    const venue = await prisma.venue.create({
-      data: {
-        name: parsed.data.name,
-        address: parsed.data.address,
-        city: parsed.data.city,
-        state: parsed.data.state,
-        country: parsed.data.country,
-        pincode: parsed.data.pincode,
-      },
-    });
+    const venue = await createVenue(parsed.data);
 
     return {
       success: true,
@@ -42,7 +36,7 @@ export const AddVenueAction = async (input: VenueInput) => {
       data: venue,
     };
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return {
       success: false,
       status: 500,
@@ -52,21 +46,32 @@ export const AddVenueAction = async (input: VenueInput) => {
 };
 
 /* -------------------------------------------------------------------------- */
-/*                              Get All Venues Action                         */
+/*                            Update Venue                                    */
 /* -------------------------------------------------------------------------- */
 
-export const getVenuesAction = async () => {
+export const updateVenueAction = async (id: string, input: VenueInput) => {
   try {
-    const venues = await getAllVenues();
+    const parsed = VenueSchema.safeParse(input);
+
+    if (!parsed.success) {
+      return {
+        success: false,
+        status: 400,
+        message: "Invalid venue data",
+        errors: z.treeifyError(parsed.error),
+      };
+    }
+
+    const venue = await updateVenueById(id, parsed.data);
 
     return {
       success: true,
       status: 200,
-      message: "Venues fetched successfully",
-      data: venues,
+      message: "Venue updated successfully",
+      data: venue,
     };
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return {
       success: false,
       status: 500,
@@ -76,12 +81,20 @@ export const getVenuesAction = async () => {
 };
 
 /* -------------------------------------------------------------------------- */
-/*                             Get Venue By Id Action                         */
+/*                            Get Venue                                       */
 /* -------------------------------------------------------------------------- */
 
 export const getVenueAction = async (id: string) => {
   try {
-    const venue = await getVenueById(id);
+    const venue = await findVenueById(id);
+
+    if (!venue) {
+      return {
+        success: false,
+        status: 404,
+        message: "Venue not found",
+      };
+    }
 
     return {
       success: true,
@@ -90,7 +103,31 @@ export const getVenueAction = async (id: string) => {
       data: venue,
     };
   } catch (error) {
-    console.log(error);
+    console.error(error);
+    return {
+      success: false,
+      status: 500,
+      message: "Internal server error",
+    };
+  }
+};
+
+/* -------------------------------------------------------------------------- */
+/*                            List Venues                                     */
+/* -------------------------------------------------------------------------- */
+
+export const listVenuesAction = async () => {
+  try {
+    const venues = await findAllVenues();
+
+    return {
+      success: true,
+      status: 200,
+      message: "Venues fetched successfully",
+      data: venues,
+    };
+  } catch (error) {
+    console.error(error);
     return {
       success: false,
       status: 500,

@@ -29,7 +29,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { AddVenueAction } from "@/domains/venue/venue.actions";
+import { createVenueAction } from "@/domains/venue/venue.actions";
 import { VenueInput, VenueSchema } from "@/domains/venue/venue.schema";
 
 export function AddVenueModal() {
@@ -49,7 +49,7 @@ export function AddVenueModal() {
 
   function onSubmit(data: VenueInput) {
     startTransition(async () => {
-      const result = await AddVenueAction(data);
+      const result = await createVenueAction(data);
 
       if (!result.success) {
         toast.error(result.message);

@@ -1,7 +1,8 @@
-import Image from "next/image";
+import { Image } from "@imagekit/next";
 
 import { PerformerModal } from "@/components/modals/performer/performer-modal";
 import { getPerformerAction } from "@/domains/performer/performer.actions";
+import { config } from "@/lib/config";
 
 export default async function PerformerPage({
   params,
@@ -37,9 +38,11 @@ export default async function PerformerPage({
       </div>
       <div className="relative order-first aspect-square w-full overflow-hidden rounded-xl md:order-last md:aspect-9/12 md:rounded-2xl lg:rounded-3xl">
         <Image
+          urlEndpoint={config.imagekit.url_endpoint}
           src={performer.image}
           alt={performer.name}
           fill
+          transformation={[{ width: 1200, height: 1200 }]}
           className="object-cover"
         />
       </div>

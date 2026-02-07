@@ -1,4 +1,6 @@
-import Image from "next/image";
+import { Image } from "@imagekit/next";
+
+import { config } from "@/lib/config";
 
 export const eventCards = [
   {
@@ -62,13 +64,16 @@ export function EventCard() {
             key={event.label}
             className="h-fit overflow-hidden rounded-3xl border lg:h-[65vh]"
           >
-            <Image
-              src={event.image}
-              alt={event.label}
-              width={500}
-              height={500}
-              className="aspect-10/11 h-fit object-cover lg:h-[72%]"
-            />
+            <div className="relative aspect-10/11 h-[73%] w-full">
+              <Image
+                urlEndpoint={config.imagekit.url_endpoint}
+                src={event.image}
+                alt={event.label}
+                fill
+                transformation={[{ width: 400, height: 400 }]}
+                className="h-full w-full object-cover"
+              />
+            </div>
             <div className="h-fit w-full space-y-1.5 p-3">
               {/* =========================== Event Date & Time =========================== */}
               {event.startDate &&
@@ -88,7 +93,7 @@ export function EventCard() {
                 {event.label}
               </div>
 
-              <div className="space-y-1 md:space-y-0">
+              <div className="space-y-1 md:space-y-0.5">
                 {/* =========================== Event Location =========================== */}
                 <div className="text-muted-foreground line-clamp-1 text-xs">
                   {event.location}

@@ -1,15 +1,44 @@
 "use server";
 
-import { PerformerSummaryOutput } from "@/domains/performer/performer.schema";
+import {
+  Performer,
+  PerformerSummaryOutput,
+} from "@/domains/performer/performer.schema";
 import prisma from "@/lib/prisma";
 
-export const getPerformerById = async (id: string) => {
+/* -------------------------------------------------------------------------- */
+/*                            Add Performer                                   */
+/* -------------------------------------------------------------------------- */
+
+export const createPerformer = async (data: Performer) => {
+  return prisma.performer.create({ data });
+};
+
+/* -------------------------------------------------------------------------- */
+/*                            Update Performer                                */
+/* -------------------------------------------------------------------------- */
+
+export const updatePerformerById = async (id: string, data: Performer) => {
+  return prisma.performer.update({
+    where: { id },
+    data,
+  });
+};
+
+/* -------------------------------------------------------------------------- */
+/*                            Find Performer By Id                             */
+/* -------------------------------------------------------------------------- */
+
+export const findPerformerById = async (id: string) => {
   return prisma.performer.findUnique({
     where: { id },
   });
 };
 
-export const getAllPerformers = async () => {
+/* -------------------------------------------------------------------------- */
+/*                            Find All Performers                              */
+/* -------------------------------------------------------------------------- */
+export const findAllPerformers = async () => {
   return prisma.performer.findMany({
     orderBy: {
       name: "asc",
@@ -22,6 +51,9 @@ export const getAllPerformers = async () => {
   });
 };
 
+/* -------------------------------------------------------------------------- */
+/*                           Search Performers By Name                        */
+/* -------------------------------------------------------------------------- */
 export const searchPerformersByName = async (
   query: string,
   limit = 10

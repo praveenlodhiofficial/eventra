@@ -9,7 +9,6 @@ import { UserSchema } from "../user/user.schema";
 export const SignUpSchema = UserSchema.pick({
   email: true,
   password: true,
-  role: true,
 });
 
 export type SignUpInput = z.input<typeof SignUpSchema>;

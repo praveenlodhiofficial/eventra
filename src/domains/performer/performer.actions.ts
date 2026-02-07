@@ -3,19 +3,20 @@
 import { z } from "zod";
 
 import {
-  getAllPerformers,
-  getPerformerById,
+  createPerformer,
+  findAllPerformers,
+  findPerformerById,
   searchPerformersByName,
+  updatePerformerById,
 } from "@/domains/performer/performer.dal";
-import prisma from "@/lib/prisma";
 
 import { PerformerInput, PerformerSchema } from "./performer.schema";
 
 /* -------------------------------------------------------------------------- */
-/*                            Add Performer Action                            */
+/*                            Create Performer                                */
 /* -------------------------------------------------------------------------- */
 
-export const AddPerformerAction = async (input: PerformerInput) => {
+export const createPerformerAction = async (input: PerformerInput) => {
   try {
     const parsed = PerformerSchema.safeParse(input);
 
@@ -28,13 +29,7 @@ export const AddPerformerAction = async (input: PerformerInput) => {
       };
     }
 
-    const performer = await prisma.performer.create({
-      data: {
-        name: parsed.data.name,
-        image: parsed.data.image,
-        bio: parsed.data.bio,
-      },
-    });
+    const performer = await createPerformer(parsed.data);
 
     return {
       success: true,
@@ -43,7 +38,7 @@ export const AddPerformerAction = async (input: PerformerInput) => {
       data: performer,
     };
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return {
       success: false,
       status: 500,
@@ -53,10 +48,10 @@ export const AddPerformerAction = async (input: PerformerInput) => {
 };
 
 /* -------------------------------------------------------------------------- */
-/*                            Update Performer Action                            */
+/*                            Update Performer                                */
 /* -------------------------------------------------------------------------- */
 
-export const UpdatePerformerAction = async (
+export const updatePerformerAction = async (
   id: string,
   input: PerformerInput
 ) => {
@@ -72,25 +67,48 @@ export const UpdatePerformerAction = async (
       };
     }
 
-    const performer = await prisma.performer.update({
-      where: {
-        id,
-      },
-      data: {
-        name: parsed.data.name,
-        image: parsed.data.image,
-        bio: parsed.data.bio,
-      },
-    });
+    const performer = await updatePerformerById(id, parsed.data);
 
     return {
       success: true,
-      status: 201,
+      status: 200,
       message: "Performer updated successfully",
       data: performer,
     };
   } catch (error) {
-    console.log(error);
+    console.error(error);
+    return {
+      success: false,
+      status: 500,
+      message: "Internal server error",
+    };
+  }
+};
+
+/* -------------------------------------------------------------------------- */
+/*                         Get Performer By Id Action                         */
+/* -------------------------------------------------------------------------- */
+
+export const getPerformerAction = async (id: string) => {
+  try {
+    const performer = await findPerformerById(id);
+
+    if (!performer) {
+      return {
+        success: false,
+        status: 404,
+        message: "Performer not found",
+      };
+    }
+
+    return {
+      success: true,
+      status: 200,
+      message: "Performer fetched successfully",
+      data: performer,
+    };
+  } catch (error) {
+    console.error(error);
     return {
       success: false,
       status: 500,
@@ -105,37 +123,13 @@ export const UpdatePerformerAction = async (
 
 export const getPerformersAction = async () => {
   try {
-    const performers = await getAllPerformers();
+    const performers = await findAllPerformers();
 
     return {
       success: true,
       status: 200,
       message: "Performers fetched successfully",
       data: performers,
-    };
-  } catch (error) {
-    console.log(error);
-    return {
-      success: false,
-      status: 500,
-      message: "Internal server error",
-    };
-  }
-};
-
-/* -------------------------------------------------------------------------- */
-/*                             Get Performer By Id Action                         */
-/* -------------------------------------------------------------------------- */
-
-export const getPerformerAction = async (id: string) => {
-  try {
-    const performer = await getPerformerById(id);
-
-    return {
-      success: true,
-      status: 200,
-      message: "Performer fetched successfully",
-      data: performer,
     };
   } catch (error) {
     console.log(error);

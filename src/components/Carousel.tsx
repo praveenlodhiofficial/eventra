@@ -35,7 +35,7 @@ export function Carousel({ productImageUrls }: { productImageUrls: string[] }) {
             {productImageUrls.map((item) => (
               <div
                 key={item}
-                className="h-[30vh] w-full shrink-0 md:h-[70vh] lg:h-full"
+                className="h-[30vh] w-full shrink-0 md:h-[40vh] lg:h-full"
               >
                 <Image
                   width={2000}

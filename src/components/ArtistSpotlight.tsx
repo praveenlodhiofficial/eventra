@@ -40,8 +40,8 @@ export function ArtistSpotlight({
             <Image
               src={performer.image}
               alt={performer.name}
-              width={150}
-              height={150}
+              width={200}
+              height={200}
               className="h-full w-full object-cover transition-all duration-300"
             />
           </motion.div>

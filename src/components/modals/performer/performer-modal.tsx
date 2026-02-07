@@ -31,8 +31,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { CoverImageUpload } from "@/components/upload/CoverImageUpload";
 import {
-  AddPerformerAction,
-  UpdatePerformerAction,
+  createPerformerAction,
+  updatePerformerAction,
 } from "@/domains/performer/performer.actions";
 import {
   PerformerInput,
@@ -68,8 +68,8 @@ export function PerformerModal(props: Props) {
   async function onSubmit(data: PerformerInput) {
     startTransition(async () => {
       const result = isUpdate
-        ? await UpdatePerformerAction(performer!.id, data)
-        : await AddPerformerAction(data);
+        ? await updatePerformerAction(performer!.id, data)
+        : await createPerformerAction(data);
 
       if (!result.success) {
         toast.error(result.message);

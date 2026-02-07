@@ -2,17 +2,44 @@
 
 import prisma from "@/lib/prisma";
 
-export const getVenueById = async (id: string) => {
+import { Venue } from "./venue.schema";
+
+/* -------------------------------------------------------------------------- */
+/*                               Create Venue                                 */
+/* -------------------------------------------------------------------------- */
+
+export const createVenue = async (data: Venue) => {
+  return prisma.venue.create({ data });
+};
+
+/* -------------------------------------------------------------------------- */
+/*                               Update Venue                                 */
+/* -------------------------------------------------------------------------- */
+
+export const updateVenueById = async (id: string, data: Venue) => {
+  return prisma.venue.update({
+    where: { id },
+    data,
+  });
+};
+
+/* -------------------------------------------------------------------------- */
+/*                            Find Venue By Id                                */
+/* -------------------------------------------------------------------------- */
+
+export const findVenueById = async (id: string) => {
   return prisma.venue.findUnique({
     where: { id },
   });
 };
 
-export const getAllVenues = async () => {
+/* -------------------------------------------------------------------------- */
+/*                            Find All Venues                                 */
+/* -------------------------------------------------------------------------- */
+
+export const findAllVenues = async () => {
   return prisma.venue.findMany({
-    orderBy: {
-      name: "asc",
-    },
+    orderBy: { name: "asc" },
     select: {
       id: true,
       name: true,

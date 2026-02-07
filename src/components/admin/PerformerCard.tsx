@@ -1,10 +1,8 @@
-import Image from "next/image";
 import Link from "next/link";
 
-import { IconEdit, IconTrash } from "@tabler/icons-react";
+import { Image } from "@imagekit/next";
 
-import { Button } from "../ui/button";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import { config } from "@/lib/config";
 
 interface PerformerCardProps {
   href: string;
@@ -21,10 +19,11 @@ export function PerformerCard({ href = "#", name, image }: PerformerCardProps) {
       {/* Image */}
       <div className="relative aspect-9/10 w-full">
         <Image
+          urlEndpoint={config.imagekit.url_endpoint}
           src={image}
           alt={name}
           fill
-          quality={50}
+          transformation={[{ width: 500, height: 500 }]}
           className="object-cover transition-transform duration-300"
         />
 
