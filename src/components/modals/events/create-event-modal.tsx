@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { PerformerPicker } from "@/components/modals/performer/pick-performer";
@@ -42,7 +42,7 @@ import {
 } from "@/components/ui/popover";
 import { CoverImageUpload } from "@/components/upload/CoverImageUpload";
 import { GalleryImageUpload } from "@/components/upload/GalleryImageUpload";
-import { CreateEventAction } from "@/domains/event/event.actions";
+import { createEventAction } from "@/domains/event/event.actions";
 import {
   EventCategoryEnum,
   EventInput,
@@ -50,6 +50,10 @@ import {
 } from "@/domains/event/event.schema";
 
 import { VenuePicker } from "../venue/pick-venue";
+
+/* -------------------------------------------------------------------------- */
+/*                            Event Category Labels                            */
+/* -------------------------------------------------------------------------- */
 
 export const EventCategoryLabels: Record<EventCategoryEnum, string> = {
   MUSIC: "Music",
@@ -86,13 +90,12 @@ export function CreateEventModal() {
 
     defaultValues: {
       name: "Test Event",
-      slug: "test-event",
       description: "This is a test event description",
       coverImage: "",
       category: [],
       city: "Mumbai",
       performerIds: [],
-      venueIds: [],
+      venueId: "",
       startDate: new Date(),
       endDate: new Date(),
       price: 999,
@@ -100,18 +103,37 @@ export function CreateEventModal() {
     },
   });
 
+  const { isSubmitting } = form.formState;
+
   function onSubmit(data: EventInput) {
+    // client safety checks
+    if (!data.venueId) {
+      toast.error("Please select a venue");
+      return;
+    }
+
+    if (!data.category.length) {
+      toast.error("Select at least one category");
+      return;
+    }
+
+    if (data.endDate < data.startDate) {
+      toast.error("End date must be after start date");
+      return;
+    }
+
     startTransition(async () => {
-      const result = await CreateEventAction(data);
+      const result = await createEventAction(data);
 
       if (!result.success) {
+        console.error(result);
         toast.error(result.message);
         return;
       }
 
-      toast.success(result.message);
+      toast.success("Event created");
       router.push("/events");
-      form.reset();
+      router.refresh();
     });
   }
 
@@ -160,7 +182,7 @@ export function CreateEventModal() {
                 </Field>
 
                 {/* ================================== Slug Input ================================== */}
-                <Field>
+                {/* <Field>
                   <FieldLabel>Event Slug</FieldLabel>
                   <FormField
                     control={form.control}
@@ -178,7 +200,7 @@ export function CreateEventModal() {
                       </FormItem>
                     )}
                   />
-                </Field>
+                </Field> */}
 
                 {/* ================================== Description Input ================================== */}
                 <Field>
@@ -272,19 +294,13 @@ export function CreateEventModal() {
 
                   <FormField
                     control={form.control}
-                    name="venueIds"
+                    name="venueId"
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
                           <VenuePicker
                             value={field.value}
-                            onChange={(ids) =>
-                              form.setValue("venueIds", ids, {
-                                shouldDirty: true,
-                                shouldTouch: true,
-                                shouldValidate: true,
-                              })
-                            }
+                            onChange={field.onChange}
                           />
                         </FormControl>
                         <FormMessage />
@@ -383,9 +399,14 @@ export function CreateEventModal() {
                       <FormItem>
                         <FormControl>
                           <Input
+                            type="number"
+                            min={0}
+                            value={field.value as number}
+                            onChange={(e) =>
+                              field.onChange(Number(e.target.value))
+                            }
                             placeholder="Event Price"
                             className="rounded-lg border border-zinc-200 bg-white/10 px-3 py-6 text-sm font-light shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
-                            {...field}
                           />
                         </FormControl>
                         <FormMessage />
@@ -478,7 +499,19 @@ export function CreateEventModal() {
               <DialogClose asChild>
                 <ActionButton2 variant="outline">Cancel</ActionButton2>
               </DialogClose>
-              <ActionButton2 type="submit">Save changes</ActionButton2>
+              <ActionButton2
+                type="submit"
+                disabled={form.formState.isSubmitting}
+                className="disabled:cursor-not-allowed disabled:opacity-70"
+              >
+                <div className="flex items-center gap-2">
+                  {isSubmitting ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : (
+                    "Create Event"
+                  )}
+                </div>
+              </ActionButton2>
             </DialogFooter>
           </form>
         </Form>

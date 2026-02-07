@@ -35,27 +35,37 @@ export type EventCategoryEnum = z.infer<typeof EventCategoryEnum>;
 /*                            Event Schema                                    */
 /* -------------------------------------------------------------------------- */
 
-export const EventSchema = z.object({
-  name: z.string().min(3).max(100).trim(),
-  slug: z.string().min(3).max(100).trim(),
-  description: z.string().min(3).trim(),
+export const EventSchema = z
+  .object({
+    name: z
+      .string()
+      .min(3, "Event name must be at least 3 characters")
+      .max(100, "Event name cannot exceed 100 characters")
+      .trim(),
 
-  coverImage: z.string().min(3).trim(),
+    description: z.string().min(3, "Description is too short").trim(),
 
-  imageUrls: z.array(z.string().min(3)).optional(),
+    coverImage: z.string().min(1, "Cover image is required"),
 
-  category: z.array(EventCategoryEnum).min(1),
-  city: z.string().min(3).trim(),
+    imageUrls: z.array(z.string()).optional(),
 
-  performerIds: z.array(z.string().min(1).trim()),
+    category: z.array(EventCategoryEnum).min(1, "Select at least one category"),
 
-  venueIds: z.array(z.string().min(1).trim()),
+    city: z.string().min(3, "City is required").trim(),
 
-  startDate: z.date(),
-  endDate: z.date(),
+    performerIds: z.array(z.string().trim()),
 
-  price: z.number().min(0),
-});
+    venueId: z.string().min(1, "Venue is required").trim(),
+
+    startDate: z.date(),
+    endDate: z.date(),
+
+    price: z.coerce.number().min(0, "Price cannot be negative"),
+  })
+  .refine((data) => data.endDate >= data.startDate, {
+    message: "End date must be after start date",
+    path: ["endDate"],
+  });
 
 export type EventInput = z.input<typeof EventSchema>;
 export type Event = z.output<typeof EventSchema>;
