@@ -6,70 +6,13 @@ import Image from "next/image";
 
 import { motion } from "motion/react";
 
-const artistSpotlight = [
-  {
-    label: "Arijit Singh",
-    image:
-      "https://media.insider.in/image/upload/c_crop,g_custom/v1728456259/j2ikwefju7m5cn8urevg.jpg",
-  },
-  {
-    label: "Coldplay",
-    image:
-      "https://media.insider.in/image/upload/c_crop,g_custom/v1728456259/j2ikwefju7m5cn8urevg.jpg",
-  },
-  {
-    label: "Shreya Ghoshal",
-    image:
-      "https://media.insider.in/image/upload/c_crop,g_custom/v1728456259/j2ikwefju7m5cn8urevg.jpg",
-  },
-  {
-    label: "Ed Sheeran",
-    image:
-      "https://media.insider.in/image/upload/c_crop,g_custom/v1728456259/j2ikwefju7m5cn8urevg.jpg",
-  },
-  {
-    label: "Sonu Nigam",
-    image:
-      "https://media.insider.in/image/upload/c_crop,g_custom/v1728456259/j2ikwefju7m5cn8urevg.jpg",
-  },
-  {
-    label: "Taylor Swift",
-    image:
-      "https://media.insider.in/image/upload/c_crop,g_custom/v1728456259/j2ikwefju7m5cn8urevg.jpg",
-  },
-  {
-    label: "Rihanna",
-    image:
-      "https://media.insider.in/image/upload/c_crop,g_custom/v1728456259/j2ikwefju7m5cn8urevg.jpg",
-  },
-  {
-    label: "Kumar Sanu",
-    image:
-      "https://media.insider.in/image/upload/c_crop,g_custom/v1728456259/j2ikwefju7m5cn8urevg.jpg",
-  },
-  {
-    label: "Ariana Grande",
-    image:
-      "https://media.insider.in/image/upload/c_crop,g_custom/v1728456259/j2ikwefju7m5cn8urevg.jpg",
-  },
-  {
-    label: "Justin Bieber",
-    image:
-      "https://media.insider.in/image/upload/c_crop,g_custom/v1728456259/j2ikwefju7m5cn8urevg.jpg",
-  },
-  {
-    label: "Lata Mangeshkar",
-    image:
-      "https://media.insider.in/image/upload/c_crop,g_custom/v1728456259/j2ikwefju7m5cn8urevg.jpg",
-  },
-  {
-    label: "Amitabh Bachchan",
-    image:
-      "https://media.insider.in/image/upload/c_crop,g_custom/v1728456259/j2ikwefju7m5cn8urevg.jpg",
-  },
-];
+import { PerformerSummary } from "@/domains/performer/performer.schema";
 
-export function ArtistSpotlight() {
+export function ArtistSpotlight({
+  performers,
+}: {
+  performers: PerformerSummary[];
+}) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   return (
@@ -77,9 +20,9 @@ export function ArtistSpotlight() {
       ref={scrollRef}
       className="no-scrollbar flex gap-3 overflow-x-auto overflow-y-hidden md:gap-5 md:p-2.5 lg:gap-10"
     >
-      {artistSpotlight.map((artist, index) => (
+      {performers.map((performer, index) => (
         <motion.div
-          key={artist.label}
+          key={performer.id}
           className="flex w-28 shrink-0 flex-col items-center gap-3 md:w-44"
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -95,8 +38,8 @@ export function ArtistSpotlight() {
             className="size-28 overflow-hidden rounded-full md:size-44"
           >
             <Image
-              src={artist.image}
-              alt={artist.label}
+              src={performer.image}
+              alt={performer.name}
               width={150}
               height={150}
               className="h-full w-full object-cover transition-all duration-300"
@@ -104,7 +47,7 @@ export function ArtistSpotlight() {
           </motion.div>
 
           <p className="text-center text-sm font-medium md:text-lg md:font-semibold">
-            {artist.label}
+            {performer.name}
           </p>
         </motion.div>
       ))}

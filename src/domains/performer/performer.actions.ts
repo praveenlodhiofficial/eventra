@@ -6,7 +6,7 @@ import {
   getAllPerformers,
   getPerformerById,
   searchPerformersByName,
-} from "@/data-access-layer/performer.dal";
+} from "@/domains/performer/performer.dal";
 import prisma from "@/lib/prisma";
 
 import { PerformerInput, PerformerSchema } from "./performer.schema";

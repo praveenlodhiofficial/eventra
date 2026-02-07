@@ -1,10 +1,11 @@
 "use server";
 
+import { cookies } from "next/headers";
+
 import argon2 from "argon2";
 import { z } from "zod";
 
-import { Role } from "@/generated/prisma/enums";
-import prisma from "@/lib/prisma";
+import { createUser, findUserByEmail } from "@/domains/auth/auth.dal";
 
 import {
   SignInInput,
@@ -12,7 +13,7 @@ import {
   SignUpInput,
   SignUpSchema,
 } from "./auth.schema";
-import { createSession } from "./auth.session";
+import { createSession, decrypt } from "./auth.session";
 
 /* -------------------------------------------------------------------------- */
 /*                          Sign Up Action                                    */
@@ -31,11 +32,7 @@ export const SignUpAction = async (input: SignUpInput) => {
       };
     }
 
-    const existingUser = await prisma.user.findFirst({
-      where: {
-        email: parsed.data.email,
-      },
-    });
+    const existingUser = await findUserByEmail(parsed.data.email);
 
     if (existingUser) {
       return {
@@ -45,23 +42,12 @@ export const SignUpAction = async (input: SignUpInput) => {
       };
     }
 
-    const hashedPassword = await argon2.hash(parsed.data.password, {
-      memoryCost: 192 * 1024,
-      timeCost: 5,
-      parallelism: 1,
-      type: 2,
-    });
+    const hashedPassword = await argon2.hash(parsed.data.password);
 
-    const user = await prisma.user.create({
-      data: {
-        email: parsed.data.email,
-        password: hashedPassword,
-        role: Role.USER,
-      },
-      select: {
-        email: true,
-        role: true,
-      },
+    const user = await createUser({
+      email: parsed.data.email,
+      password: hashedPassword,
+      role: "USER",
     });
 
     return {
@@ -100,17 +86,7 @@ export const SignInAction = async (input: SignInInput) => {
       };
     }
 
-    const user = await prisma.user.findFirst({
-      where: {
-        email: parsed.data.email,
-      },
-      select: {
-        id: true,
-        email: true,
-        role: true,
-        password: true,
-      },
-    });
+    const user = await findUserByEmail(parsed.data.email);
 
     if (!user) {
       return {
@@ -153,3 +129,42 @@ export const SignInAction = async (input: SignInInput) => {
     };
   }
 };
+
+/* -------------------------------------------------------------------------- */
+/*                             GET SESSION                                    */
+/* -------------------------------------------------------------------------- */
+
+export async function getSession() {
+  const cookie = (await cookies()).get("session")?.value;
+  if (!cookie) return null;
+
+  return await decrypt(cookie);
+}
+
+/* -------------------------------------------------------------------------- */
+/*                         REQUIRE SIGN IN                                    */
+/* -------------------------------------------------------------------------- */
+
+export async function requireAuth() {
+  const session = await getSession();
+
+  if (!session?.userId) {
+    throw new Error("AUTH_REQUIRED");
+  }
+
+  return session;
+}
+
+/* -------------------------------------------------------------------------- */
+/*                         REQUIRE ADMIN                                      */
+/* -------------------------------------------------------------------------- */
+
+export async function requireAdmin() {
+  const session = await requireAuth();
+
+  if (session.role !== "ADMIN") {
+    throw new Error("ADMIN_REQUIRED");
+  }
+
+  return session;
+}

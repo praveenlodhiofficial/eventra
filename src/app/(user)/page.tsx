@@ -1,12 +1,27 @@
+import Link from "next/link";
+
 import { ArtistSpotlight } from "@/components/ArtistSpotlight";
 import { Carousel } from "@/components/Carousel";
 import { EventCard } from "@/components/EventCard";
 import { EventCategories } from "@/components/EventCategories";
+import { Navbar } from "@/components/Navbar";
 import { Container } from "@/components/ui/container";
+import { getPerformersAction } from "@/domains/performer/performer.actions";
 
-export default function Home() {
+export default async function Home() {
+  const res = await getPerformersAction();
+  if (!res.success) {
+    return <div>Error fetching performers</div>;
+  }
+
+  const performers = res.data;
+
+  if (!performers || performers.length === 0) {
+    return <div>No performers found</div>;
+  }
   return (
     <div className="space-y-15 md:space-y-20">
+      <Navbar />
       {/* =============================== Event Carousel =============================== */}
       <div className="relative h-fit w-full lg:h-full">
         <Carousel
@@ -17,7 +32,7 @@ export default function Home() {
             "https://res.cloudinary.com/dwzmsvp7f/image/upload/f_auto,w_1280/c_crop%2Cg_custom%2Fv1764063100%2Ffksszvjfwmw3gy9ylhib.png",
           ]}
         />
-        <div className="absolute top-0 left-0 h-full w-full scale-101 bg-linear-to-b from-transparent via-white/5 to-white md:h-full" />
+        <div className="absolute top-0 left-0 h-full w-full bg-linear-to-b from-transparent via-white/5 to-white md:h-full" />
       </div>
 
       <Container>
@@ -35,7 +50,7 @@ export default function Home() {
             Artist Spotlight
           </h1>
           <div className="flex gap-5">
-            <ArtistSpotlight />
+            <ArtistSpotlight performers={performers} />
           </div>
         </section>
 

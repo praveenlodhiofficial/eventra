@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 
-import { getAllVenues, getVenueById } from "@/data-access-layer/venue.dal";
+import { getAllVenues, getVenueById } from "@/domains/venue/venue.dal";
 import prisma from "@/lib/prisma";
 
 import { VenueInput, VenueSchema } from "./venue.schema";

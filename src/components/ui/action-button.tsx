@@ -74,7 +74,7 @@ export function ActionButton1({
         )}
         {...props}
       >
-        <div className="relative flex w-full items-center justify-between">
+        <div className="relative flex w-full items-center justify-between gap-10">
           <TextTrack>{children}</TextTrack>
           {icon && <IconTrack icon={icon} />}
         </div>
