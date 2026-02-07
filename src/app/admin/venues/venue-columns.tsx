@@ -13,9 +13,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { VenueDataTableOutput } from "@/domains/venue/venue.schema";
+import { VenueSummary } from "@/domains/venue/venue.schema";
 
-export const columns: ColumnDef<VenueDataTableOutput>[] = [
+export const columns: ColumnDef<VenueSummary>[] = [
   {
     id: "select",
     header: ({ table }) => (

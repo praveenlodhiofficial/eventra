@@ -49,6 +49,8 @@ import {
   EventSchema,
 } from "@/domains/event/event.schema";
 
+import { VenuePicker } from "../venue/pick-venue";
+
 export const EventCategoryLabels: Record<EventCategoryEnum, string> = {
   MUSIC: "Music",
   COMEDY: "Comedy",
@@ -67,18 +69,33 @@ export function CreateEventModal() {
   const form = useForm<EventInput>({
     resolver: zodResolver(EventSchema),
 
+    // defaultValues: {
+    //   name: "",
+    //   slug: "",
+    //   description: "",
+    //   coverImage: "",
+    //   category: [],
+    //   city: "",
+    //   performerIds: [],
+    //   venueIds: [],
+    //   startDate: new Date(),
+    //   endDate: new Date(),
+    //   price: 0,
+    //   imageUrls: [],
+    // },
+
     defaultValues: {
-      name: "",
-      slug: "",
-      description: "",
+      name: "Test Event",
+      slug: "test-event",
+      description: "This is a test event description",
       coverImage: "",
       category: [],
-      city: "",
+      city: "Mumbai",
       performerIds: [],
+      venueIds: [],
       startDate: new Date(),
       endDate: new Date(),
-      price: 0,
-      venueId: "",
+      price: 999,
       imageUrls: [],
     },
   });
@@ -249,6 +266,33 @@ export function CreateEventModal() {
                   />
                 </Field>
 
+                {/* ==================================== Select Performer Input ==================================== */}
+                <Field className="mt-3">
+                  <FieldLabel>Event Venue</FieldLabel>
+
+                  <FormField
+                    control={form.control}
+                    name="venueIds"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <VenuePicker
+                            value={field.value}
+                            onChange={(ids) =>
+                              form.setValue("venueIds", ids, {
+                                shouldDirty: true,
+                                shouldTouch: true,
+                                shouldValidate: true,
+                              })
+                            }
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </Field>
+
                 {/* ==================================== City Input ==================================== */}
                 <Field>
                   <FieldLabel>Event City</FieldLabel>
@@ -390,12 +434,14 @@ export function CreateEventModal() {
                       <FormItem>
                         <FormControl>
                           <PerformerPicker
-                            value={field.value.map((id) => ({
-                              id,
-                              name: "",
-                              image: "",
-                            }))}
-                            onChange={field.onChange}
+                            value={field.value}
+                            onChange={(ids) =>
+                              form.setValue("performerIds", ids, {
+                                shouldDirty: true,
+                                shouldTouch: true,
+                                shouldValidate: true,
+                              })
+                            }
                           />
                         </FormControl>
                         <FormMessage />

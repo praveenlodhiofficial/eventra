@@ -2,7 +2,7 @@
 
 import prisma from "@/lib/prisma";
 
-import { Venue } from "./venue.schema";
+import { Venue, VenueSummary } from "./venue.schema";
 
 /* -------------------------------------------------------------------------- */
 /*                               Create Venue                                 */
@@ -48,6 +48,39 @@ export const findAllVenues = async () => {
       state: true,
       country: true,
       pincode: true,
+    },
+  });
+};
+
+/* -------------------------------------------------------------------------- */
+/*                           Search Venues By Name or City                        */
+/* -------------------------------------------------------------------------- */
+export const searchVenuesByNameOrCity = async (
+  query: string,
+  limit = 10
+): Promise<VenueSummary[]> => {
+  return prisma.venue.findMany({
+    where: {
+      OR: [
+        {
+          name: {
+            contains: query,
+            mode: "insensitive",
+          },
+        },
+        {
+          city: {
+            contains: query,
+            mode: "insensitive",
+          },
+        },
+      ],
+    },
+    take: limit,
+    select: {
+      id: true,
+      name: true,
+      city: true,
     },
   });
 };

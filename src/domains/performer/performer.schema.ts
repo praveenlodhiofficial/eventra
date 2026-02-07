@@ -24,5 +24,5 @@ export const PerformerSummarySchema = PerformerSchema.pick({
   id: z.string(),
 });
 
-export type PerformerSummary = z.input<typeof PerformerSummarySchema>;
-export type PerformerSummaryOutput = z.output<typeof PerformerSummarySchema>;
+export type PerformerSummaryInput = z.input<typeof PerformerSummarySchema>;
+export type PerformerSummary = z.output<typeof PerformerSummarySchema>;

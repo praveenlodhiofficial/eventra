@@ -49,12 +49,12 @@ export const EventSchema = z.object({
 
   performerIds: z.array(z.string().min(1).trim()),
 
+  venueIds: z.array(z.string().min(1).trim()),
+
   startDate: z.date(),
   endDate: z.date(),
 
   price: z.number().min(0),
-
-  venueId: z.string().min(1).trim(),
 });
 
 export type EventInput = z.input<typeof EventSchema>;

@@ -149,7 +149,7 @@ export const searchPerformersAction = async (query: string) => {
   if (!query || query.trim().length < 2) return [];
 
   try {
-    return await searchPerformersByName(query.trim());
+    return await searchPerformersByName(query.trim(), 10);
   } catch (error) {
     console.error(error);
     return [];

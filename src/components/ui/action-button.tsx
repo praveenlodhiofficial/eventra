@@ -69,12 +69,12 @@ export function ActionButton1({
       <Button
         size={isMobile ? "md" : size}
         className={cn(
-          "group relative flex h-14 w-full items-center justify-between overflow-hidden rounded-xl uppercase",
+          "group relative flex h-10 w-full items-center justify-center overflow-hidden rounded-lg text-xs uppercase md:h-12 md:text-sm",
           className
         )}
         {...props}
       >
-        <div className="relative flex w-full items-center justify-between gap-10">
+        <div className="relative flex w-full items-center justify-between gap-5 md:gap-10">
           <TextTrack>{children}</TextTrack>
           {icon && <IconTrack icon={icon} />}
         </div>

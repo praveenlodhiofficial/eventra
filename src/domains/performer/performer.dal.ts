@@ -2,7 +2,7 @@
 
 import {
   Performer,
-  PerformerSummaryOutput,
+  PerformerSummary,
 } from "@/domains/performer/performer.schema";
 import prisma from "@/lib/prisma";
 
@@ -57,7 +57,7 @@ export const findAllPerformers = async () => {
 export const searchPerformersByName = async (
   query: string,
   limit = 10
-): Promise<PerformerSummaryOutput[]> => {
+): Promise<PerformerSummary[]> => {
   return prisma.performer.findMany({
     where: {
       name: {

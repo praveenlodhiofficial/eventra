@@ -2,8 +2,6 @@
 
 import { useRef, useState } from "react";
 
-import Image from "next/image";
-
 import { X } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -20,24 +18,24 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { searchPerformersAction } from "@/domains/performer/performer.actions";
-import { PerformerSummary } from "@/domains/performer/performer.schema";
+import { searchVenuesAction } from "@/domains/venue/venue.actions";
+import { VenueSummary } from "@/domains/venue/venue.schema";
 
 type Props = {
   value: string[]; // source of truth
   onChange: (ids: string[]) => void;
 };
 
-export function PerformerPicker({ value, onChange }: Props) {
-  const [results, setResults] = useState<PerformerSummary[]>([]);
+export function VenuePicker({ value, onChange }: Props) {
+  const [results, setResults] = useState<VenueSummary[]>([]);
   const [open, setOpen] = useState(false);
 
   // cache for showing names/images
-  const [cache, setCache] = useState<Record<string, PerformerSummary>>({});
+  const [cache, setCache] = useState<Record<string, VenueSummary>>({});
 
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // ======================= Search Performers =======================
+  // ======================= Search Venues =======================
   const handleSearch = (search: string) => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
@@ -47,13 +45,13 @@ export function PerformerPicker({ value, onChange }: Props) {
         return;
       }
 
-      const data = await searchPerformersAction(search);
+      const data = await searchVenuesAction(search);
       setResults(data);
 
       // save to cache
       setCache((prev) => {
         const map = { ...prev };
-        data.forEach((p) => (map[p.id] = p));
+        data.forEach((v) => (map[v.id] = v));
         return map;
       });
 
@@ -61,22 +59,22 @@ export function PerformerPicker({ value, onChange }: Props) {
     }, 300);
   };
 
-  // ======================= Toggle Performer =======================
+  // ======================= Toggle Venue =======================
 
-  const togglePerformer = (performer: PerformerSummary) => {
-    if (value.includes(performer.id)) {
-      onChange(value.filter((id) => id !== performer.id));
+  const toggleVenue = (venue: VenueSummary) => {
+    if (value.includes(venue.id)) {
+      onChange(value.filter((id) => id !== venue.id));
     } else {
-      onChange([...value, performer.id]);
+      onChange([...value, venue.id]);
     }
   };
 
   return (
     <div className="space-y-3">
-      {/* ======================= Selected Performers ======================= */}
+      {/* ======================= Selected Venues ======================= */}
       <div className="flex flex-wrap gap-2">
         {value.map((id) => {
-          const performer = cache[id];
+          const venue = cache[id];
 
           return (
             <Badge
@@ -84,8 +82,7 @@ export function PerformerPicker({ value, onChange }: Props) {
               variant="secondary"
               className="flex items-center gap-3 py-1.5 pl-5 text-sm"
             >
-              {performer?.name ?? id}
-
+              {venue?.name}, {venue?.city}
               <Button
                 type="button"
                 onClick={(e) => {
@@ -104,13 +101,13 @@ export function PerformerPicker({ value, onChange }: Props) {
         })}
       </div>
 
-      {/* ======================= Search Performers ======================= */}
+      {/* ======================= Search Venues ======================= */}
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <div>
             <Command className="rounded-lg border">
               <CommandInput
-                placeholder="Search performers ..."
+                placeholder="Search venues ..."
                 onValueChange={handleSearch}
                 className="placeholder:font-light"
               />
@@ -120,31 +117,27 @@ export function PerformerPicker({ value, onChange }: Props) {
 
         {/* ======================= Search Results ======================= */}
         <PopoverContent
-          className="p-0"
+          className="w-lg p-0"
           align="start"
           side="bottom"
           onOpenAutoFocus={(e) => e.preventDefault()}
         >
           <Command>
             <CommandEmpty className="p-0 pt-2 text-center text-sm">
-              No performers found.
+              No venues found.
             </CommandEmpty>
 
             <CommandGroup className="max-h-52 overflow-y-auto">
-              {results.map((performer) => (
+              {results.map((venue) => (
                 <CommandItem
-                  key={performer.id}
-                  onSelect={() => togglePerformer(performer)}
-                  className="flex items-center gap-3"
+                  key={venue.id}
+                  onSelect={() => toggleVenue(venue)}
+                  className="flex flex-col items-start gap-1"
                 >
-                  <Image
-                    src={performer.image}
-                    alt={performer.name}
-                    width={32}
-                    height={32}
-                    className="aspect-square rounded-full object-cover"
-                  />
-                  {performer.name}
+                  <span className="text-sm font-medium">{venue.name}</span>
+                  <span className="text-muted-foreground text-sm">
+                    {venue.city}
+                  </span>
                 </CommandItem>
               ))}
             </CommandGroup>

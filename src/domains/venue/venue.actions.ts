@@ -6,6 +6,7 @@ import {
   createVenue,
   findAllVenues,
   findVenueById,
+  searchVenuesByNameOrCity,
   updateVenueById,
 } from "./venue.dal";
 import { VenueInput, VenueSchema } from "./venue.schema";
@@ -133,5 +134,20 @@ export const listVenuesAction = async () => {
       status: 500,
       message: "Internal server error",
     };
+  }
+};
+
+/* -------------------------------------------------------------------------- */
+/*                            Search Venues Action                        */
+/* -------------------------------------------------------------------------- */
+
+export const searchVenuesAction = async (query: string) => {
+  if (!query || query.trim().length < 2) return [];
+
+  try {
+    return await searchVenuesByNameOrCity(query.trim(), 10);
+  } catch (error) {
+    console.error(error);
+    return [];
   }
 };
