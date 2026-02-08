@@ -17,7 +17,8 @@
     "db:push": "prisma db push && prisma generate",
     "db:reset": "prisma migrate reset --force",
     "docker:up": "docker compose up -d",
-    "docker:down": "docker compose down"
+    "docker:down": "docker compose down",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
