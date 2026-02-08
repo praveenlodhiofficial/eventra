@@ -36,6 +36,7 @@ export type EventCategoryEnum = z.infer<typeof EventCategoryEnum>;
 /* -------------------------------------------------------------------------- */
 
 export const EventSchema = z.object({
+  id: z.string().optional(),
   name: z
     .string()
     .min(3, "Event name must be at least 3 characters")

@@ -5,6 +5,7 @@ import { z } from "zod";
 /* -------------------------------------------------------------------------- */
 
 export const PerformerSchema = z.object({
+  id: z.string().optional(),
   name: z.string().min(3).max(100).trim(),
   image: z.string().min(3).trim(),
   bio: z.string().min(3).trim(),

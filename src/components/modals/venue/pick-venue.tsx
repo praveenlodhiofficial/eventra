@@ -35,7 +35,7 @@ export function VenuePicker({ value, onChange }: Props) {
 
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // ======================= Search =======================
+  // ======================= Search Venues =======================
   const handleSearch = (search: string) => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
 

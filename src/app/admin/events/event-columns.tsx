@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 
+import { IconArrowUpRight } from "@tabler/icons-react";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 
@@ -43,6 +44,20 @@ export const columns: ColumnDef<EventSummary>[] = [
   {
     accessorKey: "name",
     header: "Name",
+    cell: ({ row }) => {
+      const slug = row.original.slug;
+      const name = row.getValue("name") as string;
+
+      return (
+        <Link
+          href={`/admin/events/${slug}`}
+          className="group relative font-medium text-blue-600"
+        >
+          <span className="truncate">{name}</span>
+          <IconArrowUpRight className="absolute -top-2.5 -right-3.5 h-3.5 w-3.5 opacity-0 transition-all group-hover:translate-x-1 group-hover:opacity-100" />
+        </Link>
+      );
+    },
   },
   {
     accessorKey: "venueId",

@@ -12,7 +12,12 @@ import {
   findUpcomingEvents,
   updateEventById,
 } from "./event.dal";
-import { EventCategoryEnum, EventInput, EventSchema } from "./event.schema";
+import {
+  Event,
+  EventCategoryEnum,
+  EventInput,
+  EventSchema,
+} from "./event.schema";
 
 /* -------------------------------------------------------------------------- */
 /*                            Create Event Action                            */
@@ -73,12 +78,9 @@ export const getEventByIdAction = async (id: string) => {
 /*                            Update Event Action                            */
 /* -------------------------------------------------------------------------- */
 
-export const updateEventAction = async (
-  id: string,
-  input: Partial<EventInput>
-) => {
+export const updateEventAction = async (id: string, input: EventInput) => {
   try {
-    const parsed = EventSchema.partial().safeParse(input);
+    const parsed = EventSchema.safeParse(input);
 
     if (!parsed.success) {
       return {
@@ -89,17 +91,40 @@ export const updateEventAction = async (
       };
     }
 
-    const exists = await findEventById(id);
-    if (!exists) {
-      return { success: false, status: 404, message: "Event not found" };
-    }
-
-    const event = await updateEventById(id, parsed.data);
+    const event = await updateEventById(id, parsed.data as Event);
 
     return {
       success: true,
       status: 200,
       message: "Event updated successfully",
+      data: event,
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      success: false,
+      status: 500,
+      message: "Internal server error",
+    };
+  }
+};
+
+/* -------------------------------------------------------------------------- */
+/*                       Get Event By Slug Action                        */
+/* -------------------------------------------------------------------------- */
+
+export const getEventBySlugAction = async (slug: string) => {
+  try {
+    const event = await findEventBySlug(slug);
+
+    if (!event) {
+      return { success: false, status: 404, message: "Event not found" };
+    }
+
+    return {
+      success: true,
+      status: 200,
+      message: "Event fetched successfully",
       data: event,
     };
   } catch (error) {

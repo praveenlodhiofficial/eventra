@@ -91,11 +91,37 @@ export const findEventById = async (id: string) => {
 export const findEventBySlug = async (slug: string) => {
   return prisma.event.findUnique({
     where: { slug },
-    include: {
-      venue: true,
-      performers: true,
-      images: true,
-      categories: true,
+    select: {
+      venue: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+      performers: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+      images: {
+        select: {
+          url: true,
+        },
+      },
+      categories: {
+        select: {
+          name: true,
+        },
+      },
+      name: true,
+      city: true,
+      startDate: true,
+      endDate: true,
+      price: true,
+      slug: true,
+      coverImage: true,
+      description: true,
     },
   });
 };
@@ -104,35 +130,10 @@ export const findEventBySlug = async (slug: string) => {
 /*                             update Event By Id                              */
 /* -------------------------------------------------------------------------- */
 
-export const updateEventById = async (id: string, data: Partial<Event>) => {
+export const updateEventById = async (id: string, data: Event) => {
   return prisma.event.update({
     where: { id },
-    data: {
-      ...(data.name && { name: data.name }),
-      ...(data.description && { description: data.description }),
-      ...(data.coverImage && { coverImage: data.coverImage }),
-      ...(data.city && { city: data.city }),
-      ...(data.startDate && { startDate: data.startDate }),
-      ...(data.endDate && { endDate: data.endDate }),
-      ...(data.price !== undefined && { price: data.price }),
-
-      ...(data.venueId && {
-        venue: { connect: { id: data.venueId } },
-      }),
-
-      ...(data.imageUrls && {
-        images: {
-          deleteMany: {},
-          create: data.imageUrls.map((url) => ({ url })),
-        },
-      }),
-    },
-    include: {
-      venue: true,
-      performers: true,
-      images: true,
-      categories: true,
-    },
+    data,
   });
 };
 

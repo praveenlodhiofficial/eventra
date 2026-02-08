@@ -1,6 +1,6 @@
 "use client";
 
-import { startTransition } from "react";
+import { startTransition, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { useRouter } from "next/navigation";
@@ -69,36 +69,21 @@ export const EventCategoryLabels: Record<EventCategoryEnum, string> = {
 
 export function CreateEventModal() {
   const router = useRouter();
-
+  const [isOpen, setIsOpen] = useState(false);
   const form = useForm<EventInput>({
     resolver: zodResolver(EventSchema),
 
-    // defaultValues: {
-    //   name: "",
-    //   slug: "",
-    //   description: "",
-    //   coverImage: "",
-    //   category: [],
-    //   city: "",
-    //   performerIds: [],
-    //   venueIds: [],
-    //   startDate: new Date(),
-    //   endDate: new Date(),
-    //   price: 0,
-    //   imageUrls: [],
-    // },
-
     defaultValues: {
-      name: "Test Event",
-      description: "This is a test event description",
+      name: "",
+      description: "",
       coverImage: "",
       category: [],
-      city: "Mumbai",
+      city: "",
       performerIds: [],
       venueId: "",
       startDate: new Date(),
       endDate: new Date(),
-      price: 999,
+      price: 0,
       imageUrls: [],
     },
   });
@@ -106,7 +91,6 @@ export function CreateEventModal() {
   const { isSubmitting } = form.formState;
 
   function onSubmit(data: EventInput) {
-    // client safety checks
     if (!data.venueId) {
       toast.error("Please select a venue");
       return;
@@ -131,14 +115,15 @@ export function CreateEventModal() {
         return;
       }
 
-      toast.success("Event created");
-      router.push("/events");
-      router.refresh();
+      toast.success(result.message);
+      router.push(`/admin/events/${result.data?.slug}`);
+      form.reset();
+      setIsOpen(false);
     });
   }
 
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button variant="outline">Create Event</Button>
       </DialogTrigger>

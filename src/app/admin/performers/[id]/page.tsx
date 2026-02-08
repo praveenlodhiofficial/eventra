@@ -14,13 +14,21 @@ export default async function PerformerPage({
   const res = await getPerformerAction(id);
 
   if (!res.success) {
-    return <div>Error fetching performer</div>;
+    return (
+      <div className="flex h-[calc(100vh-10rem)] items-center justify-center text-xl font-medium">
+        Error fetching performer
+      </div>
+    );
   }
 
   const performer = res.data;
 
   if (!performer) {
-    return <div>Performer not found</div>;
+    return (
+      <div className="flex h-[calc(100vh-10rem)] items-center justify-center text-xl font-medium">
+        No performer found
+      </div>
+    );
   }
 
   return (

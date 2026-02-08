@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { ActionButton2 } from "@/components/ui/action-button";
@@ -35,16 +36,10 @@ import {
   updatePerformerAction,
 } from "@/domains/performer/performer.actions";
 import {
+  Performer,
   PerformerInput,
   PerformerSchema,
 } from "@/domains/performer/performer.schema";
-
-type Performer = {
-  id: string;
-  name: string;
-  image: string;
-  bio: string;
-};
 
 type Props = { type: "create" } | { type: "update"; performer: Performer };
 
@@ -54,30 +49,37 @@ export function PerformerModal(props: Props) {
   const isUpdate = props.type === "update";
   const performer = isUpdate
     ? props.performer
-    : { id: "", name: "", image: "", bio: "" };
+    : { name: "", image: "", bio: "" };
+
+  if (!performer) {
+    throw new Error("Performer not found");
+  }
 
   const form = useForm<PerformerInput>({
     resolver: zodResolver(PerformerSchema),
     defaultValues: {
-      name: performer?.name ?? "",
-      image: performer?.image ?? "",
-      bio: performer?.bio ?? "",
+      id: performer.id,
+      name: performer.name,
+      image: performer.image,
+      bio: performer.bio,
     },
   });
+
+  const { isSubmitting } = form.formState;
 
   async function onSubmit(data: PerformerInput) {
     startTransition(async () => {
       const result = isUpdate
-        ? await updatePerformerAction(performer!.id, data)
+        ? await updatePerformerAction(performer.id!, data)
         : await createPerformerAction(data);
 
-      if (!result.success) {
+      if (!result.success || !result.data) {
         toast.error(result.message);
         return;
       }
 
       toast.success(result.message);
-      router.push(`/admin/performers/${result.data?.id}`);
+      router.push(`/admin/performers/${result.data.id}`);
       form.reset();
       setIsOpen(false);
     });
@@ -99,10 +101,11 @@ export function PerformerModal(props: Props) {
           >
             <DialogHeader className="bg-background sticky top-0 z-5 items-center justify-center">
               <DialogTitle className="border-primary border-y-2 px-5 py-1 text-xl font-semibold uppercase">
-                {isUpdate ? "Update Performer" : "Add Performer"}
+                {isUpdate ? "Update Performer Details" : "Add Performer"}
               </DialogTitle>
               <DialogDescription className="sr-only">
-                Performer form
+                Provide the required information to add a new performer to the
+                platform.
               </DialogDescription>
             </DialogHeader>
 
@@ -180,13 +183,25 @@ export function PerformerModal(props: Props) {
               </Field>
             </FieldGroup>
 
-            <DialogFooter className="bg-background sticky bottom-0 grid grid-cols-2 gap-5">
+            <DialogFooter className="bg-background sticky bottom-0 z-5 grid grid-cols-2 gap-5">
               <DialogClose asChild>
                 <ActionButton2 variant="outline">Cancel</ActionButton2>
               </DialogClose>
 
-              <ActionButton2 type="submit">
-                {isUpdate ? "Update Performer" : "Add Performer"}
+              <ActionButton2
+                type="submit"
+                disabled={form.formState.isSubmitting}
+                className="disabled:cursor-not-allowed disabled:opacity-70"
+              >
+                <div className="flex items-center gap-2">
+                  {isSubmitting ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : isUpdate ? (
+                    "Update Performer"
+                  ) : (
+                    "Add Performer"
+                  )}
+                </div>
               </ActionButton2>
             </DialogFooter>
           </form>
