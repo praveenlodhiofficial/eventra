@@ -1,20 +1,26 @@
 "use server";
 
+import { format } from "node:path";
 import { z } from "zod";
 
 import {
   createEvent,
+  createEventCategory,
   deleteEventById,
+  findAllEventCategories,
   findAllEvents,
   findEventById,
   findEventBySlug,
   findEvents,
   findUpcomingEvents,
   updateEventById,
+  updateEventCategory,
 } from "./event.dal";
 import {
   Event,
   EventCategoryEnum,
+  EventCategoryInput,
+  EventCategorySchema,
   EventInput,
   EventSchema,
 } from "./event.schema";
@@ -45,7 +51,7 @@ export const createEventAction = async (input: EventInput) => {
       data: event,
     };
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return { success: false, status: 500, message: "Internal server error" };
   }
 };
@@ -69,7 +75,7 @@ export const getEventByIdAction = async (id: string) => {
       data: event,
     };
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return { success: false, status: 500, message: "Internal server error" };
   }
 };
@@ -100,7 +106,7 @@ export const updateEventAction = async (id: string, input: EventInput) => {
       data: event,
     };
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return {
       success: false,
       status: 500,
@@ -183,5 +189,90 @@ export const listEventsAction = async () => {
       status: 500,
       message: "Internal server error",
     };
+  }
+};
+
+/* -------------------------------------------------------------------------- */
+/*                       Create Event Category Action                         */
+/* -------------------------------------------------------------------------- */
+
+export const createEventCategoryAction = async (input: EventCategoryInput) => {
+  try {
+    const parsed = EventCategorySchema.safeParse(input);
+
+    if (!parsed.success) {
+      return {
+        success: false,
+        status: 400,
+        message: "Invalid event category data",
+        errors: z.treeifyError(parsed.error),
+      };
+    }
+
+    const eventCategory = await createEventCategory(parsed.data);
+
+    return {
+      success: true,
+      status: 201,
+      message: "Event category created successfully",
+      data: eventCategory,
+    };
+  } catch (error) {
+    console.error(error);
+    return { success: false, status: 500, message: "Internal server error" };
+  }
+};
+
+/* -------------------------------------------------------------------------- */
+/*                        Update Event Category Action                        */
+/* -------------------------------------------------------------------------- */
+
+export const updateEventCategoryAction = async (
+  id: string,
+  input: EventCategoryInput
+) => {
+  try {
+    const parsed = EventCategorySchema.safeParse(input);
+
+    if (!parsed.success) {
+      return {
+        success: false,
+        status: 400,
+        message: "Invalid event category data",
+        errors: z.treeifyError(parsed.error),
+      };
+    }
+
+    const eventCategory = await updateEventCategory(id, parsed.data);
+
+    return {
+      success: true,
+      status: 201,
+      message: "Event category updated successfully",
+      data: eventCategory,
+    };
+  } catch (error) {
+    console.error(error);
+    return { success: false, status: 500, message: "Internal server error" };
+  }
+};
+
+/* -------------------------------------------------------------------------- */
+/*                      List All Event Categories Action                      */
+/* -------------------------------------------------------------------------- */
+
+export const listEventCategoriesAction = async () => {
+  try {
+    const eventCategories = await findAllEventCategories();
+
+    return {
+      success: true,
+      status: 200,
+      message: "Event categories fetched successfully",
+      data: eventCategories,
+    };
+  } catch (error) {
+    console.error(error);
+    return { success: false, status: 500, message: "Internal server error" };
   }
 };

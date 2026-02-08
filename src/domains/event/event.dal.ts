@@ -2,7 +2,7 @@ import { Prisma } from "@/generated/prisma/client";
 import prisma from "@/lib/prisma";
 import { slugify } from "@/utils/slugify";
 
-import { Event } from "./event.schema";
+import { Event, EventCategory } from "./event.schema";
 
 /* -------------------------------------------------------------------------- */
 /*                            Create Event                                    */
@@ -187,6 +187,43 @@ export const findAllEvents = async () => {
         },
       },
       city: true,
+    },
+  });
+};
+
+/* -------------------------------------------------------------------------- */
+/*                           create Event Category                            */
+/* -------------------------------------------------------------------------- */
+
+export const createEventCategory = async (data: EventCategory) => {
+  return prisma.eventCategory.create({
+    data: {
+      name: data.name,
+    },
+  });
+};
+
+/* -------------------------------------------------------------------------- */
+/*                           update Event Category                            */
+/* -------------------------------------------------------------------------- */
+
+export const updateEventCategory = async (id: string, data: EventCategory) => {
+  return prisma.eventCategory.update({
+    where: { id },
+    data,
+  });
+};
+
+/* -------------------------------------------------------------------------- */
+/*                           find All Event Categories                            */
+/* -------------------------------------------------------------------------- */
+
+export const findAllEventCategories = async () => {
+  return prisma.eventCategory.findMany({
+    orderBy: { name: "asc" },
+    select: {
+      id: true,
+      name: true,
     },
   });
 };

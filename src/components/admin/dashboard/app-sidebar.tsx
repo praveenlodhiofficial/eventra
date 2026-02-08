@@ -8,6 +8,7 @@ import {
   IconBuilding,
   IconCalendarEvent,
   IconCamera,
+  IconCategory,
   IconClockHour7,
   IconDashboard,
   IconDatabase,
@@ -46,6 +47,11 @@ const data = {
       title: "Dashboard",
       url: "/admin",
       icon: IconDashboard,
+    },
+    {
+      title: "Event Categories",
+      url: "/admin/event-categories",
+      icon: IconCategory,
     },
     {
       title: "Venues",
