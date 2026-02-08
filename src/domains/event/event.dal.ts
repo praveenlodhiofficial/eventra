@@ -8,6 +8,7 @@ import { Event } from "./event.schema";
 /* -------------------------------------------------------------------------- */
 /*                            Create Event                                    */
 /* -------------------------------------------------------------------------- */
+
 export const createEvent = async (data: Event) => {
   return prisma.event.create({
     data: {
@@ -20,8 +21,9 @@ export const createEvent = async (data: Event) => {
       endDate: data.endDate,
       price: new Prisma.Decimal(data.price),
 
+      // ✅ connect by ids
       categories: {
-        connect: data.category.map((name) => ({ name })),
+        connect: data.categoryIds.map((id) => ({ id })),
       },
 
       venue: {
@@ -32,9 +34,10 @@ export const createEvent = async (data: Event) => {
         connect: data.performerIds.map((id) => ({ id })),
       },
 
-      images: data.imageUrls
+      // ✅ create image records
+      images: data.images?.length
         ? {
-            create: data.imageUrls.map((url) => ({ url })),
+            create: data.images.map((url) => ({ url })),
           }
         : undefined,
     },
@@ -42,7 +45,45 @@ export const createEvent = async (data: Event) => {
 };
 
 /* -------------------------------------------------------------------------- */
-/*                           find Events By Filter                            */
+/*                                Update Event                               */
+/* -------------------------------------------------------------------------- */
+
+export const updateEventById = async (id: string, data: Event) => {
+  return prisma.event.update({
+    where: { id },
+    data: {
+      name: data.name,
+      slug: slugify(data.name),
+      description: data.description,
+      coverImage: data.coverImage,
+      city: data.city,
+      startDate: data.startDate,
+      endDate: data.endDate,
+      price: new Prisma.Decimal(data.price),
+
+      categories: {
+        set: data.categoryIds.map((id) => ({ id })),
+      },
+
+      venue: {
+        connect: { id: data.venueId },
+      },
+
+      performers: {
+        set: data.performerIds.map((id) => ({ id })),
+      },
+
+      // replace images
+      images: {
+        deleteMany: {},
+        create: data.images?.map((url) => ({ url })) ?? [],
+      },
+    },
+  });
+};
+
+/* -------------------------------------------------------------------------- */
+/*                           Find Events By Filter                            */
 /* -------------------------------------------------------------------------- */
 
 export const findEvents = async (filters?: {
@@ -98,18 +139,7 @@ export const findEvent = async ({ id, slug }: FindEventParams) => {
 };
 
 /* -------------------------------------------------------------------------- */
-/*                             update Event By Id                              */
-/* -------------------------------------------------------------------------- */
-
-export const updateEventById = async (id: string, data: Event) => {
-  return prisma.event.update({
-    where: { id },
-    data,
-  });
-};
-
-/* -------------------------------------------------------------------------- */
-/*                             delete Event By Id                              */
+/*                             Delete Event By Id                              */
 /* -------------------------------------------------------------------------- */
 
 export const deleteEventById = async (id: string) => {
@@ -119,7 +149,7 @@ export const deleteEventById = async (id: string) => {
 };
 
 /* -------------------------------------------------------------------------- */
-/*                             find Upcoming Events                            */
+/*                             Find Upcoming Events                            */
 /* -------------------------------------------------------------------------- */
 
 export const findUpcomingEvents = async (limit?: number) => {

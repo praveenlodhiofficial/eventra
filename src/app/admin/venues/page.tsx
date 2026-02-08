@@ -28,7 +28,11 @@ export default async function VenuesPage() {
 
   return (
     <div className="mx-auto w-full">
-      <DataTable columns={columns} data={venues} />
+      <DataTable
+        columns={columns}
+        data={venues}
+        toolbarAction={<AddVenueModal />}
+      />
     </div>
   );
 }

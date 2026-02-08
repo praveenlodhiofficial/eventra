@@ -42,49 +42,38 @@ import {
 } from "@/components/ui/popover";
 import { CoverImageUpload } from "@/components/upload/CoverImageUpload";
 import { GalleryImageUpload } from "@/components/upload/GalleryImageUpload";
+import { EventCategory } from "@/domains/event-categories/event-categories.schema";
 import { createEventAction } from "@/domains/event/event.actions";
-import {
-  EventCategoryEnum,
-  EventInput,
-  EventSchema,
-} from "@/domains/event/event.schema";
+import { EventInput, EventSchema } from "@/domains/event/event.schema";
 
 import { VenuePicker } from "../venue/pick-venue";
 
 /* -------------------------------------------------------------------------- */
-/*                            Event Category Labels                            */
+/*                              Types                                          */
 /* -------------------------------------------------------------------------- */
 
-export const EventCategoryLabels: Record<EventCategoryEnum, string> = {
-  MUSIC: "Music",
-  COMEDY: "Comedy",
-  SPORTS: "Sports",
-  THEATRE: "Theatre",
-  CONFERENCE: "Conference",
-  FITNESS: "Fitness",
-  EXHIBITION: "Exhibition",
-  FEST: "Fest",
-  SOCIAL: "Social",
-};
-
-export function CreateEventModal() {
+export function CreateEventModal({
+  categories,
+}: {
+  categories: EventCategory[];
+}) {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
+
   const form = useForm<EventInput>({
     resolver: zodResolver(EventSchema),
-
     defaultValues: {
       name: "",
       description: "",
       coverImage: "",
-      category: [],
+      categoryIds: [],
       city: "",
       performerIds: [],
       venueId: "",
       startDate: new Date(),
       endDate: new Date(),
       price: 0,
-      imageUrls: [],
+      images: [],
     },
   });
 
@@ -96,7 +85,7 @@ export function CreateEventModal() {
       return;
     }
 
-    if (!data.category.length) {
+    if (!data.categoryIds.length) {
       toast.error("Select at least one category");
       return;
     }
@@ -133,6 +122,7 @@ export function CreateEventModal() {
           <span className="ml-2">Create Event</span>
         </ActionButton2>
       </DialogTrigger>
+
       <DialogContent className="h-[calc(100vh-2rem)] md:h-[calc(100vh-7rem)] md:max-w-3xl lg:max-w-5xl lg:rounded-3xl">
         <Form {...form}>
           <form
@@ -151,7 +141,7 @@ export function CreateEventModal() {
 
             <FieldGroup className="grid md:grid-cols-[2fr_1fr]">
               <FieldGroup>
-                {/* ================================== Name Input ================================== */}
+                {/* Name */}
                 <Field>
                   <FieldLabel>Event Name</FieldLabel>
                   <FormField
@@ -172,28 +162,7 @@ export function CreateEventModal() {
                   />
                 </Field>
 
-                {/* ================================== Slug Input ================================== */}
-                {/* <Field>
-                  <FieldLabel>Event Slug</FieldLabel>
-                  <FormField
-                    control={form.control}
-                    name="slug"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input
-                            placeholder="Event Slug"
-                            className="rounded-lg border border-zinc-200 bg-white/10 px-3 py-6 text-sm font-light shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </Field> */}
-
-                {/* ================================== Description Input ================================== */}
+                {/* Description */}
                 <Field>
                   <FieldLabel>Event Description</FieldLabel>
                   <FormField
@@ -205,7 +174,6 @@ export function CreateEventModal() {
                           <textarea
                             placeholder="Event Description"
                             rows={5}
-                            aria-multiline="true"
                             className="rounded-lg border border-zinc-200 bg-white/10 p-3 text-sm font-light shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
                             {...field}
                           />
@@ -216,26 +184,21 @@ export function CreateEventModal() {
                   />
                 </Field>
 
-                {/* ================================== Category Input ================================== */}
+                {/* Categories */}
                 <Field>
                   <FieldLabel>Event Category</FieldLabel>
 
                   <FormField
                     control={form.control}
-                    name="category"
+                    name="categoryIds"
                     render={({ field }) => {
-                      const selected: EventCategoryEnum[] = field.value ?? [];
+                      const selected = field.value ?? [];
 
-                      const toggleCategory = (
-                        category: EventCategoryEnum,
-                        checked: boolean
-                      ) => {
+                      const toggle = (id: string, checked: boolean) => {
                         if (checked) {
-                          field.onChange([...selected, category]);
+                          field.onChange([...selected, id]);
                         } else {
-                          field.onChange(
-                            selected.filter((c) => c !== category)
-                          );
+                          field.onChange(selected.filter((c) => c !== id));
                         }
                       };
 
@@ -243,28 +206,27 @@ export function CreateEventModal() {
                         <FormItem>
                           <FormControl>
                             <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
-                              {EventCategoryEnum.options.map((category) => {
-                                const isChecked = selected.includes(category);
+                              {categories.map((category) => {
+                                const isChecked = selected.includes(
+                                  category.id!
+                                );
 
                                 return (
                                   <FormItem
-                                    key={category}
+                                    key={category.id}
                                     className="flex items-center space-y-0 space-x-3 rounded-md border p-3"
                                   >
                                     <FormControl>
                                       <Checkbox
                                         checked={isChecked}
                                         onCheckedChange={(checked) =>
-                                          toggleCategory(
-                                            category,
-                                            Boolean(checked)
-                                          )
+                                          toggle(category.id!, Boolean(checked))
                                         }
                                       />
                                     </FormControl>
 
                                     <FormLabel className="cursor-pointer font-normal">
-                                      {EventCategoryLabels[category]}
+                                      {category.name}
                                     </FormLabel>
                                   </FormItem>
                                 );
@@ -279,7 +241,7 @@ export function CreateEventModal() {
                   />
                 </Field>
 
-                {/* ==================================== Select Venue Input ==================================== */}
+                {/* Venue */}
                 <Field className="mt-3">
                   <FieldLabel>Event Venue</FieldLabel>
 
@@ -300,7 +262,7 @@ export function CreateEventModal() {
                   />
                 </Field>
 
-                {/* ==================================== City Input ==================================== */}
+                {/* City */}
                 <Field>
                   <FieldLabel>Event City</FieldLabel>
                   <FormField
@@ -321,7 +283,7 @@ export function CreateEventModal() {
                   />
                 </Field>
 
-                {/* ==================================== Start Date and End Date Input ==================================== */}
+                {/* Dates */}
                 <FieldGroup className="grid md:grid-cols-2">
                   {[
                     {
@@ -332,6 +294,7 @@ export function CreateEventModal() {
                     {
                       name: "endDate",
                       label: "Event End Date",
+                      placeholder: "Select end date",
                     },
                   ].map((fieldData) => (
                     <Field key={fieldData.name}>
@@ -380,7 +343,7 @@ export function CreateEventModal() {
                   ))}
                 </FieldGroup>
 
-                {/* ==================================== Price Input ==================================== */}
+                {/* Price */}
                 <Field>
                   <FieldLabel>Event Price</FieldLabel>
                   <FormField
@@ -408,7 +371,7 @@ export function CreateEventModal() {
               </FieldGroup>
 
               <FieldGroup>
-                {/* ================================== Cover Image Upload ================================== */}
+                {/* Cover */}
                 <Field>
                   <FieldLabel>Event Cover Image</FieldLabel>
                   <FormField
@@ -435,7 +398,7 @@ export function CreateEventModal() {
                   />
                 </Field>
 
-                {/* ==================================== Select Performer Input ==================================== */}
+                {/* Performers */}
                 <Field>
                   <FieldLabel>Event Performers</FieldLabel>
 
@@ -462,20 +425,25 @@ export function CreateEventModal() {
                   />
                 </Field>
 
-                {/* ================================== Gallery Images Upload ================================== */}
+                {/* Gallery */}
                 <Field>
                   <FieldLabel>Event Gallery Images</FieldLabel>
                   <FormField
                     control={form.control}
-                    name="imageUrls"
+                    name="images"
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
                           <GalleryImageUpload
                             folder="eventra/events"
-                            onUploaded={(url) =>
-                              field.onChange([...(field.value || []), url])
-                            }
+                            onUploaded={(url) => {
+                              const current = form.getValues("images") ?? [];
+                              form.setValue("images", [...current, url], {
+                                shouldDirty: true,
+                                shouldTouch: true,
+                                shouldValidate: true,
+                              });
+                            }}
                           />
                         </FormControl>
                         <FormMessage />
@@ -490,6 +458,7 @@ export function CreateEventModal() {
               <DialogClose asChild>
                 <ActionButton2 variant="outline">Cancel</ActionButton2>
               </DialogClose>
+
               <ActionButton2
                 type="submit"
                 disabled={form.formState.isSubmitting}

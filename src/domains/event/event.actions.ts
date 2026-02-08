@@ -10,7 +10,7 @@ import {
   findEvent,
   updateEventById,
 } from "./event.dal";
-import { Event, EventInput, EventSchema } from "./event.schema";
+import { EventInput, EventSchema } from "./event.schema";
 
 /* -------------------------------------------------------------------------- */
 /*                            Create Event Action                            */
@@ -60,7 +60,7 @@ export const updateEventAction = async (id: string, input: EventInput) => {
       };
     }
 
-    const event = await updateEventById(id, parsed.data as Event);
+    const event = await updateEventById(id, parsed.data);
 
     return {
       success: true,

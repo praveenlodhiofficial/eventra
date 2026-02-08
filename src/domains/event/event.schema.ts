@@ -13,25 +13,6 @@ export type EventImageInput = z.input<typeof EventImageSchema>;
 export type EventImage = z.output<typeof EventImageSchema>;
 
 /* -------------------------------------------------------------------------- */
-/*                 Approved Event Categories Enum Constants                   */
-/* -------------------------------------------------------------------------- */
-
-export const ApprovedEventCategories = [
-  "MUSIC",
-  "COMEDY",
-  "SPORTS",
-  "THEATRE",
-  "CONFERENCE",
-  "FITNESS",
-  "EXHIBITION",
-  "FEST",
-  "SOCIAL",
-] as const;
-
-export const EventCategoryEnum = z.enum(ApprovedEventCategories);
-export type EventCategoryEnum = z.infer<typeof EventCategoryEnum>;
-
-/* -------------------------------------------------------------------------- */
 /*                            Event Schema                                    */
 /* -------------------------------------------------------------------------- */
 
@@ -45,10 +26,12 @@ export const EventSchema = z.object({
 
   description: z.string().min(3, "Description is too short").trim(),
   coverImage: z.string().min(1, "Cover image is required"),
-  imageUrls: z.array(z.string()).optional(),
-  category: z.array(EventCategoryEnum).min(1, "Select at least one category"),
-  city: z.string().min(3, "City is required").trim(),
-  performerIds: z.array(z.string().trim()),
+  images: z.array(z.string()).optional(),
+  categoryIds: z.array(z.string()).min(1, "Select at least one category"),
+  city: z.string().min(1, "City is required").trim(),
+  performerIds: z
+    .array(z.string().trim())
+    .min(1, "Select at least one performer"),
   venueId: z.string().min(1, "Venue is required").trim(),
   startDate: z.date(),
   endDate: z.date(),

@@ -10,8 +10,6 @@ import {
   VisibilityState,
 } from "@tanstack/react-table";
 
-import { CreateEventModal } from "@/components/modals/events/create-event-modal";
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -28,14 +26,18 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import { ActionButton2 } from "../ui/action-button";
+
 interface EventDataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  toolbarAction?: React.ReactNode;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  toolbarAction,
 }: EventDataTableProps<TData, TValue>) {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -62,14 +64,14 @@ export function DataTable<TData, TValue>({
           onChange={(event) =>
             table.getColumn("name")?.setFilterValue(event.target.value)
           }
-          className="max-w-sm"
+          className="max-w-sm rounded-lg border border-zinc-500 bg-white/10 px-3 py-6 text-sm font-light shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
         />
         <div className="flex w-full gap-3">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="ml-auto">
+              <ActionButton2 variant="outline" className="ml-auto w-fit">
                 Columns
-              </Button>
+              </ActionButton2>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               {table
@@ -91,7 +93,7 @@ export function DataTable<TData, TValue>({
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
-          <CreateEventModal />
+          {toolbarAction}
         </div>
       </div>
       <div className="overflow-hidden rounded-md border">
