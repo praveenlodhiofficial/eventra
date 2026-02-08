@@ -1,6 +1,5 @@
-import { EventCategoryModal } from "@/components/modals/events/event-category-modal";
-import { Container } from "@/components/ui/container";
-import { listEventCategoriesAction } from "@/domains/event/event.actions";
+import { EventCategoriesModal } from "@/components/modals/event-categories/event-categories-modal";
+import { listEventCategoriesAction } from "@/domains/event-categories/event-categories.actions";
 
 export default async function AdminEventCategoriesPage() {
   const res = await listEventCategoriesAction();
@@ -19,16 +18,16 @@ export default async function AdminEventCategoriesPage() {
     return (
       <div className="flex h-[calc(100vh-10rem)] flex-col items-center justify-center gap-4 text-xl font-medium">
         <p>No event categories found</p>
-        <EventCategoryModal type="create" />
+        <EventCategoriesModal type="create" />
       </div>
     );
   }
 
   return (
-    <Container className="md:space-y-5">
+    <div className="md:space-y-5">
       <div className="flex items-center justify-between">
         <h1 className="text-lg font-medium md:text-3xl">Event Categories</h1>
-        <EventCategoryModal type="create" />
+        <EventCategoriesModal type="create" />
       </div>
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-6">
         {eventCategories.map((eventCategory) => (
@@ -40,6 +39,6 @@ export default async function AdminEventCategoriesPage() {
           </div>
         ))}
       </div>
-    </Container>
+    </div>
   );
 }

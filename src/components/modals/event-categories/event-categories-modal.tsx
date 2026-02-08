@@ -6,11 +6,10 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CircleFadingPlusIcon, Loader2, PlusIcon } from "lucide-react";
+import { CircleFadingPlusIcon, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { ActionButton2 } from "@/components/ui/action-button";
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogClose,
@@ -33,18 +32,18 @@ import { Input } from "@/components/ui/input";
 import {
   createEventCategoryAction,
   updateEventCategoryAction,
-} from "@/domains/event/event.actions";
+} from "@/domains/event-categories/event-categories.actions";
 import {
   EventCategory,
   EventCategoryInput,
   EventCategorySchema,
-} from "@/domains/event/event.schema";
+} from "@/domains/event-categories/event-categories.schema";
 
 type Props =
   | { type: "create" }
   | { type: "update"; eventCategory: EventCategory };
 
-export function EventCategoryModal(props: Props) {
+export function EventCategoriesModal(props: Props) {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -143,12 +142,14 @@ export function EventCategoryModal(props: Props) {
 
             <DialogFooter className="bg-background sticky bottom-0 z-5 grid grid-cols-2 gap-3">
               <DialogClose asChild>
-                <ActionButton2 variant="outline">Cancel</ActionButton2>
+                <ActionButton2 variant="outline" className="w-full">
+                  Cancel
+                </ActionButton2>
               </DialogClose>
               <ActionButton2
                 type="submit"
                 disabled={form.formState.isSubmitting}
-                className="disabled:cursor-not-allowed disabled:opacity-70"
+                className="w-full disabled:cursor-not-allowed disabled:opacity-70"
               >
                 <div className="flex items-center gap-2">
                   {isSubmitting ? (
