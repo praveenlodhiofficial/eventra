@@ -6,11 +6,11 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { CircleFadingPlusIcon } from "lucide-react";
 import { toast } from "sonner";
 
 import { MapBox } from "@/components/MapBox";
 import { ActionButton2 } from "@/components/ui/action-button";
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogClose,
@@ -66,7 +66,13 @@ export function AddVenueModal() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">Add Venue</Button>
+        <ActionButton2
+          variant="outline"
+          className="flex w-fit cursor-pointer items-center gap-2"
+        >
+          <CircleFadingPlusIcon className="size-3.5 group-hover:animate-pulse" />
+          <span className="ml-2">Add Venue</span>
+        </ActionButton2>
       </DialogTrigger>
 
       <DialogContent className="h-[calc(100vh-7rem)] md:max-w-3xl lg:max-w-5xl lg:rounded-3xl">

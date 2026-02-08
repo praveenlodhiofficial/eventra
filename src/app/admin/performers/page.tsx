@@ -6,13 +6,22 @@ export default async function AdminPerformersPage() {
   const res = await getPerformersAction();
 
   if (!res.success) {
-    return <div>Error fetching performers data</div>;
+    return (
+      <div className="flex h-[calc(100vh-10rem)] items-center justify-center text-xl font-medium">
+        Error fetching performers data
+      </div>
+    );
   }
 
   const performers = res.data;
 
   if (!performers || performers.length === 0) {
-    return <div>No performers found</div>;
+    return (
+      <div className="flex h-[calc(100vh-10rem)] flex-col items-center justify-center gap-4 text-xl font-medium">
+        <p>No performers found</p>
+        <PerformerModal type="create" />
+      </div>
+    );
   }
 
   return (
@@ -24,7 +33,7 @@ export default async function AdminPerformersPage() {
         {performers.map((performer) => (
           <PerformerCard
             key={performer.id}
-            href={`/admin/performers/${performer.id}`}
+            href={`/admin/performers/${performer.slug}`}
             name={performer.name}
             image={performer.image}
           />

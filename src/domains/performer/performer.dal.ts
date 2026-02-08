@@ -5,13 +5,17 @@ import {
   PerformerSummary,
 } from "@/domains/performer/performer.schema";
 import prisma from "@/lib/prisma";
+import { FindPerformerParams } from "@/types/performer.types";
+import { slugify } from "@/utils/slugify";
 
 /* -------------------------------------------------------------------------- */
 /*                            Add Performer                                   */
 /* -------------------------------------------------------------------------- */
 
 export const createPerformer = async (data: Performer) => {
-  return prisma.performer.create({ data });
+  return prisma.performer.create({
+    data: { ...data, slug: slugify(data.name) },
+  });
 };
 
 /* -------------------------------------------------------------------------- */
@@ -21,17 +25,26 @@ export const createPerformer = async (data: Performer) => {
 export const updatePerformerById = async (id: string, data: Performer) => {
   return prisma.performer.update({
     where: { id },
-    data,
+    data: { ...data, slug: slugify(data.name) },
   });
 };
 
 /* -------------------------------------------------------------------------- */
-/*                            Find Performer By Id                             */
+/*                      Find Performer By Both Id or Slug                     */
 /* -------------------------------------------------------------------------- */
 
-export const findPerformerById = async (id: string) => {
-  return prisma.performer.findUnique({
-    where: { id },
+export const findPerformer = async ({ id, slug }: FindPerformerParams) => {
+  return prisma.performer.findFirst({
+    where: {
+      ...(id && { id }),
+      ...(slug && { slug }),
+    },
+    select: {
+      id: true,
+      name: true,
+      image: true,
+      bio: true,
+    },
   });
 };
 
@@ -47,6 +60,7 @@ export const findAllPerformers = async () => {
       id: true,
       name: true,
       image: true,
+      slug: true,
     },
   });
 };

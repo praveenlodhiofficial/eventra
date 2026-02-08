@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
-import { CalendarIcon, Loader2 } from "lucide-react";
+import { CalendarIcon, CircleFadingPlusIcon, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { PerformerPicker } from "@/components/modals/performer/pick-performer";
@@ -109,14 +109,14 @@ export function CreateEventModal() {
     startTransition(async () => {
       const result = await createEventAction(data);
 
-      if (!result.success) {
+      if (!result.success || !result.data) {
         console.error(result);
         toast.error(result.message);
         return;
       }
 
       toast.success(result.message);
-      router.push(`/admin/events/${result.data?.slug}`);
+      router.push(`/admin/events/${result.data.slug}`);
       form.reset();
       setIsOpen(false);
     });
@@ -125,7 +125,13 @@ export function CreateEventModal() {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">Create Event</Button>
+        <ActionButton2
+          variant="outline"
+          className="flex w-fit cursor-pointer items-center gap-2"
+        >
+          <CircleFadingPlusIcon className="size-3.5 group-hover:animate-pulse" />
+          <span className="ml-2">Create Event</span>
+        </ActionButton2>
       </DialogTrigger>
       <DialogContent className="h-[calc(100vh-2rem)] md:h-[calc(100vh-7rem)] md:max-w-3xl lg:max-w-5xl lg:rounded-3xl">
         <Form {...form}>
@@ -273,7 +279,7 @@ export function CreateEventModal() {
                   />
                 </Field>
 
-                {/* ==================================== Select Performer Input ==================================== */}
+                {/* ==================================== Select Venue Input ==================================== */}
                 <Field className="mt-3">
                   <FieldLabel>Event Venue</FieldLabel>
 

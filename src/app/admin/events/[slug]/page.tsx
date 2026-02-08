@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import { getEventBySlugAction } from "@/domains/event/event.actions";
+import { getEventAction } from "@/domains/event/event.actions";
 
 export default async function EventPage({
   params,
@@ -8,7 +8,7 @@ export default async function EventPage({
   params: { slug: string };
 }) {
   const { slug } = await params;
-  const res = await getEventBySlugAction(slug);
+  const res = await getEventAction({ slug });
 
   if (!res.success) {
     return (

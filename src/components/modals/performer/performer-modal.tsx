@@ -6,11 +6,10 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
+import { CircleFadingPlusIcon, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { ActionButton2 } from "@/components/ui/action-button";
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogClose,
@@ -79,7 +78,7 @@ export function PerformerModal(props: Props) {
       }
 
       toast.success(result.message);
-      router.push(`/admin/performers/${result.data.id}`);
+      router.push(`/admin/performers/${result.data.slug}`);
       form.reset();
       setIsOpen(false);
     });
@@ -88,9 +87,19 @@ export function PerformerModal(props: Props) {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">
-          {isUpdate ? "Edit Details" : "Add Performer"}
-        </Button>
+        {isUpdate ? (
+          <ActionButton2 variant="outline" className="w-fit">
+            Edit Details
+          </ActionButton2>
+        ) : (
+          <ActionButton2
+            variant="outline"
+            className="flex w-fit cursor-pointer items-center gap-2"
+          >
+            <CircleFadingPlusIcon className="size-3.5 group-hover:animate-pulse" />
+            <span className="ml-2">Add Performer</span>
+          </ActionButton2>
+        )}
       </DialogTrigger>
 
       <DialogContent className="h-[calc(100vh-7rem)] md:max-w-xl lg:rounded-3xl">

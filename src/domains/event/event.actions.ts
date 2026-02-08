@@ -1,29 +1,16 @@
 "use server";
 
-import { format } from "node:path";
 import { z } from "zod";
+
+import { GetEventParams } from "@/types/performer.types";
 
 import {
   createEvent,
-  createEventCategory,
-  deleteEventById,
-  findAllEventCategories,
   findAllEvents,
-  findEventById,
-  findEventBySlug,
-  findEvents,
-  findUpcomingEvents,
+  findEvent,
   updateEventById,
-  updateEventCategory,
 } from "./event.dal";
-import {
-  Event,
-  EventCategoryEnum,
-  EventCategoryInput,
-  EventCategorySchema,
-  EventInput,
-  EventSchema,
-} from "./event.schema";
+import { Event, EventInput, EventSchema } from "./event.schema";
 
 /* -------------------------------------------------------------------------- */
 /*                            Create Event Action                            */
@@ -48,30 +35,6 @@ export const createEventAction = async (input: EventInput) => {
       success: true,
       status: 201,
       message: "Event created successfully",
-      data: event,
-    };
-  } catch (error) {
-    console.error(error);
-    return { success: false, status: 500, message: "Internal server error" };
-  }
-};
-
-/* -------------------------------------------------------------------------- */
-/*                            Get Event By Id Action                            */
-/* -------------------------------------------------------------------------- */
-
-export const getEventByIdAction = async (id: string) => {
-  try {
-    const event = await findEventById(id);
-
-    if (!event) {
-      return { success: false, status: 404, message: "Event not found" };
-    }
-
-    return {
-      success: true,
-      status: 200,
-      message: "Event fetched successfully",
       data: event,
     };
   } catch (error) {
@@ -116,15 +79,19 @@ export const updateEventAction = async (id: string, input: EventInput) => {
 };
 
 /* -------------------------------------------------------------------------- */
-/*                       Get Event By Slug Action                        */
+/*                     Get Event By Both Id or Slug                       */
 /* -------------------------------------------------------------------------- */
 
-export const getEventBySlugAction = async (slug: string) => {
+export const getEventAction = async (params: GetEventParams) => {
   try {
-    const event = await findEventBySlug(slug);
+    const event = await findEvent(params);
 
     if (!event) {
-      return { success: false, status: 404, message: "Event not found" };
+      return {
+        success: false,
+        status: 404,
+        message: "Event not found",
+      };
     }
 
     return {
@@ -134,34 +101,12 @@ export const getEventBySlugAction = async (slug: string) => {
       data: event,
     };
   } catch (error) {
-    console.log(error);
-    return { success: false, status: 500, message: "Internal server error" };
-  }
-};
-
-/* -------------------------------------------------------------------------- */
-/*                       Get Events By Category Action                        */
-/* -------------------------------------------------------------------------- */
-
-export const getEventsByCategoryAction = async (category: string) => {
-  const parsed = EventCategoryEnum.safeParse(category);
-
-  if (!parsed.success) {
-    return { success: false, status: 400, message: "Invalid category" };
-  }
-
-  try {
-    const events = await findEvents({ category: parsed.data });
-
+    console.error(error);
     return {
-      success: true,
-      status: 200,
-      message: "Events fetched successfully",
-      data: events,
+      success: false,
+      status: 500,
+      message: "Internal server error",
     };
-  } catch (error) {
-    console.log(error);
-    return { success: false, status: 500, message: "Internal server error" };
   }
 };
 
@@ -189,90 +134,5 @@ export const listEventsAction = async () => {
       status: 500,
       message: "Internal server error",
     };
-  }
-};
-
-/* -------------------------------------------------------------------------- */
-/*                       Create Event Category Action                         */
-/* -------------------------------------------------------------------------- */
-
-export const createEventCategoryAction = async (input: EventCategoryInput) => {
-  try {
-    const parsed = EventCategorySchema.safeParse(input);
-
-    if (!parsed.success) {
-      return {
-        success: false,
-        status: 400,
-        message: "Invalid event category data",
-        errors: z.treeifyError(parsed.error),
-      };
-    }
-
-    const eventCategory = await createEventCategory(parsed.data);
-
-    return {
-      success: true,
-      status: 201,
-      message: "Event category created successfully",
-      data: eventCategory,
-    };
-  } catch (error) {
-    console.error(error);
-    return { success: false, status: 500, message: "Internal server error" };
-  }
-};
-
-/* -------------------------------------------------------------------------- */
-/*                        Update Event Category Action                        */
-/* -------------------------------------------------------------------------- */
-
-export const updateEventCategoryAction = async (
-  id: string,
-  input: EventCategoryInput
-) => {
-  try {
-    const parsed = EventCategorySchema.safeParse(input);
-
-    if (!parsed.success) {
-      return {
-        success: false,
-        status: 400,
-        message: "Invalid event category data",
-        errors: z.treeifyError(parsed.error),
-      };
-    }
-
-    const eventCategory = await updateEventCategory(id, parsed.data);
-
-    return {
-      success: true,
-      status: 201,
-      message: "Event category updated successfully",
-      data: eventCategory,
-    };
-  } catch (error) {
-    console.error(error);
-    return { success: false, status: 500, message: "Internal server error" };
-  }
-};
-
-/* -------------------------------------------------------------------------- */
-/*                      List All Event Categories Action                      */
-/* -------------------------------------------------------------------------- */
-
-export const listEventCategoriesAction = async () => {
-  try {
-    const eventCategories = await findAllEventCategories();
-
-    return {
-      success: true,
-      status: 200,
-      message: "Event categories fetched successfully",
-      data: eventCategories,
-    };
-  } catch (error) {
-    console.error(error);
-    return { success: false, status: 500, message: "Internal server error" };
   }
 };

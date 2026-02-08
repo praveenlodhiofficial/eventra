@@ -5,10 +5,11 @@ import { z } from "zod";
 import {
   createPerformer,
   findAllPerformers,
-  findPerformerById,
+  findPerformer,
   searchPerformersByName,
   updatePerformerById,
 } from "@/domains/performer/performer.dal";
+import { GetPerformerParams } from "@/types/performer.types";
 
 import { PerformerInput, PerformerSchema } from "./performer.schema";
 
@@ -86,12 +87,12 @@ export const updatePerformerAction = async (
 };
 
 /* -------------------------------------------------------------------------- */
-/*                         Get Performer By Id Action                         */
+/*                     Get Performer By Both Id or Slug                       */
 /* -------------------------------------------------------------------------- */
 
-export const getPerformerAction = async (id: string) => {
+export const getPerformerAction = async (params: GetPerformerParams) => {
   try {
-    const performer = await findPerformerById(id);
+    const performer = await findPerformer(params);
 
     if (!performer) {
       return {
@@ -129,7 +130,12 @@ export const getPerformersAction = async () => {
       success: true,
       status: 200,
       message: "Performers fetched successfully",
-      data: performers,
+      data: performers.map((performer) => ({
+        id: performer.id,
+        name: performer.name,
+        image: performer.image,
+        slug: performer.slug,
+      })),
     };
   } catch (error) {
     console.log(error);

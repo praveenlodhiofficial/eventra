@@ -1,8 +1,9 @@
 import { Prisma } from "@/generated/prisma/client";
 import prisma from "@/lib/prisma";
+import { FindEventParams } from "@/types/performer.types";
 import { slugify } from "@/utils/slugify";
 
-import { Event, EventCategory } from "./event.schema";
+import { Event } from "./event.schema";
 
 /* -------------------------------------------------------------------------- */
 /*                            Create Event                                    */
@@ -69,59 +70,29 @@ export const findEvents = async (filters?: {
 };
 
 /* -------------------------------------------------------------------------- */
-/*                             find Event By Id                                */
+/*                      Find Event By Both Id or Slug                     */
 /* -------------------------------------------------------------------------- */
 
-export const findEventById = async (id: string) => {
-  return prisma.event.findUnique({
-    where: { id },
-    include: {
-      venue: true,
-      performers: true,
+export const findEvent = async ({ id, slug }: FindEventParams) => {
+  return prisma.event.findFirst({
+    where: {
+      ...(id && { id }),
+      ...(slug && { slug }),
+    },
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      description: true,
+      coverImage: true,
       images: true,
       categories: true,
-    },
-  });
-};
-
-/* -------------------------------------------------------------------------- */
-/*                             find Event By Slug                              */
-/* -------------------------------------------------------------------------- */
-
-export const findEventBySlug = async (slug: string) => {
-  return prisma.event.findUnique({
-    where: { slug },
-    select: {
-      venue: {
-        select: {
-          id: true,
-          name: true,
-        },
-      },
-      performers: {
-        select: {
-          id: true,
-          name: true,
-        },
-      },
-      images: {
-        select: {
-          url: true,
-        },
-      },
-      categories: {
-        select: {
-          name: true,
-        },
-      },
-      name: true,
       city: true,
+      performers: true,
       startDate: true,
       endDate: true,
       price: true,
-      slug: true,
-      coverImage: true,
-      description: true,
+      venue: true,
     },
   });
 };
@@ -187,43 +158,6 @@ export const findAllEvents = async () => {
         },
       },
       city: true,
-    },
-  });
-};
-
-/* -------------------------------------------------------------------------- */
-/*                           create Event Category                            */
-/* -------------------------------------------------------------------------- */
-
-export const createEventCategory = async (data: EventCategory) => {
-  return prisma.eventCategory.create({
-    data: {
-      name: data.name,
-    },
-  });
-};
-
-/* -------------------------------------------------------------------------- */
-/*                           update Event Category                            */
-/* -------------------------------------------------------------------------- */
-
-export const updateEventCategory = async (id: string, data: EventCategory) => {
-  return prisma.eventCategory.update({
-    where: { id },
-    data,
-  });
-};
-
-/* -------------------------------------------------------------------------- */
-/*                           find All Event Categories                            */
-/* -------------------------------------------------------------------------- */
-
-export const findAllEventCategories = async () => {
-  return prisma.eventCategory.findMany({
-    orderBy: { name: "asc" },
-    select: {
-      id: true,
-      name: true,
     },
   });
 };

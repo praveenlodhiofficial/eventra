@@ -7,11 +7,11 @@ import { config } from "@/lib/config";
 export default async function PerformerPage({
   params,
 }: {
-  params: { id: string };
+  params: { slug: string };
 }) {
-  const { id } = await params;
+  const { slug } = await params;
 
-  const res = await getPerformerAction(id);
+  const res = await getPerformerAction({ slug });
 
   if (!res.success) {
     return (
