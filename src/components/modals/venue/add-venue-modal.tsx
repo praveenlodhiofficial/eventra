@@ -38,12 +38,12 @@ export function AddVenueModal() {
   const form = useForm<VenueInput>({
     resolver: zodResolver(VenueSchema),
     defaultValues: {
-      name: "",
-      address: "",
-      city: "",
-      state: "",
-      country: "",
-      pincode: "",
+      name: "Jio World Plaza",
+      address: "Jio World Plaza, Bandra Kurla Complex, Mumbai",
+      city: "Mumbai",
+      state: "Maharashtra",
+      country: "India",
+      pincode: "400051",
     },
   });
 
@@ -75,7 +75,7 @@ export function AddVenueModal() {
         </ActionButton2>
       </DialogTrigger>
 
-      <DialogContent className="h-[calc(100vh-7rem)] md:max-w-3xl lg:max-w-5xl lg:rounded-3xl">
+      <DialogContent className="h-full w-full rounded-none md:h-[calc(100vh-7rem)] md:max-w-3xl lg:max-w-5xl lg:rounded-3xl">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -169,9 +169,16 @@ export function AddVenueModal() {
 
             <DialogFooter className="bg-background sticky bottom-0 grid grid-cols-2 gap-5">
               <DialogClose asChild>
-                <ActionButton2 variant="outline">Cancel</ActionButton2>
+                <ActionButton2 variant="outline" className="w-full">
+                  Cancel
+                </ActionButton2>
               </DialogClose>
-              <ActionButton2 type="submit">Save changes</ActionButton2>
+              <ActionButton2
+                type="submit"
+                className="w-full disabled:cursor-not-allowed disabled:opacity-70"
+              >
+                Save changes
+              </ActionButton2>
             </DialogFooter>
           </form>
         </Form>

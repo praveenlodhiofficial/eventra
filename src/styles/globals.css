@@ -145,3 +145,19 @@ body::-webkit-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* ========================= HIDE TIME PICKER ARROW FROM INPUT FIELD OF TYPE TIME ========================= */
+
+input[type="time"]::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* ========================= CUSTOMIZE WHEEL PICKER ========================= */
+.react-wheel-picker-container {
+  text-align: center;
+  font-size: 1.1rem;
+}
+.react-wheel-picker-option {
+  line-height: 2rem;
+}

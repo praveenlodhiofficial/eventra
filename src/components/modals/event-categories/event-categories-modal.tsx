@@ -48,7 +48,7 @@ export function EventCategoriesModal(props: Props) {
   const [isOpen, setIsOpen] = useState(false);
 
   const isUpdate = props.type === "update";
-  const eventCategory = isUpdate ? props.eventCategory : { name: "" };
+  const eventCategory = isUpdate ? props.eventCategory : { name: "Music" };
 
   if (!eventCategory) {
     throw new Error("Event category not found");
@@ -100,14 +100,14 @@ export function EventCategoriesModal(props: Props) {
           </ActionButton2>
         )}
       </DialogTrigger>
-      <DialogContent className="h-fit max-w-md lg:rounded-3xl">
+      <DialogContent className="h-fit max-w-[calc(100%-2rem)] md:max-w-md lg:rounded-3xl">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
             className="no-scrollbar relative flex flex-col gap-10 overflow-hidden overflow-y-scroll"
           >
             <DialogHeader className="bg-background sticky top-0 z-5 flex h-fit items-center justify-center">
-              <DialogTitle className="border-primary border-y-2 px-5 py-1 text-center text-base font-semibold uppercase md:text-lg lg:text-xl">
+              <DialogTitle className="border-primary w-fit border-y-2 px-5 py-1 text-base font-semibold uppercase md:text-lg lg:text-xl">
                 {isUpdate ? "Update Event Category" : "Create Event Category"}
               </DialogTitle>
               <DialogDescription className="sr-only">

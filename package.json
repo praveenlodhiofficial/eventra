@@ -24,6 +24,7 @@
     "@hookform/resolvers": "^5.2.2",
     "@imagekit/next": "^2.1.4",
     "@mapbox/mapbox-gl-geocoder": "^5.1.2",
+    "@ncdai/react-wheel-picker": "^1.2.0",
     "@prisma/adapter-pg": "^7.3.0",
     "@prisma/client": "^7.3.0",
     "@react-google-maps/api": "^2.20.8",

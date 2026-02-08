@@ -19,7 +19,6 @@ export default async function EventPage({
   }
 
   const event = res.data;
-  console.log(`event: ${JSON.stringify(event, null, 2)}`);
 
   if (!event) {
     return (
@@ -91,13 +90,25 @@ export default async function EventPage({
       {/* Event Start Date */}
       <div className="flex items-center gap-2">
         <p>Event Start Date:</p>
-        <p>{event.startDate.toLocaleDateString()}</p>
+        <p>{event.startAt.toLocaleDateString()}</p>
+      </div>
+
+      {/* Event Start Time */}
+      <div className="flex items-center gap-2">
+        <p>Event Start Time:</p>
+        <p>{event.startAt.toLocaleTimeString()}</p>
       </div>
 
       {/* Event End Date */}
       <div className="flex items-center gap-2">
         <p>Event End Date:</p>
-        <p>{event.endDate.toLocaleDateString()}</p>
+        <p>{event.endAt.toLocaleDateString()}</p>
+      </div>
+
+      {/* Event End Time */}
+      <div className="flex items-center gap-2">
+        <p>Event End Time:</p>
+        <p>{event.endAt.toLocaleTimeString()}</p>
       </div>
 
       {/* Event Price */}

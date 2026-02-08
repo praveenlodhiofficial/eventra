@@ -17,8 +17,8 @@ export const createEvent = async (data: Event) => {
       description: data.description,
       coverImage: data.coverImage,
       city: data.city,
-      startDate: data.startDate,
-      endDate: data.endDate,
+      startAt: data.startAt,
+      endAt: data.endAt,
       price: new Prisma.Decimal(data.price),
 
       // ✅ connect by ids
@@ -57,8 +57,8 @@ export const updateEventById = async (id: string, data: Event) => {
       description: data.description,
       coverImage: data.coverImage,
       city: data.city,
-      startDate: data.startDate,
-      endDate: data.endDate,
+      startAt: data.startAt,
+      endAt: data.endAt,
       price: new Prisma.Decimal(data.price),
 
       categories: {
@@ -83,34 +83,6 @@ export const updateEventById = async (id: string, data: Event) => {
 };
 
 /* -------------------------------------------------------------------------- */
-/*                           Find Events By Filter                            */
-/* -------------------------------------------------------------------------- */
-
-export const findEvents = async (filters?: {
-  category?: string;
-  city?: string;
-  startDate?: Date;
-  endDate?: Date;
-}) => {
-  return prisma.event.findMany({
-    where: {
-      ...(filters?.category && {
-        categories: { some: { name: filters.category } },
-      }),
-      ...(filters?.city && { city: filters.city }),
-      ...(filters?.startDate && { startDate: { gte: filters.startDate } }),
-      ...(filters?.endDate && { endDate: { lte: filters.endDate } }),
-    },
-    include: {
-      venue: true,
-      performers: true,
-      images: true,
-    },
-    orderBy: { startDate: "asc" },
-  });
-};
-
-/* -------------------------------------------------------------------------- */
 /*                      Find Event By Both Id or Slug                     */
 /* -------------------------------------------------------------------------- */
 
@@ -130,8 +102,8 @@ export const findEvent = async ({ id, slug }: FindEventParams) => {
       categories: true,
       city: true,
       performers: true,
-      startDate: true,
-      endDate: true,
+      startAt: true,
+      endAt: true,
       price: true,
       venue: true,
     },
@@ -139,55 +111,13 @@ export const findEvent = async ({ id, slug }: FindEventParams) => {
 };
 
 /* -------------------------------------------------------------------------- */
-/*                             Delete Event By Id                              */
+/*                               Find Events                                  */
 /* -------------------------------------------------------------------------- */
 
-export const deleteEventById = async (id: string) => {
-  return prisma.event.delete({
-    where: { id },
-  });
-};
-
-/* -------------------------------------------------------------------------- */
-/*                             Find Upcoming Events                            */
-/* -------------------------------------------------------------------------- */
-
-export const findUpcomingEvents = async (limit?: number) => {
+export const findEvents = async () => {
   return prisma.event.findMany({
-    where: {
-      startDate: { gte: new Date() },
-    },
-    include: {
-      venue: true,
-      performers: true,
-      images: true,
-    },
-    orderBy: { startDate: "asc" },
-    ...(limit && { take: limit }),
-  });
-};
-
-/* -------------------------------------------------------------------------- */
-/*                            Find All Events                                 */
-/* -------------------------------------------------------------------------- */
-
-export const findAllEvents = async () => {
-  return prisma.event.findMany({
-    orderBy: { startDate: "asc" },
-    select: {
-      id: true,
-      name: true,
-      slug: true,
-      startDate: true,
-      endDate: true,
-      price: true,
-      venue: {
-        select: {
-          id: true,
-          name: true,
-        },
-      },
-      city: true,
+    orderBy: {
+      startAt: "asc",
     },
   });
 };

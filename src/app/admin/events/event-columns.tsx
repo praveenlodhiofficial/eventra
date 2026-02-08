@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import { IconArrowUpRight } from "@tabler/icons-react";
 import { ColumnDef } from "@tanstack/react-table";
+import { format } from "date-fns";
 import { MoreHorizontal } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -60,39 +61,67 @@ export const columns: ColumnDef<EventSummary>[] = [
     },
   },
   {
-    accessorKey: "venueId",
+    accessorKey: "venue",
     header: "Venue",
   },
   {
     accessorKey: "city",
     header: "City",
   },
+  // {
+  //   accessorKey: "startAt",
+  //   header: "Start Date & Time",
+  //   cell: ({ row }) => {
+  //     const date = new Date(row.original.startAt);
+  //     return date.toLocaleString("en-IN", {
+  //       day: "2-digit",
+  //       month: "short",
+  //       year: "numeric",
+  //       hour: "2-digit",
+  //       minute: "2-digit",
+  //     });
+  //   },
+  // },
+  // {
+  //   accessorKey: "endAt",
+  //   header: "End Date & Time",
+  //   cell: ({ row }) => {
+  //     const date = new Date(row.original.endAt);
+  //     return date.toLocaleString("en-IN", {
+  //       day: "2-digit",
+  //       month: "short",
+  //       year: "numeric",
+  //       hour: "2-digit",
+  //       minute: "2-digit",
+  //     });
+  //   },
+  // },
+
   {
-    accessorKey: "startDate",
-    header: "Start Date & Time",
+    id: "date",
+    header: "Date",
     cell: ({ row }) => {
-      const date = new Date(row.original.startDate);
-      return date.toLocaleString("en-IN", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      });
+      const start = new Date(row.original.startAt);
+      const end = new Date(row.original.endAt);
+
+      const sameDay = format(start, "yyyy-MM-dd") === format(end, "yyyy-MM-dd");
+
+      if (sameDay) {
+        return format(start, "dd MMM yyyy");
+      }
+
+      return `${format(start, "dd MMM")} → ${format(end, "dd MMM yyyy")}`;
     },
   },
+
   {
-    accessorKey: "endDate",
-    header: "End Date & Time",
+    id: "time",
+    header: "Time",
     cell: ({ row }) => {
-      const date = new Date(row.original.endDate);
-      return date.toLocaleString("en-IN", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      });
+      const start = new Date(row.original.startAt);
+      const end = new Date(row.original.endAt);
+
+      return `${format(start, "p")} → ${format(end, "p")}`;
     },
   },
 

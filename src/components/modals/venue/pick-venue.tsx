@@ -33,19 +33,24 @@ export function VenuePicker({ value, onChange }: Props) {
   // cache for showing name/city
   const [cache, setCache] = useState<Record<string, VenueSummary>>({});
 
+  // ✅ NEW → control input
+  const [search, setSearch] = useState("");
+
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // ======================= Search Venues =======================
-  const handleSearch = (search: string) => {
+  const handleSearch = (searchValue: string) => {
+    setSearch(searchValue);
+
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
     timeoutRef.current = setTimeout(async () => {
-      if (search.length < 2) {
+      if (searchValue.length < 2) {
         setResults([]);
         return;
       }
 
-      const data = await searchVenuesAction(search);
+      const data = await searchVenuesAction(searchValue);
       setResults(data);
 
       setCache((prev) => {
@@ -62,6 +67,11 @@ export function VenuePicker({ value, onChange }: Props) {
   const selectVenue = (venue: VenueSummary) => {
     onChange(venue.id); // replace, not append
     setCache((prev) => ({ ...prev, [venue.id]: venue }));
+
+    // ✅ NEW → reset input
+    setSearch("");
+    setResults([]);
+
     setOpen(false);
   };
 
@@ -98,6 +108,7 @@ export function VenuePicker({ value, onChange }: Props) {
           <div>
             <Command className="rounded-lg border">
               <CommandInput
+                value={search}
                 placeholder="Search venue ..."
                 onValueChange={handleSearch}
                 className="placeholder:font-light"

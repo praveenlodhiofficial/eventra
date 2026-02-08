@@ -35,19 +35,24 @@ export function PerformerPicker({ value, onChange }: Props) {
   // cache for showing names/images
   const [cache, setCache] = useState<Record<string, PerformerSummary>>({});
 
+  // ✅ NEW → control input
+  const [search, setSearch] = useState("");
+
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // ======================= Search Performers =======================
-  const handleSearch = (search: string) => {
+  const handleSearch = (searchValue: string) => {
+    setSearch(searchValue);
+
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
     timeoutRef.current = setTimeout(async () => {
-      if (search.length < 2) {
+      if (searchValue.length < 2) {
         setResults([]);
         return;
       }
 
-      const data = await searchPerformersAction(search);
+      const data = await searchPerformersAction(searchValue);
       setResults(data);
 
       // save to cache
@@ -62,13 +67,16 @@ export function PerformerPicker({ value, onChange }: Props) {
   };
 
   // ======================= Toggle Performer =======================
-
   const togglePerformer = (performer: PerformerSummary) => {
     if (value.includes(performer.id)) {
       onChange(value.filter((id) => id !== performer.id));
     } else {
       onChange([...value, performer.id]);
     }
+
+    // ✅ NEW → reset input
+    setSearch("");
+    setResults([]);
   };
 
   return (
@@ -110,6 +118,7 @@ export function PerformerPicker({ value, onChange }: Props) {
           <div>
             <Command className="rounded-lg border">
               <CommandInput
+                value={search}
                 placeholder="Search performers ..."
                 onValueChange={handleSearch}
                 className="placeholder:font-light"

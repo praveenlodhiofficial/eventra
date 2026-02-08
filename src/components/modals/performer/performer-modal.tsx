@@ -48,7 +48,11 @@ export function PerformerModal(props: Props) {
   const isUpdate = props.type === "update";
   const performer = isUpdate
     ? props.performer
-    : { name: "", image: "", bio: "" };
+    : {
+        name: "Justin Bieber",
+        image: "",
+        bio: "Justin Bieber is a Canadian singer, songwriter, and actor. He is known for his pop music and has sold over 150 million records worldwide. He is one of the best-selling artists of all time.",
+      };
 
   if (!performer) {
     throw new Error("Performer not found");
@@ -102,14 +106,14 @@ export function PerformerModal(props: Props) {
         )}
       </DialogTrigger>
 
-      <DialogContent className="h-[calc(100vh-7rem)] md:max-w-xl lg:rounded-3xl">
+      <DialogContent className="h-full w-full rounded-none md:h-[calc(100vh-7rem)] md:max-w-xl lg:rounded-3xl">
         <Form {...form} key={isUpdate ? performer.id : "create"}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
             className="no-scrollbar relative flex flex-col gap-4 overflow-hidden overflow-y-scroll"
           >
             <DialogHeader className="bg-background sticky top-0 z-5 items-center justify-center">
-              <DialogTitle className="border-primary border-y-2 px-5 py-1 text-xl font-semibold uppercase">
+              <DialogTitle className="border-primary border-y-2 px-5 py-1 text-base font-semibold uppercase md:text-xl">
                 {isUpdate ? "Update Performer Details" : "Add Performer"}
               </DialogTitle>
               <DialogDescription className="sr-only">
@@ -194,13 +198,15 @@ export function PerformerModal(props: Props) {
 
             <DialogFooter className="bg-background sticky bottom-0 z-5 grid grid-cols-2 gap-5">
               <DialogClose asChild>
-                <ActionButton2 variant="outline">Cancel</ActionButton2>
+                <ActionButton2 variant="outline" className="w-full">
+                  Cancel
+                </ActionButton2>
               </DialogClose>
 
               <ActionButton2
                 type="submit"
                 disabled={form.formState.isSubmitting}
-                className="disabled:cursor-not-allowed disabled:opacity-70"
+                className="w-full disabled:cursor-not-allowed disabled:opacity-70"
               >
                 <div className="flex items-center gap-2">
                   {isSubmitting ? (

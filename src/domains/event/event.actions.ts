@@ -6,8 +6,8 @@ import { GetEventParams } from "@/types/performer.types";
 
 import {
   createEvent,
-  findAllEvents,
   findEvent,
+  findEvents,
   updateEventById,
 } from "./event.dal";
 import { EventInput, EventSchema } from "./event.schema";
@@ -116,16 +116,13 @@ export const getEventAction = async (params: GetEventParams) => {
 
 export const listEventsAction = async () => {
   try {
-    const events = await findAllEvents();
+    const events = await findEvents();
 
     return {
       success: true,
       status: 200,
       message: "Events fetched successfully",
-      data: events.map((event) => ({
-        ...event,
-        venue: event.venue.name,
-      })),
+      data: events,
     };
   } catch (error) {
     console.error(error);

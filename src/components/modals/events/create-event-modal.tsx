@@ -7,7 +7,12 @@ import { useRouter } from "next/navigation";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
-import { CalendarIcon, CircleFadingPlusIcon, Loader2 } from "lucide-react";
+import {
+  CalendarIcon,
+  CircleFadingPlusIcon,
+  Clock,
+  Loader2,
+} from "lucide-react";
 import { toast } from "sonner";
 
 import { PerformerPicker } from "@/components/modals/performer/pick-performer";
@@ -63,16 +68,17 @@ export function CreateEventModal({
   const form = useForm<EventInput>({
     resolver: zodResolver(EventSchema),
     defaultValues: {
-      name: "",
-      description: "",
+      name: "Arijit Singh India Tour | Pune | 01",
+      description:
+        "Description is any type of communication that aims to make vivid a place, object, person, group, or other physical entity.[1] It is one of four rhetorical modes (also known as modes of discourse), along with exposition, argumentation, and narration.[2]",
       coverImage: "",
       categoryIds: [],
-      city: "",
+      city: "Pune",
       performerIds: [],
       venueId: "",
-      startDate: new Date(),
-      endDate: new Date(),
-      price: 0,
+      startAt: new Date(),
+      endAt: new Date(),
+      price: 1799,
       images: [],
     },
   });
@@ -90,8 +96,8 @@ export function CreateEventModal({
       return;
     }
 
-    if (data.endDate < data.startDate) {
-      toast.error("End date must be after start date");
+    if (data.endAt < data.startAt) {
+      toast.error("End Date/Time must be after Start Date/Time");
       return;
     }
 
@@ -123,14 +129,14 @@ export function CreateEventModal({
         </ActionButton2>
       </DialogTrigger>
 
-      <DialogContent className="h-[calc(100vh-2rem)] md:h-[calc(100vh-7rem)] md:max-w-3xl lg:max-w-5xl lg:rounded-3xl">
+      <DialogContent className="h-full w-full rounded-none md:h-[calc(100vh-7rem)] md:max-w-3xl lg:max-w-5xl lg:rounded-3xl">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
             className="no-scrollbar relative flex flex-col gap-4 overflow-hidden overflow-y-scroll"
           >
             <DialogHeader className="bg-background sticky top-0 z-5 flex h-fit items-center justify-center">
-              <DialogTitle className="border-primary border-y-2 px-5 py-1 text-center text-base font-semibold uppercase md:text-lg lg:text-xl">
+              <DialogTitle className="border-primary w-fit border-y-2 px-5 py-1 text-base font-semibold uppercase md:text-lg lg:text-xl">
                 Create Event
               </DialogTitle>
               <DialogDescription className="sr-only">
@@ -284,17 +290,17 @@ export function CreateEventModal({
                 </Field>
 
                 {/* Dates */}
-                <FieldGroup className="grid md:grid-cols-2">
+                {/* <FieldGroup className="grid md:grid-cols-2">
                   {[
                     {
-                      name: "startDate",
-                      label: "Event Start Date",
-                      placeholder: "Select start date",
+                      name: "startAt",
+                      label: "Event Start At",
+                      placeholder: "Select start at",
                     },
                     {
-                      name: "endDate",
-                      label: "Event End Date",
-                      placeholder: "Select end date",
+                      name: "endAt",
+                      label: "Event End At",
+                      placeholder: "Select end at",
                     },
                   ].map((fieldData) => (
                     <Field key={fieldData.name}>
@@ -338,6 +344,103 @@ export function CreateEventModal({
                             <FormMessage />
                           </FormItem>
                         )}
+                      />
+                    </Field>
+                  ))}
+                </FieldGroup> */}
+
+                <FieldGroup className="grid gap-4 md:grid-cols-2">
+                  {[
+                    {
+                      name: "startAt",
+                      label: "Event Start",
+                    },
+                    {
+                      name: "endAt",
+                      label: "Event End",
+                    },
+                  ].map((fieldData) => (
+                    <Field key={fieldData.name}>
+                      <FieldLabel>{fieldData.label}</FieldLabel>
+
+                      <FormField
+                        control={form.control}
+                        name={fieldData.name as keyof EventInput}
+                        render={({ field }) => {
+                          const value = field.value as Date | undefined;
+
+                          return (
+                            <FormItem className="grid grid-cols-2 gap-2 md:grid-cols-1">
+                              {/* DATE */}
+                              <Popover>
+                                <PopoverTrigger asChild>
+                                  <FormControl>
+                                    <Button
+                                      variant="outline"
+                                      className="justify-start rounded-lg border border-zinc-200 bg-white/10 px-3 py-6 text-left text-sm font-light shadow-none"
+                                    >
+                                      {value
+                                        ? format(value, "dd MMM yyyy")
+                                        : "Select date"}
+                                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                    </Button>
+                                  </FormControl>
+                                </PopoverTrigger>
+
+                                <PopoverContent
+                                  className="w-auto p-0"
+                                  align="start"
+                                >
+                                  <Calendar
+                                    mode="single"
+                                    selected={value}
+                                    onSelect={(date) => {
+                                      if (!date) return;
+
+                                      const current = value ?? new Date();
+                                      date.setHours(
+                                        current.getHours(),
+                                        current.getMinutes()
+                                      );
+
+                                      field.onChange(date);
+                                    }}
+                                    initialFocus
+                                  />
+                                </PopoverContent>
+                              </Popover>
+
+                              {/* TIME */}
+                              <div className="relative">
+                                <Input
+                                  type="time"
+                                  value={
+                                    value
+                                      ? format(value, "HH:mm") // needed for input
+                                      : ""
+                                  }
+                                  onChange={(e) => {
+                                    const [hours, minutes] =
+                                      e.target.value.split(":");
+
+                                    const newDate = value
+                                      ? new Date(value)
+                                      : new Date();
+
+                                    newDate.setHours(Number(hours));
+                                    newDate.setMinutes(Number(minutes));
+
+                                    field.onChange(newDate);
+                                  }}
+                                  className="rounded-lg border border-zinc-200 bg-white/10 px-3 py-6 text-sm font-light shadow-none"
+                                />
+                                <Clock className="text-muted-foreground/85 pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2" />
+                              </div>
+
+                              <FormMessage />
+                            </FormItem>
+                          );
+                        }}
                       />
                     </Field>
                   ))}
@@ -456,13 +559,15 @@ export function CreateEventModal({
 
             <DialogFooter className="bg-background sticky bottom-0 z-5 grid grid-cols-2 gap-5">
               <DialogClose asChild>
-                <ActionButton2 variant="outline">Cancel</ActionButton2>
+                <ActionButton2 variant="outline" className="w-full">
+                  Cancel
+                </ActionButton2>
               </DialogClose>
 
               <ActionButton2
                 type="submit"
                 disabled={form.formState.isSubmitting}
-                className="disabled:cursor-not-allowed disabled:opacity-70"
+                className="w-full disabled:cursor-not-allowed disabled:opacity-70"
               >
                 <div className="flex items-center gap-2">
                   {isSubmitting ? (
