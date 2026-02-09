@@ -5,11 +5,12 @@ import {
   PerformerSummary,
 } from "@/domains/performer/performer.schema";
 import prisma from "@/lib/prisma";
-import { FindPerformerParams } from "@/types/performer.types";
 import { slugify } from "@/utils/slugify";
 
+import { FindPerformerParams } from "./performer.types";
+
 /* -------------------------------------------------------------------------- */
-/*                            Add Performer                                   */
+/*                            Create Performer                                   */
 /* -------------------------------------------------------------------------- */
 
 export const createPerformer = async (data: Performer) => {
@@ -26,6 +27,26 @@ export const updatePerformerById = async (id: string, data: Performer) => {
   return prisma.performer.update({
     where: { id },
     data: { ...data, slug: slugify(data.name) },
+  });
+};
+
+/* -------------------------------------------------------------------------- */
+/*                               Delete Performer                                */
+/* -------------------------------------------------------------------------- */
+
+export const deletePerformer = async (id: string) => {
+  return prisma.performer.delete({
+    where: { id },
+  });
+};
+
+/* -------------------------------------------------------------------------- */
+/*                              Delete Performers                                 */
+/* -------------------------------------------------------------------------- */
+
+export const deletePerformers = async (ids: string[]) => {
+  return prisma.performer.deleteMany({
+    where: { id: { in: ids } },
   });
 };
 

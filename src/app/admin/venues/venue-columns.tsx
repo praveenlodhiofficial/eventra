@@ -1,8 +1,11 @@
 "use client";
 
-import { ColumnDef } from "@tanstack/react-table";
-import { Link, MoreHorizontal } from "lucide-react";
+import Link from "next/link";
 
+import { ColumnDef } from "@tanstack/react-table";
+import { MoreHorizontal } from "lucide-react";
+
+import { DeleteModal } from "@/components/modals/delete.modal";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -14,6 +17,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { VenueSummary } from "@/domains/venue/venue.schema";
+import { DeleteModalType } from "@/types/delete.types";
 
 export const columns: ColumnDef<VenueSummary>[] = [
   {
@@ -78,9 +82,11 @@ export const columns: ColumnDef<VenueSummary>[] = [
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>Edit Venue</DropdownMenuItem>
-            <DropdownMenuItem variant="destructive">
-              Delete Venue
-            </DropdownMenuItem>
+            <DeleteModal
+              type={DeleteModalType.VENUE}
+              id={row.original.id}
+              trigger="text"
+            />
           </DropdownMenuContent>
         </DropdownMenu>
       );

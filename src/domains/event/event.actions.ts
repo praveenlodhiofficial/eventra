@@ -2,15 +2,16 @@
 
 import { z } from "zod";
 
-import { GetEventParams } from "@/types/performer.types";
-
 import {
   createEvent,
+  deleteEvent,
+  deleteEvents,
   findEvent,
   findEvents,
   updateEventById,
 } from "./event.dal";
 import { EventInput, EventSchema } from "./event.schema";
+import { GetEventParams } from "./event.types";
 
 /* -------------------------------------------------------------------------- */
 /*                            Create Event Action                            */
@@ -67,6 +68,70 @@ export const updateEventAction = async (id: string, input: EventInput) => {
       status: 200,
       message: "Event updated successfully",
       data: event,
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      success: false,
+      status: 500,
+      message: "Internal server error",
+    };
+  }
+};
+
+/* -------------------------------------------------------------------------- */
+/*                            Delete Event Action                            */
+/* -------------------------------------------------------------------------- */
+
+export const deleteEventAction = async (id: string) => {
+  try {
+    const event = await deleteEvent(id);
+
+    if (!event) {
+      return {
+        success: false,
+        status: 404,
+        message: "Event not found",
+      };
+    }
+
+    return {
+      success: true,
+      status: 200,
+      message: "Event deleted successfully",
+      data: event,
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      success: false,
+      status: 500,
+      message: "Internal server error",
+    };
+  }
+};
+
+/* -------------------------------------------------------------------------- */
+/*                         Delete Events Action                          */
+/* -------------------------------------------------------------------------- */
+
+export const deleteEventsAction = async (ids: string[]) => {
+  try {
+    const events = await deleteEvents(ids);
+
+    if (!events) {
+      return {
+        success: false,
+        status: 404,
+        message: "Events not found",
+      };
+    }
+
+    return {
+      success: true,
+      status: 200,
+      message: "Events deleted successfully",
+      data: events,
     };
   } catch (error) {
     console.error(error);

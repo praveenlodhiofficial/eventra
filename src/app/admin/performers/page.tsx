@@ -1,9 +1,9 @@
 import { PerformerCard } from "@/components/admin/PerformerCard";
 import { PerformerModal } from "@/components/modals/performer/performer-modal";
-import { getPerformersAction } from "@/domains/performer/performer.actions";
+import { listPerformersAction } from "@/domains/performer/performer.actions";
 
 export default async function AdminPerformersPage() {
-  const res = await getPerformersAction();
+  const res = await listPerformersAction();
 
   const performers = res.data;
 
@@ -25,6 +25,7 @@ export default async function AdminPerformersPage() {
         {performers.map((performer) => (
           <PerformerCard
             key={performer.id}
+            id={performer.id}
             href={`/admin/performers/${performer.slug}`}
             name={performer.name}
             image={performer.image}

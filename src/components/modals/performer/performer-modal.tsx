@@ -84,10 +84,10 @@ export function PerformerModal(props: Props) {
       }
 
       toast.success(result.message);
-      router.push(`/admin/performers/${result.data.slug}`);
       form.reset();
       setIsOpen(false);
     });
+    router.refresh();
   }
 
   return (
@@ -185,7 +185,7 @@ export function PerformerModal(props: Props) {
                     <FormItem>
                       <FormControl>
                         <Input
-                          artisplaceholder="Performer Role"
+                          placeholder="Performer Role"
                           className="rounded-lg border border-zinc-200 bg-white/10 px-3 py-6 text-sm font-light shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
                           {...field}
                         />

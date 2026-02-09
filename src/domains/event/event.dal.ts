@@ -1,9 +1,9 @@
 import { Prisma } from "@/generated/prisma/client";
 import prisma from "@/lib/prisma";
-import { FindEventParams } from "@/types/performer.types";
 import { slugify } from "@/utils/slugify";
 
 import { Event } from "./event.schema";
+import { FindEventParams } from "./event.types";
 
 /* -------------------------------------------------------------------------- */
 /*                            Create Event                                    */
@@ -107,6 +107,26 @@ export const findEvent = async ({ id, slug }: FindEventParams) => {
       price: true,
       venue: true,
     },
+  });
+};
+
+/* -------------------------------------------------------------------------- */
+/*                               Delete Event                                */
+/* -------------------------------------------------------------------------- */
+
+export const deleteEvent = async (id: string) => {
+  return prisma.event.delete({
+    where: { id },
+  });
+};
+
+/* -------------------------------------------------------------------------- */
+/*                              Delete Events                                 */
+/* -------------------------------------------------------------------------- */
+
+export const deleteEvents = async (ids: string[]) => {
+  return prisma.event.deleteMany({
+    where: { id: { in: ids } },
   });
 };
 

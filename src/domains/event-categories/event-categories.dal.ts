@@ -28,6 +28,26 @@ export const updateEventCategory = async (id: string, data: EventCategory) => {
 };
 
 /* -------------------------------------------------------------------------- */
+/*                           Delete Event Category                            */
+/* -------------------------------------------------------------------------- */
+
+export const deleteEventCategory = async (id: string) => {
+  return prisma.eventCategory.delete({
+    where: { id },
+  });
+};
+
+/* -------------------------------------------------------------------------- */
+/*                            Delete Event Categories                         */
+/* -------------------------------------------------------------------------- */
+
+export const deleteEventCategories = async (ids: string[]) => {
+  return prisma.eventCategory.deleteMany({
+    where: { id: { in: ids } },
+  });
+};
+
+/* -------------------------------------------------------------------------- */
 /*                           Find Event Categories                            */
 /* -------------------------------------------------------------------------- */
 

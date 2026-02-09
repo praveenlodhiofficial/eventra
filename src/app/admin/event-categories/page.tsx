@@ -1,5 +1,7 @@
+import { DeleteModal } from "@/components/modals/delete.modal";
 import { EventCategoriesModal } from "@/components/modals/event-categories/event-categories-modal";
 import { listEventCategoriesAction } from "@/domains/event-categories/event-categories.actions";
+import { DeleteModalType } from "@/types/delete.types";
 
 export default async function AdminEventCategoriesPage() {
   const res = await listEventCategoriesAction();
@@ -33,9 +35,16 @@ export default async function AdminEventCategoriesPage() {
         {eventCategories.map((eventCategory) => (
           <div
             key={eventCategory.id}
-            className="bg-accent flex aspect-3/4 h-full w-full items-center justify-center rounded-3xl p-4 text-center text-sm font-medium lg:items-end lg:text-lg"
+            className="bg-accent relative flex aspect-3/4 h-full w-full items-center justify-center rounded-3xl p-4 text-center text-sm font-medium lg:items-end lg:text-lg"
           >
             {eventCategory.name}
+            <div className="absolute top-3 right-3">
+              <DeleteModal
+                type={DeleteModalType.EVENT_CATEGORY}
+                id={eventCategory.id}
+                trigger="icon"
+              />
+            </div>
           </div>
         ))}
       </div>

@@ -7,6 +7,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { MoreHorizontal } from "lucide-react";
 
+import { DeleteModal } from "@/components/modals/delete.modal";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -18,6 +19,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { EventSummary } from "@/domains/event/event.schema";
+import { DeleteModalType } from "@/types/delete.types";
 
 export const columns: ColumnDef<EventSummary>[] = [
   {
@@ -61,7 +63,7 @@ export const columns: ColumnDef<EventSummary>[] = [
     },
   },
   {
-    accessorKey: "venue",
+    accessorKey: "venueId",
     header: "Venue",
   },
   {
@@ -149,9 +151,11 @@ export const columns: ColumnDef<EventSummary>[] = [
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>Edit Event</DropdownMenuItem>
-            <DropdownMenuItem variant="destructive">
-              Delete Event
-            </DropdownMenuItem>
+            <DeleteModal
+              type={DeleteModalType.EVENT}
+              id={row.original.id}
+              trigger="text"
+            />
           </DropdownMenuContent>
         </DropdownMenu>
       );
