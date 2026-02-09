@@ -92,7 +92,7 @@ export function EventCategoriesModal(props: Props) {
           </ActionButton2>
         ) : (
           <ActionButton2
-            variant="outline"
+            variant="secondary"
             className="flex w-fit cursor-pointer items-center gap-2"
           >
             <CircleFadingPlusIcon className="size-3.5 group-hover:animate-pulse" />

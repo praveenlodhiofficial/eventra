@@ -45,6 +45,13 @@ model EventImage {
   createdAt DateTime @default(now())
 }
 
+enum EventStatus {
+  DRAFT
+  PUBLISHED
+  CANCELLED
+  COMPLETED
+}
+
 model Event {
   id          String @id @default(cuid())
   name        String
@@ -57,6 +64,7 @@ model Event {
   categories  EventCategory[] @relation("EventCategories")
   city     String
 
+  status EventStatus @default(DRAFT)
 
   performers Performer[] @relation("EventPerformers")
 

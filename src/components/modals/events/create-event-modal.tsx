@@ -45,10 +45,18 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { CoverImageUpload } from "@/components/upload/CoverImageUpload";
 import { GalleryImageUpload } from "@/components/upload/GalleryImageUpload";
 import { EventCategory } from "@/domains/event-categories/event-categories.schema";
 import { createEventAction } from "@/domains/event/event.actions";
+import { EVENT_STATUS } from "@/domains/event/event.constants";
 import { EventInput, EventSchema } from "@/domains/event/event.schema";
 
 import { EventCategoriesModal } from "../event-categories/event-categories-modal";
@@ -76,6 +84,7 @@ export function CreateEventModal({
       coverImage: "",
       categoryIds: [],
       city: "",
+      status: "DRAFT",
       performerIds: [],
       venueId: "",
       startAt: new Date(),
@@ -135,7 +144,7 @@ export function CreateEventModal({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="no-scrollbar relative flex flex-col gap-4 overflow-hidden overflow-y-scroll"
+            className="no-scrollbar relative flex flex-col gap-6 overflow-hidden overflow-y-scroll"
           >
             <DialogHeader className="bg-background sticky top-0 z-5 flex h-fit items-center justify-center">
               <DialogTitle className="border-primary w-fit border-y-2 px-5 py-1 text-base font-semibold uppercase md:text-lg lg:text-xl">
@@ -147,10 +156,10 @@ export function CreateEventModal({
               </DialogDescription>
             </DialogHeader>
 
-            <FieldGroup className="grid md:grid-cols-[2fr_1fr]">
+            <FieldGroup className="grid md:grid-cols-[2fr_1.2fr]">
               <FieldGroup>
                 {/* Name */}
-                <Field>
+                <Field className="">
                   <FieldLabel>Event Name</FieldLabel>
                   <FormField
                     control={form.control}
@@ -160,7 +169,7 @@ export function CreateEventModal({
                         <FormControl>
                           <Input
                             placeholder="Event Name"
-                            className="rounded-lg border border-zinc-200 bg-white/10 px-3 py-6 text-sm font-light shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                            className="rounded-lg border px-3 py-6 text-sm font-light shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
                             {...field}
                           />
                         </FormControl>
@@ -181,8 +190,8 @@ export function CreateEventModal({
                         <FormControl>
                           <textarea
                             placeholder="Event Description"
-                            rows={5}
-                            className="rounded-lg border border-zinc-200 bg-white/10 p-3 text-sm font-light shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                            rows={9}
+                            className="rounded-lg border p-3 text-sm font-light shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
                             {...field}
                           />
                         </FormControl>
@@ -213,7 +222,7 @@ export function CreateEventModal({
                       return (
                         <FormItem>
                           <FormControl>
-                            <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
+                            <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
                               {categories.map((category) => {
                                 const isChecked = selected.includes(
                                   category.id!
@@ -222,7 +231,7 @@ export function CreateEventModal({
                                 return (
                                   <FormItem
                                     key={category.id}
-                                    className="flex items-center space-y-0 space-x-3 rounded-md border p-3"
+                                    className="flex items-center space-y-0 space-x-3 rounded-lg rounded-md border p-3 py-4"
                                   >
                                     <FormControl>
                                       <Checkbox
@@ -233,7 +242,7 @@ export function CreateEventModal({
                                       />
                                     </FormControl>
 
-                                    <FormLabel className="cursor-pointer font-normal">
+                                    <FormLabel className="line-clamp-1 cursor-pointer font-normal">
                                       {category.name}
                                     </FormLabel>
                                   </FormItem>
@@ -248,6 +257,34 @@ export function CreateEventModal({
                     }}
                   />
                   <EventCategoriesModal type="create" />
+                </Field>
+
+                {/* Performers */}
+                <Field>
+                  <FieldLabel>Event Performers</FieldLabel>
+
+                  <FormField
+                    control={form.control}
+                    name="performerIds"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <PerformerPicker
+                            value={field.value}
+                            onChange={(ids) =>
+                              form.setValue("performerIds", ids, {
+                                shouldDirty: true,
+                                shouldTouch: true,
+                                shouldValidate: true,
+                              })
+                            }
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <PerformerModal type="create" />
                 </Field>
 
                 {/* Venue */}
@@ -283,7 +320,7 @@ export function CreateEventModal({
                         <FormControl>
                           <Input
                             placeholder="Event City"
-                            className="rounded-lg border border-zinc-200 bg-white/10 px-3 py-6 text-sm font-light shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                            className="rounded-lg border px-3 py-6 text-sm font-light shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
                             {...field}
                           />
                         </FormControl>
@@ -293,67 +330,7 @@ export function CreateEventModal({
                   />
                 </Field>
 
-                {/* Dates */}
-                {/* <FieldGroup className="grid md:grid-cols-2">
-                  {[
-                    {
-                      name: "startAt",
-                      label: "Event Start At",
-                      placeholder: "Select start at",
-                    },
-                    {
-                      name: "endAt",
-                      label: "Event End At",
-                      placeholder: "Select end at",
-                    },
-                  ].map((fieldData) => (
-                    <Field key={fieldData.name}>
-                      <FieldLabel>{fieldData.label}</FieldLabel>
-
-                      <FormField
-                        control={form.control}
-                        name={fieldData.name as keyof EventInput}
-                        render={({ field }) => (
-                          <FormItem className="flex flex-col">
-                            <Popover>
-                              <PopoverTrigger asChild>
-                                <FormControl>
-                                  <Button
-                                    variant="outline"
-                                    className="justify-start rounded-lg border border-zinc-200 bg-white/10 px-3 py-6 text-left text-sm font-light shadow-none"
-                                  >
-                                    {field.value ? (
-                                      format(field.value as Date, "PPP")
-                                    ) : (
-                                      <span>{fieldData.placeholder}</span>
-                                    )}
-                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                  </Button>
-                                </FormControl>
-                              </PopoverTrigger>
-
-                              <PopoverContent
-                                className="w-auto p-0"
-                                align="start"
-                              >
-                                <Calendar
-                                  mode="single"
-                                  selected={field.value as Date}
-                                  onSelect={field.onChange}
-                                  initialFocus
-                                />
-                              </PopoverContent>
-                            </Popover>
-
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </Field>
-                  ))}
-                </FieldGroup> */}
-
-                <FieldGroup className="grid gap-4 md:grid-cols-2">
+                <FieldGroup className="grid gap-6 md:grid-cols-2">
                   {[
                     {
                       name: "startAt",
@@ -381,7 +358,7 @@ export function CreateEventModal({
                                   <FormControl>
                                     <Button
                                       variant="outline"
-                                      className="justify-start rounded-lg border border-zinc-200 bg-white/10 px-3 py-6 text-left text-sm font-light shadow-none"
+                                      className="justify-start rounded-lg border px-3 py-6 text-left text-sm font-light shadow-none"
                                     >
                                       {value
                                         ? format(value, "dd MMM yyyy")
@@ -436,7 +413,7 @@ export function CreateEventModal({
 
                                     field.onChange(newDate);
                                   }}
-                                  className="rounded-lg border border-zinc-200 bg-white/10 px-3 py-6 text-sm font-light shadow-none"
+                                  className="rounded-lg border px-3 py-6 text-sm font-light shadow-none"
                                 />
                                 <Clock className="text-muted-foreground/85 pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2" />
                               </div>
@@ -449,32 +426,6 @@ export function CreateEventModal({
                     </Field>
                   ))}
                 </FieldGroup>
-
-                {/* Price */}
-                <Field>
-                  <FieldLabel>Event Price</FieldLabel>
-                  <FormField
-                    control={form.control}
-                    name="price"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input
-                            type="number"
-                            min={0}
-                            value={field.value as number}
-                            onChange={(e) =>
-                              field.onChange(Number(e.target.value))
-                            }
-                            placeholder="Event Price"
-                            className="rounded-lg border border-zinc-200 bg-white/10 px-3 py-6 text-sm font-light shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </Field>
               </FieldGroup>
 
               <FieldGroup>
@@ -505,33 +456,67 @@ export function CreateEventModal({
                   />
                 </Field>
 
-                {/* Performers */}
-                <Field>
-                  <FieldLabel>Event Performers</FieldLabel>
+                <div className="grid grid-cols-2 gap-4">
+                  {/* Price */}
+                  <Field>
+                    <FieldLabel>Event Price</FieldLabel>
+                    <FormField
+                      control={form.control}
+                      name="price"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              min={0}
+                              value={field.value as number}
+                              onChange={(e) =>
+                                field.onChange(Number(e.target.value))
+                              }
+                              placeholder="Event Price"
+                              className="rounded-lg border px-3 py-6 text-sm font-light shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </Field>
 
-                  <FormField
-                    control={form.control}
-                    name="performerIds"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <PerformerPicker
+                  {/* Event Status */}
+                  <Field>
+                    <FieldLabel>Event Status</FieldLabel>
+
+                    <FormField
+                      control={form.control}
+                      name="status"
+                      render={({ field }) => (
+                        <FormItem>
+                          <Select
                             value={field.value}
-                            onChange={(ids) =>
-                              form.setValue("performerIds", ids, {
-                                shouldDirty: true,
-                                shouldTouch: true,
-                                shouldValidate: true,
-                              })
-                            }
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <PerformerModal type="create" />
-                </Field>
+                            onValueChange={field.onChange}
+                          >
+                            <FormControl className="rounded-lg py-6">
+                              <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Select event status" />
+                              </SelectTrigger>
+                            </FormControl>
+
+                            <SelectContent className="w-full">
+                              {EVENT_STATUS.map((status) => (
+                                <SelectItem key={status} value={status}>
+                                  {status}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </Field>
+                </div>
 
                 {/* Gallery */}
                 <Field>

@@ -112,7 +112,7 @@ export function DeleteModal(props: Props) {
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={isOpen} onOpenChange={setIsOpen} modal>
       <DialogTrigger asChild>
         {trigger === "icon" ? (
           <Button variant="destructive" size="icon-sm" className="rounded-lg">
@@ -205,6 +205,7 @@ export function DeleteModal(props: Props) {
 
               <ActionButton2
                 type="submit"
+                variant="destructive"
                 disabled={!isMatch || isSubmitting}
                 className="w-full disabled:cursor-not-allowed disabled:opacity-70"
               >

@@ -8,6 +8,7 @@ import { format } from "date-fns";
 import { MoreHorizontal } from "lucide-react";
 
 import { DeleteModal } from "@/components/modals/delete.modal";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -70,35 +71,6 @@ export const columns: ColumnDef<EventSummary>[] = [
     accessorKey: "city",
     header: "City",
   },
-  // {
-  //   accessorKey: "startAt",
-  //   header: "Start Date & Time",
-  //   cell: ({ row }) => {
-  //     const date = new Date(row.original.startAt);
-  //     return date.toLocaleString("en-IN", {
-  //       day: "2-digit",
-  //       month: "short",
-  //       year: "numeric",
-  //       hour: "2-digit",
-  //       minute: "2-digit",
-  //     });
-  //   },
-  // },
-  // {
-  //   accessorKey: "endAt",
-  //   header: "End Date & Time",
-  //   cell: ({ row }) => {
-  //     const date = new Date(row.original.endAt);
-  //     return date.toLocaleString("en-IN", {
-  //       day: "2-digit",
-  //       month: "short",
-  //       year: "numeric",
-  //       hour: "2-digit",
-  //       minute: "2-digit",
-  //     });
-  //   },
-  // },
-
   {
     id: "date",
     header: "Date",
@@ -130,6 +102,14 @@ export const columns: ColumnDef<EventSummary>[] = [
   {
     accessorKey: "price",
     header: "Price",
+  },
+  {
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ row }) => {
+      const status = row.original.status;
+      return <Badge variant="default">{status}</Badge>;
+    },
   },
   {
     id: "actions",

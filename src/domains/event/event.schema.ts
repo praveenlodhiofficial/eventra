@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { EVENT_STATUS } from "./event.constants";
+
 /* -------------------------------------------------------------------------- */
 /*                            Event Image Schema                              */
 /* -------------------------------------------------------------------------- */
@@ -16,6 +18,8 @@ export type EventImage = z.output<typeof EventImageSchema>;
 /*                           Event Base Schema                                */
 /* -------------------------------------------------------------------------- */
 
+export const EventStatusEnum = z.enum(EVENT_STATUS);
+
 export const EventBaseSchema = z.object({
   id: z.string().optional(),
   name: z
@@ -29,6 +33,7 @@ export const EventBaseSchema = z.object({
   images: z.array(z.string()).optional(),
   categoryIds: z.array(z.string()).min(1, "Select at least one category"),
   city: z.string().min(1, "City is required").trim(),
+  status: EventStatusEnum.default("DRAFT"),
   performerIds: z
     .array(z.string().trim())
     .min(1, "Select at least one performer"),
@@ -72,6 +77,7 @@ export const EventSummarySchema = EventBaseSchema.pick({
   venueId: true,
   startAt: true,
   endAt: true,
+  status: true,
 }).extend({
   id: z.string(),
   slug: z.string(),

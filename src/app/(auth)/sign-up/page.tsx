@@ -118,7 +118,7 @@ export default function SignUp() {
             )}
           />
 
-          <ActionButton2 variant="default" type="submit">
+          <ActionButton2 variant="default" type="submit" className="w-full">
             Sign Up
           </ActionButton2>
 

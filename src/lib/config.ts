@@ -17,4 +17,10 @@ export const config = {
   mapbox: {
     access_token: process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!,
   },
+  mojoauth: {
+    client_id: process.env.MOJOAUTH_CLIENT_ID!,
+    client_secret: process.env.MOJOAUTH_CLIENT_SECRET!,
+    issuer: process.env.MOJOAUTH_ISSUER!,
+    redirect_url: process.env.MOJOAUTH_REDIRECT_URL!,
+  },
 };
