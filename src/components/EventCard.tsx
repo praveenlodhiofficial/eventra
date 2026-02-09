@@ -3,21 +3,13 @@ import Link from "next/link";
 import { Image } from "@imagekit/next";
 import { format, isSameDay } from "date-fns";
 
-import { listEventsAction } from "@/domains/event/event.actions";
+import { findEvents } from "@/domains/event/event.dal";
 import { config } from "@/lib/config";
 
 export async function EventCard() {
-  const res = await listEventsAction();
-
-  if (!res.success) {
-    return (
-      <div className="bg-muted text-destructive flex h-[30vh] w-full items-center justify-center rounded-3xl text-xl font-medium">
-        Error fetching events data
-      </div>
-    );
-  }
-
-  const events = res.data;
+  const events = await findEvents({
+    status: "PUBLISHED",
+  });
 
   if (!events || events.length === 0) {
     return (

@@ -17,15 +17,12 @@ export function ArtistSpotlight({
   const scrollRef = useRef<HTMLDivElement>(null);
 
   return (
-    <div
-      ref={scrollRef}
-      className="no-scrollbar flex gap-3 overflow-x-auto overflow-y-hidden md:gap-5 md:p-2.5 lg:gap-10"
-    >
+    <div ref={scrollRef} className="flex gap-3 md:gap-5 lg:gap-10">
       {performers.map((performer, index) => (
         <Link
           href={`/artists/${performer.slug}`}
           key={performer.id}
-          className="overflow-hidden rounded-full"
+          className="overflow-hidden"
         >
           <motion.div
             key={performer.id}

@@ -14,7 +14,6 @@ export async function Navbar() {
         <>
           <ActionButton1
             variant="outline"
-            href="/sign-up"
             className="cursor-pointer bg-transparent px-5 text-white hover:bg-transparent hover:text-white md:px-10"
           >
             Sign Up
@@ -22,7 +21,6 @@ export async function Navbar() {
 
           <ActionButton1
             variant="outline"
-            href="/sign-in"
             className="cursor-pointer px-5 md:px-10"
           >
             Sign In
@@ -34,7 +32,6 @@ export async function Navbar() {
       {session?.role === "ADMIN" && (
         <ActionButton1
           variant="outline"
-          href="/admin"
           icon={<IconLockShare className="size-5" />}
           className="cursor-pointer"
         >

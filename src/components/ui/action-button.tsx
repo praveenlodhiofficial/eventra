@@ -2,8 +2,6 @@
 
 import { ReactNode } from "react";
 
-import Link from "next/link";
-
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
@@ -49,13 +47,11 @@ function IconTrack({ icon }: { icon: ReactNode }) {
 /* -------------------------------------------------------------------------- */
 
 type ActionButtonLinkProps = ButtonProps & {
-  href: string;
   children: ReactNode;
   icon?: ReactNode;
 };
 
 export function ActionButton1({
-  href,
   children,
   icon,
   className,
@@ -65,21 +61,19 @@ export function ActionButton1({
   const isMobile = useIsMobile();
 
   return (
-    <Link href={href}>
-      <Button
-        size={isMobile ? "md" : size}
-        className={cn(
-          "group relative flex h-10 w-full items-center justify-center overflow-hidden rounded-lg text-xs uppercase md:h-12 md:text-sm",
-          className
-        )}
-        {...props}
-      >
-        <div className="relative flex w-full items-center justify-between gap-5 md:gap-10">
-          <TextTrack>{children}</TextTrack>
-          {icon && <IconTrack icon={icon} />}
-        </div>
-      </Button>
-    </Link>
+    <Button
+      size={isMobile ? "md" : size}
+      className={cn(
+        "group relative flex h-10 w-fit items-center justify-center overflow-hidden rounded-lg text-xs uppercase md:h-12 md:text-sm",
+        className
+      )}
+      {...props}
+    >
+      <div className="relative flex w-full items-center justify-between gap-5 md:gap-10">
+        <TextTrack>{children}</TextTrack>
+        {icon && <IconTrack icon={icon} />}
+      </div>
+    </Button>
   );
 }
 

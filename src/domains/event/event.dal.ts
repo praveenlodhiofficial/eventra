@@ -3,7 +3,7 @@ import prisma from "@/lib/prisma";
 import { slugify } from "@/utils/slugify";
 
 import { Event } from "./event.schema";
-import { FindEventParams } from "./event.types";
+import { FindEventParams, FindEventsOptions } from "./event.types";
 
 /* -------------------------------------------------------------------------- */
 /*                            Create Event                                    */
@@ -17,7 +17,6 @@ export const createEvent = async (data: Event) => {
       description: data.description,
       coverImage: data.coverImage,
       city: data.city,
-      status: data.status,
       startAt: data.startAt,
       endAt: data.endAt,
       price: new Prisma.Decimal(data.price),
@@ -58,7 +57,6 @@ export const updateEventById = async (id: string, data: Event) => {
       description: data.description,
       coverImage: data.coverImage,
       city: data.city,
-      status: data.status,
       startAt: data.startAt,
       endAt: data.endAt,
       price: new Prisma.Decimal(data.price),
@@ -104,11 +102,11 @@ export const findEvent = async ({ id, slug }: FindEventParams) => {
       categories: true,
       city: true,
       performers: true,
-      status: true,
       startAt: true,
       endAt: true,
       price: true,
       venue: true,
+      status: true,
     },
   });
 };
@@ -137,8 +135,15 @@ export const deleteEvents = async (ids: string[]) => {
 /*                               Find Events                                  */
 /* -------------------------------------------------------------------------- */
 
-export const findEvents = async () => {
+/* -------------------------------------------------------------------------- */
+/*                               Find Events                                  */
+/* -------------------------------------------------------------------------- */
+
+export const findEvents = async (options?: FindEventsOptions) => {
   return prisma.event.findMany({
+    where: {
+      ...(options?.status && { status: options.status }),
+    },
     orderBy: {
       startAt: "asc",
     },
@@ -152,7 +157,6 @@ export const findEvents = async () => {
       categories: true,
       city: true,
       performers: true,
-      status: true,
       startAt: true,
       endAt: true,
       price: true,

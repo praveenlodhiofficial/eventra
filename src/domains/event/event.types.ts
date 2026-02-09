@@ -1,6 +1,7 @@
 /* -------------------------------------------------------------------------- */
 /*                     Get Event Params (For Action)                      */
 /* -------------------------------------------------------------------------- */
+import { EventStatus } from "@/generated/prisma/enums";
 
 export type GetEventParams =
   | { id: string; slug?: never }
@@ -13,4 +14,12 @@ export type GetEventParams =
 export type FindEventParams = {
   id?: string;
   slug?: string;
+};
+
+/* -------------------------------------------------------------------------- */
+/*                     Find Events Options (For DAL)                        */
+/* -------------------------------------------------------------------------- */
+
+export type FindEventsOptions = {
+  status?: EventStatus;
 };

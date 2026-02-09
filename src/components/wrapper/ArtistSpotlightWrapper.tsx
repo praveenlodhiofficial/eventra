@@ -13,5 +13,9 @@ export async function ArtistSpotlightWrapper() {
     );
   }
 
-  return <ArtistSpotlight performers={performers} />;
+  return (
+    <div className="no-scrollbar flex overflow-x-auto overflow-y-hidden">
+      <ArtistSpotlight performers={performers} />
+    </div>
+  );
 }
