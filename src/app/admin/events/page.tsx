@@ -40,7 +40,8 @@ export default async function EventsPage() {
         columns={columns}
         data={events.map((event) => ({
           ...event,
-          venue: venues.find((venue) => venue.id === event.venueId)?.name,
+          venueId: event.venue.name,
+          city: event.venue.city,
           price: event.price.toNumber(),
         }))}
         toolbarAction={<CreateEventModal categories={categories ?? []} />}

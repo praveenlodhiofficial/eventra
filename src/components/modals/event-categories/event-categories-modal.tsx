@@ -77,10 +77,10 @@ export function EventCategoriesModal(props: Props) {
       }
 
       toast.success(result.message);
-      router.push(`/admin/event-categories`);
       form.reset();
       setIsOpen(false);
     });
+    router.refresh();
   }
 
   return (
@@ -106,6 +106,7 @@ export function EventCategoriesModal(props: Props) {
             onSubmit={form.handleSubmit(onSubmit)}
             className="no-scrollbar relative flex flex-col gap-10 overflow-hidden overflow-y-scroll"
           >
+            {/* ================================== Dialog Header ================================== */}
             <DialogHeader className="bg-background sticky top-0 z-5 flex h-fit items-center justify-center">
               <DialogTitle className="border-primary w-fit border-y-2 px-5 py-1 text-base font-semibold uppercase md:text-lg lg:text-xl">
                 {isUpdate ? "Update Event Category" : "Create Event Category"}
@@ -117,8 +118,8 @@ export function EventCategoriesModal(props: Props) {
               </DialogDescription>
             </DialogHeader>
 
+            {/* ================================== Dialog Body ================================== */}
             <FieldGroup>
-              {/* ================================== Name Input ================================== */}
               <Field>
                 <FieldLabel>Event Category Name</FieldLabel>
                 <FormField
@@ -140,6 +141,7 @@ export function EventCategoriesModal(props: Props) {
               </Field>
             </FieldGroup>
 
+            {/* ================================== Dialog Footer Button ================================== */}
             <DialogFooter className="bg-background sticky bottom-0 z-5 grid grid-cols-2 gap-3">
               <DialogClose asChild>
                 <ActionButton2 variant="outline" className="w-full">

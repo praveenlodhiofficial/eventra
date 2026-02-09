@@ -1,6 +1,6 @@
 "use client";
 
-import { startTransition } from "react";
+import { startTransition, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { useRouter } from "next/navigation";
@@ -34,6 +34,7 @@ import { VenueInput, VenueSchema } from "@/domains/venue/venue.schema";
 
 export function AddVenueModal() {
   const router = useRouter();
+  const [isOpen, setIsOpen] = useState(false);
 
   const form = useForm<VenueInput>({
     resolver: zodResolver(VenueSchema),
@@ -57,14 +58,14 @@ export function AddVenueModal() {
       }
 
       toast.success(result.message);
-      router.push("/admin/venues");
       form.reset();
+      setIsOpen(false);
     });
     router.refresh();
   }
 
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <ActionButton2
           variant="outline"

@@ -13,10 +13,10 @@ export type EventImageInput = z.input<typeof EventImageSchema>;
 export type EventImage = z.output<typeof EventImageSchema>;
 
 /* -------------------------------------------------------------------------- */
-/*                            Event Schema                                    */
+/*                           Event Base Schema                                */
 /* -------------------------------------------------------------------------- */
 
-export const EventSchema = z.object({
+export const EventBaseSchema = z.object({
   id: z.string().optional(),
   name: z
     .string()
@@ -33,10 +33,30 @@ export const EventSchema = z.object({
     .array(z.string().trim())
     .min(1, "Select at least one performer"),
   venueId: z.string().min(1, "Venue is required").trim(),
-  startAt: z.date(),
-  endAt: z.date(),
+  startAt: z.date().min(new Date(), "Start date cannot be in the past"),
+  endAt: z.date().min(new Date(), "End date cannot be in the past"),
   price: z.coerce.number().min(0, "Price cannot be negative"),
 });
+
+/* -------------------------------------------------------------------------- */
+/*                            Event Schema                                    */
+/* -------------------------------------------------------------------------- */
+
+export const EventSchema = EventBaseSchema.refine(
+  (data) => data.startAt >= new Date(),
+  {
+    path: ["startAt"],
+    message: "Start date cannot be in the past",
+  }
+)
+  .refine((data) => data.endAt >= new Date(), {
+    path: ["endAt"],
+    message: "End date cannot be in the past",
+  })
+  .refine((data) => data.endAt > data.startAt, {
+    path: ["endAt"],
+    message: "End date must be after start date",
+  });
 
 export type EventInput = z.input<typeof EventSchema>;
 export type Event = z.output<typeof EventSchema>;
@@ -45,13 +65,13 @@ export type Event = z.output<typeof EventSchema>;
 /*                            Event Summary Schema                            */
 /* -------------------------------------------------------------------------- */
 
-export const EventSummarySchema = EventSchema.pick({
+export const EventSummarySchema = EventBaseSchema.pick({
   name: true,
-  venueId: true,
   city: true,
+  price: true,
+  venueId: true,
   startAt: true,
   endAt: true,
-  price: true,
 }).extend({
   id: z.string(),
   slug: z.string(),

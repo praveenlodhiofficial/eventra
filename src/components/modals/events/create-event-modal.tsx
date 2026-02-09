@@ -51,6 +51,9 @@ import { EventCategory } from "@/domains/event-categories/event-categories.schem
 import { createEventAction } from "@/domains/event/event.actions";
 import { EventInput, EventSchema } from "@/domains/event/event.schema";
 
+import { EventCategoriesModal } from "../event-categories/event-categories-modal";
+import { PerformerModal } from "../performer/performer-modal";
+import { AddVenueModal } from "../venue/add-venue-modal";
 import { VenuePicker } from "../venue/pick-venue";
 
 /* -------------------------------------------------------------------------- */
@@ -110,10 +113,10 @@ export function CreateEventModal({
       }
 
       toast.success(result.message);
-      router.push(`/admin/events/${result.data.slug}`);
       form.reset();
       setIsOpen(false);
     });
+    router.refresh();
   }
 
   return (
@@ -244,6 +247,7 @@ export function CreateEventModal({
                       );
                     }}
                   />
+                  <EventCategoriesModal type="create" />
                 </Field>
 
                 {/* Venue */}
@@ -265,6 +269,7 @@ export function CreateEventModal({
                       </FormItem>
                     )}
                   />
+                  <AddVenueModal />
                 </Field>
 
                 {/* City */}
@@ -525,6 +530,7 @@ export function CreateEventModal({
                       </FormItem>
                     )}
                   />
+                  <PerformerModal type="create" />
                 </Field>
 
                 {/* Gallery */}
