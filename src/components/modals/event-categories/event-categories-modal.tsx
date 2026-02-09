@@ -48,7 +48,7 @@ export function EventCategoriesModal(props: Props) {
   const [isOpen, setIsOpen] = useState(false);
 
   const isUpdate = props.type === "update";
-  const eventCategory = isUpdate ? props.eventCategory : { name: "Music" };
+  const eventCategory = isUpdate ? props.eventCategory : { name: "" };
 
   if (!eventCategory) {
     throw new Error("Event category not found");

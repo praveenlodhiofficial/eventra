@@ -1,74 +1,46 @@
-import { Image } from "@imagekit/next";
+import Link from "next/link";
 
+import { Image } from "@imagekit/next";
+import { format, isSameDay } from "date-fns";
+
+import { listEventsAction } from "@/domains/event/event.actions";
 import { config } from "@/lib/config";
 
-export const eventCards = [
-  {
-    label: "Sonu Nigam Live in Concert | Mumbai",
-    image:
-      "https://media.insider.in/image/upload/c_crop,g_custom/v1768801587/ixwzvqwsal2jfx7yjrul.jpg",
-    price: 1499,
-    location: "TMC Ground, Hiranandani Estate, Thane West, Thane",
-    startDate: "Sat, 12 Jan",
-    endDate: "Sat, 14 Jan",
-    time: "7:00 PM",
-  },
-  {
-    label: "Arijit Singh India Tour | Pune",
-    image:
-      "https://media.insider.in/image/upload/c_crop,g_custom/v1768801587/ixwzvqwsal2jfx7yjrul.jpg",
-    price: 1799,
-    location: "Balewadi Stadium, Baner, Pune",
-    startDate: "Sun, 19 Jan",
-    endDate: "Sun, 19 Jan",
-    time: "6:30 PM",
-  },
-  {
-    label: "Comedy Night ft. Zakir Khan | Delhi",
-    image:
-      "https://media.insider.in/image/upload/c_crop,g_custom/v1768801587/ixwzvqwsal2jfx7yjrul.jpg",
-    price: 799,
-    location: "Talkatora Indoor Stadium, Connaught Place, Delhi",
-    startDate: "Fri, 24 Jan",
-    endDate: "Fri, 24 Jan",
-    time: "8:00 PM",
-  },
-  {
-    label: "EDM Festival 2026 | Bangalore",
-    image:
-      "https://media.insider.in/image/upload/w_800/v1760685563/xthylybyrruskmwrb58p.jpg",
-    price: 2499,
-    location: "Nice Grounds, Madavara, Bangalore",
-    startDate: "Sat, 1 Feb",
-    endDate: "Sun, 2 Feb",
-    time: "5:00 PM",
-  },
-  {
-    label: "Taylor Swift Tribute Night | Goa",
-    image:
-      "https://media.insider.in/image/upload/c_crop,g_custom/v1768801587/ixwzvqwsal2jfx7yjrul.jpg",
-    price: 999,
-    location: "Baga Beach Arena, North Goa",
-    startDate: "Sat, 8 Feb",
-    endDate: "Sat, 8 Feb",
-    time: "9:00 PM",
-  },
-];
+export async function EventCard() {
+  const res = await listEventsAction();
 
-export function EventCard() {
+  if (!res.success) {
+    return (
+      <div className="bg-muted text-destructive flex h-[30vh] w-full items-center justify-center rounded-3xl text-xl font-medium">
+        Error fetching events data
+      </div>
+    );
+  }
+
+  const events = res.data;
+
+  if (!events || events.length === 0) {
+    return (
+      <div className="bg-muted flex h-[20vh] w-full items-center justify-center rounded-3xl text-xl font-medium lg:h-[30vh]">
+        No events found
+      </div>
+    );
+  }
+
   return (
     <div className="grid h-full w-full grid-cols-2 gap-3 md:gap-5 lg:grid-cols-4">
-      {eventCards.map((event) => {
+      {events.map((event) => {
         return (
-          <div
-            key={event.label}
+          <Link
+            href={`/events/${event.slug}`}
+            key={event.id}
             className="h-fit overflow-hidden rounded-3xl border lg:h-[65vh]"
           >
             <div className="relative aspect-10/11 h-[73%] w-full">
               <Image
                 urlEndpoint={config.imagekit.url_endpoint}
-                src={event.image}
-                alt={event.label}
+                src={event.coverImage}
+                alt={event.name}
                 fill
                 transformation={[{ width: 400, height: 400 }]}
                 className="h-full w-full object-cover"
@@ -76,36 +48,39 @@ export function EventCard() {
             </div>
             <div className="h-fit w-full space-y-1.5 p-3">
               {/* =========================== Event Date & Time =========================== */}
-              {event.startDate &&
-              event.endDate &&
-              event.startDate === event.endDate ? (
-                <div className="line-clamp-1 text-xs text-amber-600 md:line-clamp-none md:text-[13px]">
-                  {event.startDate}, {event.time}
-                </div>
-              ) : (
-                <div className="line-clamp-1 text-xs text-amber-600 md:line-clamp-none md:text-[13px]">
-                  {event.startDate} - {event.endDate}, {event.time}
-                </div>
-              )}
+              <div className="line-clamp-1 text-xs text-amber-600 md:line-clamp-none md:text-[13px]">
+                {isSameDay(event.startAt, event.endAt) ? (
+                  <>
+                    {format(event.startAt, "MMM dd, yyyy")},{" "}
+                    {format(event.startAt, "p")}
+                  </>
+                ) : (
+                  <>
+                    {format(event.startAt, "MMM dd, yyyy")} -{" "}
+                    {format(event.endAt, "MMM dd, yyyy")},{" "}
+                    {format(event.startAt, "p")}
+                  </>
+                )}
+              </div>
 
               {/* =========================== Event Title =========================== */}
               <div className="line-clamp-2 text-[14px] leading-snug font-semibold md:text-[16px]">
-                {event.label}
+                {event.name}
               </div>
 
               <div className="space-y-1 md:space-y-0.5">
                 {/* =========================== Event Location =========================== */}
                 <div className="text-muted-foreground line-clamp-1 text-xs">
-                  {event.location}
+                  {event.venue.name}, {event.venue.state}
                 </div>
 
                 {/* =========================== Event Price =========================== */}
                 <div className="text-muted-foreground text-xs md:text-[13px]">
-                  ₹{event.price} onwards
+                  ₹{Number(event.price).toFixed(2)} onwards
                 </div>
               </div>
             </div>
-          </div>
+          </Link>
         );
       })}
     </div>

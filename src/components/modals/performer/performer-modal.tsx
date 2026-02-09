@@ -49,9 +49,10 @@ export function PerformerModal(props: Props) {
   const performer = isUpdate
     ? props.performer
     : {
-        name: "Justin Bieber",
+        name: "",
         image: "",
-        bio: "Justin Bieber is a Canadian singer, songwriter, and actor. He is known for his pop music and has sold over 150 million records worldwide. He is one of the best-selling artists of all time.",
+        bio: "",
+        role: "",
       };
 
   if (!performer) {
@@ -65,6 +66,7 @@ export function PerformerModal(props: Props) {
       name: performer.name,
       image: performer.image,
       bio: performer.bio,
+      role: performer.role,
     },
   });
 
@@ -163,6 +165,27 @@ export function PerformerModal(props: Props) {
                       <FormControl>
                         <Input
                           placeholder="Performer Name"
+                          className="rounded-lg border border-zinc-200 bg-white/10 px-3 py-6 text-sm font-light shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </Field>
+
+              {/* Role */}
+              <Field>
+                <FieldLabel>Performer Role</FieldLabel>
+                <FormField
+                  control={form.control}
+                  name="role"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input
+                          artisplaceholder="Performer Role"
                           className="rounded-lg border border-zinc-200 bg-white/10 px-3 py-6 text-sm font-light shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
                           {...field}
                         />

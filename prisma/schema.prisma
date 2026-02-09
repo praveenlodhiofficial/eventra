@@ -81,6 +81,7 @@ model Performer {
   slug  String @unique
   image String
   bio   String
+  role  String 
 
   events Event[] @relation("EventPerformers")
 

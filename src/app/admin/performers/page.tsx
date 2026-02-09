@@ -5,14 +5,6 @@ import { getPerformersAction } from "@/domains/performer/performer.actions";
 export default async function AdminPerformersPage() {
   const res = await getPerformersAction();
 
-  if (!res.success) {
-    return (
-      <div className="flex h-[calc(100vh-10rem)] items-center justify-center text-xl font-medium">
-        Error fetching performers data
-      </div>
-    );
-  }
-
   const performers = res.data;
 
   if (!performers || performers.length === 0) {
@@ -36,6 +28,7 @@ export default async function AdminPerformersPage() {
             href={`/admin/performers/${performer.slug}`}
             name={performer.name}
             image={performer.image}
+            role={performer.role}
           />
         ))}
       </div>

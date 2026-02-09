@@ -8,9 +8,15 @@ interface PerformerCardProps {
   href: string;
   name: string;
   image: string;
+  role: string;
 }
 
-export function PerformerCard({ href = "#", name, image }: PerformerCardProps) {
+export function PerformerCard({
+  href = "#",
+  name,
+  image,
+  role,
+}: PerformerCardProps) {
   return (
     <Link
       href={href}
@@ -54,10 +60,11 @@ export function PerformerCard({ href = "#", name, image }: PerformerCardProps) {
       </div>
 
       {/* Name */}
-      <div className="p-2">
-        <div className="line-clamp-1 text-center text-sm font-medium">
-          {name}
-        </div>
+      <div className="flex flex-col items-center justify-center p-2">
+        <h3 className="line-clamp-1 text-center text-sm font-medium">{name}</h3>
+        <p className="text-muted-foreground text-[13px] font-light text-balance">
+          {role}
+        </p>
       </div>
     </Link>
   );

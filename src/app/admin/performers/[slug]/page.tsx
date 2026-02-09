@@ -40,7 +40,7 @@ export default async function PerformerPage({
           </h1>
           <PerformerModal type="update" performer={performer} />
         </div>
-        <p className="text-muted-foreground text-sm font-light text-balance md:text-base">
+        <p className="text-muted-foreground text-sm font-light text-balance whitespace-pre-line md:text-base">
           {performer.bio}
         </p>
       </div>

@@ -68,17 +68,16 @@ export function CreateEventModal({
   const form = useForm<EventInput>({
     resolver: zodResolver(EventSchema),
     defaultValues: {
-      name: "Arijit Singh India Tour | Pune | 01",
-      description:
-        "Description is any type of communication that aims to make vivid a place, object, person, group, or other physical entity.[1] It is one of four rhetorical modes (also known as modes of discourse), along with exposition, argumentation, and narration.[2]",
+      name: "",
+      description: "",
       coverImage: "",
       categoryIds: [],
-      city: "Pune",
+      city: "",
       performerIds: [],
       venueId: "",
       startAt: new Date(),
       endAt: new Date(),
-      price: 1799,
+      price: 0,
       images: [],
     },
   });

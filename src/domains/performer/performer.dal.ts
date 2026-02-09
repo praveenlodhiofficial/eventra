@@ -44,6 +44,7 @@ export const findPerformer = async ({ id, slug }: FindPerformerParams) => {
       name: true,
       image: true,
       bio: true,
+      role: true,
     },
   });
 };
@@ -61,6 +62,7 @@ export const findAllPerformers = async () => {
       name: true,
       image: true,
       slug: true,
+      role: true,
     },
   });
 };
@@ -84,6 +86,7 @@ export const searchPerformersByName = async (
       id: true,
       name: true,
       image: true,
+      role: true,
     },
   });
 };

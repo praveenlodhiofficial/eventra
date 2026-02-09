@@ -1,22 +1,11 @@
-import { ArtistSpotlight } from "@/components/ArtistSpotlight";
 import { Carousel } from "@/components/Carousel";
 import { EventCard } from "@/components/EventCard";
 import { EventCategories } from "@/components/EventCategories";
 import { Navbar } from "@/components/Navbar";
 import { Container } from "@/components/ui/container";
-import { getPerformersAction } from "@/domains/performer/performer.actions";
+import { ArtistSpotlightWrapper } from "@/components/wrapper/ArtistSpotlightWrapper";
 
 export default async function Home() {
-  const res = await getPerformersAction();
-  if (!res.success) {
-    return <div>Error fetching performers</div>;
-  }
-
-  const performers = res.data;
-
-  if (!performers || performers.length === 0) {
-    return <div>No performers found</div>;
-  }
   return (
     <div className="space-y-0 md:space-y-10 lg:space-y-20">
       <Navbar />
@@ -48,7 +37,7 @@ export default async function Home() {
             Artist Spotlight
           </h1>
           <div className="flex gap-5">
-            <ArtistSpotlight performers={performers} />
+            <ArtistSpotlightWrapper />
           </div>
         </section>
 

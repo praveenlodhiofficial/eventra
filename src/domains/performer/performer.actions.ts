@@ -135,6 +135,7 @@ export const getPerformersAction = async () => {
         name: performer.name,
         image: performer.image,
         slug: performer.slug,
+        role: performer.role,
       })),
     };
   } catch (error) {

@@ -37,6 +37,7 @@ export const findEventCategories = async () => {
     select: {
       id: true,
       name: true,
+      slug: true,
     },
   });
 };

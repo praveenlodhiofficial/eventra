@@ -119,5 +119,20 @@ export const findEvents = async () => {
     orderBy: {
       startAt: "asc",
     },
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      description: true,
+      coverImage: true,
+      images: true,
+      categories: true,
+      city: true,
+      performers: true,
+      startAt: true,
+      endAt: true,
+      price: true,
+      venue: true,
+    },
   });
 };
