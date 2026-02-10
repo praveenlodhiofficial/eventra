@@ -7,9 +7,9 @@ import { Container } from "@/components/ui/container";
 export default function EventsPage() {
   return (
     <Container>
-      <section className="mx-auto w-full max-w-7xl space-y-5 md:space-y-8">
+      <section className="mx-auto w-full space-y-5 md:max-w-7xl md:space-y-8">
         <h1 className="text-2xl font-semibold md:text-3xl">Popular Events</h1>
-        <div className="flex h-fit items-center justify-start gap-2 rounded-lg">
+        <div className="no-scrollbar flex h-fit w-[calc(105%)] items-center justify-start gap-2 overflow-x-auto rounded-lg">
           <ActionButton1
             variant="secondary"
             icon={<SlidersHorizontal className="size-5" />}

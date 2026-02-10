@@ -2,10 +2,17 @@
 import React, { useEffect, useRef, useState } from "react";
 
 import Image from "next/image";
+import Link from "next/link";
 
 import { animate, motion, useMotionValue } from "motion/react";
 
-export function Carousel({ productImageUrls }: { productImageUrls: string[] }) {
+export function Carousel({
+  coverImage,
+  slug,
+}: {
+  coverImage: string[];
+  slug: string[];
+}) {
   const [index, setIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -32,20 +39,21 @@ export function Carousel({ productImageUrls }: { productImageUrls: string[] }) {
           ref={containerRef}
         >
           <motion.div className="flex" style={{ x }}>
-            {productImageUrls.map((item) => (
-              <div
-                key={item}
+            {coverImage.map((item, index) => (
+              <Link
+                href={`/events/${slug[index]}`}
+                key={index}
                 className="h-[30vh] w-full shrink-0 md:h-[40vh] lg:h-full"
               >
                 <Image
                   width={2000}
                   height={2000}
-                  src={item}
+                  src={coverImage[index]}
                   alt={item}
-                  className="pointer-events-none h-fit w-full object-cover select-none lg:h-full"
+                  className="h-fit w-full object-cover select-none lg:h-full"
                   draggable={false}
                 />
-              </div>
+              </Link>
             ))}
           </motion.div>
 
@@ -76,12 +84,12 @@ export function Carousel({ productImageUrls }: { productImageUrls: string[] }) {
 
           {/* Next Button */}
           <motion.button
-            disabled={index === productImageUrls.length - 1}
+            disabled={index === coverImage.length - 1}
             onClick={() =>
-              setIndex((i) => Math.min(productImageUrls.length - 1, i + 1))
+              setIndex((i) => Math.min(coverImage.length - 1, i + 1))
             }
             className={`absolute top-1/2 right-4 z-10 flex size-8 -translate-y-1/2 items-center justify-center rounded-full shadow-lg transition-transform md:size-10 ${
-              index === productImageUrls.length - 1
+              index === coverImage.length - 1
                 ? "cursor-not-allowed opacity-40"
                 : "bg-white opacity-70 hover:scale-110 hover:opacity-100"
             }`}
@@ -102,7 +110,7 @@ export function Carousel({ productImageUrls }: { productImageUrls: string[] }) {
           </motion.button>
           {/* Progress Indicator */}
           <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2 rounded-xl border border-white/30 bg-white/20 p-1.5 md:p-2">
-            {productImageUrls.map((_, i) => (
+            {coverImage.map((_, i) => (
               <button
                 key={i}
                 onClick={() => setIndex(i)}

@@ -1,3 +1,4 @@
+import { Navbar } from "@/components/Navbar";
 import { cn } from "@/lib/utils";
 
 type UserLayoutProps = {
@@ -6,5 +7,12 @@ type UserLayoutProps = {
 };
 
 export default function UserLayout({ children, className }: UserLayoutProps) {
-  return <div className={cn(className)}>{children}</div>;
+  return (
+    <div className={cn(className)}>
+      {/* <div className="sticky top-0 z-50"> */}
+      <Navbar />
+      {/* </div> */}
+      {children}
+    </div>
+  );
 }

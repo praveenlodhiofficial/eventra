@@ -135,10 +135,6 @@ export const deleteEvents = async (ids: string[]) => {
 /*                               Find Events                                  */
 /* -------------------------------------------------------------------------- */
 
-/* -------------------------------------------------------------------------- */
-/*                               Find Events                                  */
-/* -------------------------------------------------------------------------- */
-
 export const findEvents = async (options?: FindEventsOptions) => {
   return prisma.event.findMany({
     where: {
@@ -161,6 +157,7 @@ export const findEvents = async (options?: FindEventsOptions) => {
       endAt: true,
       price: true,
       venue: true,
+      status: true,
     },
   });
 };

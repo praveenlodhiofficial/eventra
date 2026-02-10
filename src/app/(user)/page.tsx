@@ -1,25 +1,16 @@
-import { Carousel } from "@/components/Carousel";
 import { EventCard } from "@/components/EventCard";
 import { EventCategories } from "@/components/EventCategories";
-import { Navbar } from "@/components/Navbar";
 import { Container } from "@/components/ui/container";
 import { ArtistSpotlightWrapper } from "@/components/wrapper/ArtistSpotlightWrapper";
+import { CarouselWrapper } from "@/components/wrapper/CarouselWrapper";
 
 export default async function Home() {
   return (
     <div className="space-y-0 md:space-y-10 lg:space-y-20">
-      <Navbar />
       {/* =============================== Event Carousel =============================== */}
       <div className="relative h-fit w-full lg:h-full">
-        <Carousel
-          productImageUrls={[
-            "https://res.cloudinary.com/dwzmsvp7f/image/upload/f_auto,w_1280/c_crop%2Cg_custom%2Fv1770204742%2Fugbadsyxmfrd4voxoz91.jpg",
-            "https://res.cloudinary.com/dwzmsvp7f/image/upload/f_auto,w_1280/c_crop%2Cg_custom%2Fv1769517757%2Fbcki8o6ulghmf7bxt53l.jpg",
-            "https://res.cloudinary.com/dwzmsvp7f/image/upload/f_auto,w_1280/c_crop%2Cg_custom%2Fv1768801567%2Fjfvotrokpq53xtmryzi8.jpg",
-            "https://res.cloudinary.com/dwzmsvp7f/image/upload/f_auto,w_1280/c_crop%2Cg_custom%2Fv1764063100%2Ffksszvjfwmw3gy9ylhib.png",
-          ]}
-        />
-        <div className="absolute top-0 left-0 hidden h-full w-full bg-linear-to-b from-transparent via-white/5 to-white md:h-full" />
+        <CarouselWrapper />
+        {/* <div className="absolute bottom-0 left-0 max-h-[30vh] w-full bg-linear-to-b from-transparent via-white/60 to-white md:h-full" /> */}
       </div>
 
       <Container>
