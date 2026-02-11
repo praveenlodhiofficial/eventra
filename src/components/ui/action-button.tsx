@@ -33,7 +33,7 @@ function TextTrack({ children }: { children: ReactNode }) {
 
 function IconTrack({ icon }: { icon: ReactNode }) {
   return (
-    <div className="relative size-5 overflow-hidden">
+    <div className="relative flex size-5 overflow-hidden">
       <div className="flex -translate-y-5 flex-col transition-transform duration-200 ease-in-out group-hover:translate-y-0">
         {icon}
         {icon}
@@ -46,9 +46,10 @@ function IconTrack({ icon }: { icon: ReactNode }) {
 /*                            Action Button 1 (Link)                            */
 /* -------------------------------------------------------------------------- */
 
-type ActionButtonLinkProps = ButtonProps & {
+type ActionButton1Props = ButtonProps & {
   children: ReactNode;
   icon?: ReactNode;
+  gap?: string;
 };
 
 export function ActionButton1({
@@ -56,8 +57,9 @@ export function ActionButton1({
   icon,
   className,
   size = "lg",
+  gap = "gap-5 md:gap-10",
   ...props
-}: ActionButtonLinkProps) {
+}: ActionButton1Props & { gap?: string }) {
   const isMobile = useIsMobile();
 
   return (
@@ -69,7 +71,9 @@ export function ActionButton1({
       )}
       {...props}
     >
-      <div className="relative flex w-full items-center justify-between gap-5 md:gap-10">
+      <div
+        className={cn("relative flex w-full items-center justify-between", gap)}
+      >
         <TextTrack>{children}</TextTrack>
         {icon && <IconTrack icon={icon} />}
       </div>
@@ -81,7 +85,7 @@ export function ActionButton1({
 /*                         Action Button 2 (Submit / Normal)                    */
 /* -------------------------------------------------------------------------- */
 
-type ActionButtonProps = ButtonProps & {
+type ActionButton2Props = ButtonProps & {
   children: ReactNode;
 };
 
@@ -90,7 +94,7 @@ export function ActionButton2({
   className,
   size = "lg",
   ...props
-}: ActionButtonProps) {
+}: ActionButton2Props) {
   const isMobile = useIsMobile();
 
   return (

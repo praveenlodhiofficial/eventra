@@ -5,8 +5,8 @@ type FramerBlurProps = {
 };
 
 export default function FramerBlur({ className = "" }: FramerBlurProps) {
-  const blurs = [0.46875, 0.9375, 1.875, 3.75, 7.5, 15, 30];
-  // const blurs = [0.9375, 1.5381, 2.5236, 4.1396, 6.7932, 11.151, 18.299, 30.0];
+  // const blurs = [0.46875, 0.9375, 1.875, 3.75, 7.5, 15, 30];
+  const blurs = [0.9375, 1.5381, 2.5236, 4.1396, 6.7932, 11.151, 18.299, 30.0];
 
   return (
     <div className={cn("fixed right-0 bottom-0 left-0 w-full", className)}>

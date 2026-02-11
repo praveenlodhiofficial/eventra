@@ -12,7 +12,7 @@ export default function UserLayout({ children, className }: UserLayoutProps) {
     <div className={cn(className)}>
       <Navbar />
       {children}
-      <FramerBlur className="pointer-events-none h-20" />
+      <FramerBlur className="pointer-events-none h-25" />
     </div>
   );
 }

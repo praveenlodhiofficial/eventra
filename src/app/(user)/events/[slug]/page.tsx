@@ -9,6 +9,7 @@ import { AutoImageGrid } from "@/components/AutoImageGrid";
 import { ActionButton2 } from "@/components/ui/action-button";
 import { Badge } from "@/components/ui/badge";
 import { Container } from "@/components/ui/container";
+import { ReadMore } from "@/components/ui/read-more";
 import { Separator } from "@/components/ui/separator";
 import { findEvent } from "@/domains/event/event.dal";
 import { config } from "@/lib/config";
@@ -138,9 +139,11 @@ export default async function EventPage({
             About Event
           </h2>
 
-          <p className="text-muted-foreground line-clamp-4 max-w-full text-sm font-light text-balance whitespace-pre-line md:text-lg lg:max-w-4/7">
-            {event.description}
-          </p>
+          <ReadMore
+            text={event.description}
+            lines={5}
+            className="text-muted-foreground line-clamp-4 w-[60%] text-sm font-light text-balance whitespace-pre-line md:text-lg lg:max-w-4/7"
+          />
         </section>
 
         {/* =========================== Artist Lineup =========================== */}

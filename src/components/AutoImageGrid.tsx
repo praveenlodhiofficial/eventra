@@ -16,22 +16,27 @@ export function AutoImageGrid({ images }: Props) {
   }
 
   return (
-    <div className="no-scrollbar flex gap-3.5 overflow-hidden overflow-x-auto pb-2">
+    <div className="no-scrollbar flex gap-2 overflow-hidden overflow-x-auto pb-2 md:gap-3.5">
       {groups.map((group, index) => {
         const type = PATTERN[index % PATTERN.length];
 
         const widthClass =
-          group.length === 3 ? "min-w-[600px]" : "min-w-[300px]";
+          group.length === 3
+            ? "min-w-[350px] md:min-w-[600px]"
+            : "min-w-[200px] md:min-w-[300px]";
 
         return (
-          <div key={index} className={`grid ${widthClass} grid-cols-2 gap-3.5`}>
+          <div
+            key={index}
+            className={`grid ${widthClass} grid-cols-2 gap-2 md:gap-3.5`}
+          >
             {/* ================= GROUP OF 3 IMAGES ================= */}
             {group.length === 3 && (
               <>
                 {/* Layout A */}
                 {type === "A" && (
                   <>
-                    <div className="relative col-span-2 h-80">
+                    <div className="relative col-span-2 h-50 md:h-80">
                       <Image
                         src={group[0]}
                         alt=""
@@ -40,7 +45,7 @@ export function AutoImageGrid({ images }: Props) {
                       />
                     </div>
                     {group[1] && (
-                      <div className="relative h-45">
+                      <div className="relative h-65 md:h-45">
                         <Image
                           src={group[1]}
                           alt=""
@@ -50,7 +55,7 @@ export function AutoImageGrid({ images }: Props) {
                       </div>
                     )}
                     {group[2] && (
-                      <div className="relative h-45">
+                      <div className="relative h-65 md:h-45">
                         <Image
                           src={group[2]}
                           alt=""
@@ -66,7 +71,7 @@ export function AutoImageGrid({ images }: Props) {
                 {type === "B" && (
                   <>
                     {group[0] && (
-                      <div className="relative h-45">
+                      <div className="relative h-65 md:h-45">
                         <Image
                           src={group[0]}
                           alt=""
@@ -76,7 +81,7 @@ export function AutoImageGrid({ images }: Props) {
                       </div>
                     )}
                     {group[1] && (
-                      <div className="relative h-45">
+                      <div className="relative h-65 md:h-45">
                         <Image
                           src={group[1]}
                           alt=""
@@ -86,7 +91,7 @@ export function AutoImageGrid({ images }: Props) {
                       </div>
                     )}
                     {group[2] && (
-                      <div className="relative col-span-2 h-80">
+                      <div className="relative col-span-2 h-50 md:h-80">
                         <Image
                           src={group[2]}
                           alt=""
@@ -102,7 +107,7 @@ export function AutoImageGrid({ images }: Props) {
                 {type === "C" && (
                   <>
                     {group[0] && (
-                      <div className="relative col-span-2 h-45">
+                      <div className="relative col-span-2 h-65 md:h-45">
                         <Image
                           src={group[0]}
                           alt=""
@@ -112,7 +117,7 @@ export function AutoImageGrid({ images }: Props) {
                       </div>
                     )}
                     {group[1] && (
-                      <div className="relative h-80">
+                      <div className="relative h-50 md:h-80">
                         <Image
                           src={group[1]}
                           alt=""
@@ -122,7 +127,7 @@ export function AutoImageGrid({ images }: Props) {
                       </div>
                     )}
                     {group[2] && (
-                      <div className="relative h-80">
+                      <div className="relative h-50 md:h-80">
                         <Image
                           src={group[2]}
                           alt=""
@@ -138,7 +143,7 @@ export function AutoImageGrid({ images }: Props) {
 
             {/* ================= GROUP OF 2 IMAGES ================= */}
             {group.length === 2 && (
-              <div className="col-span-2 grid grid-rows-[0.5fr_1fr] gap-3.5">
+              <div className="col-span-2 grid grid-rows-[1fr_0.5fr] gap-2 md:grid-rows-[0.5fr_1fr] md:gap-3.5">
                 {group.map((src, i) => (
                   <div key={i} className="relative">
                     <Image
@@ -154,7 +159,7 @@ export function AutoImageGrid({ images }: Props) {
 
             {/* ================= GROUP OF 1 IMAGE ================= */}
             {group.length === 1 && (
-              <div className="relative col-span-2 h-80">
+              <div className="relative col-span-2 h-50 md:h-80">
                 <Image
                   src={group[0]}
                   alt=""
