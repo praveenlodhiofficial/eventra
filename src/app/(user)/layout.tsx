@@ -1,3 +1,4 @@
+import FramerBlur from "@/components/FramerBlur";
 import { Navbar } from "@/components/Navbar";
 import { cn } from "@/lib/utils";
 
@@ -9,10 +10,9 @@ type UserLayoutProps = {
 export default function UserLayout({ children, className }: UserLayoutProps) {
   return (
     <div className={cn(className)}>
-      {/* <div className="sticky top-0 z-50"> */}
       <Navbar />
-      {/* </div> */}
       {children}
+      <FramerBlur className="pointer-events-none h-20" />
     </div>
   );
 }

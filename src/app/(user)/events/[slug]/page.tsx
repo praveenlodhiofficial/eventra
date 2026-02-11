@@ -5,6 +5,7 @@ import { formatDate, isSameDay } from "date-fns";
 import { Bookmark, CalendarCheckIcon, MapPinIcon, Share2 } from "lucide-react";
 
 import { ArtistSpotlight } from "@/components/ArtistSpotlight";
+import { AutoImageGrid } from "@/components/AutoImageGrid";
 import { ActionButton2 } from "@/components/ui/action-button";
 import { Badge } from "@/components/ui/badge";
 import { Container } from "@/components/ui/container";
@@ -39,7 +40,7 @@ export default async function EventPage({
 
   return (
     <div>
-      <section className="relative mx-auto aspect-video w-full scale-x-98 scale-y-96 overflow-hidden rounded-t-xl md:rounded-t-2xl lg:aspect-16/7 lg:rounded-t-3xl">
+      <section className="relative mx-auto aspect-video w-full scale-x-98 overflow-hidden rounded-t-xl md:rounded-t-2xl lg:rounded-t-3xl">
         <Image
           urlEndpoint={config.imagekit.url_endpoint}
           src={event.coverImage}
@@ -60,7 +61,7 @@ export default async function EventPage({
           ))}
         </div>
 
-        <div className="absolute top-2 right-2 flex flex-col items-end gap-2 md:top-22 md:right-3 md:flex-row md:items-center">
+        <div className="absolute top-2 right-2 flex flex-col items-end gap-2 md:top-3 md:right-3 md:flex-row md:items-center">
           <Link href="#" key={event.id}>
             <ActionButton2
               className="flex h-8 items-center rounded-full capitalize md:text-lg"
@@ -132,6 +133,7 @@ export default async function EventPage({
 
           <Separator className="md:my-5" />
 
+          {/* =========================== About Event =========================== */}
           <h2 className="text-base font-medium capitalize md:text-2xl">
             About Event
           </h2>
@@ -141,6 +143,7 @@ export default async function EventPage({
           </p>
         </section>
 
+        {/* =========================== Artist Lineup =========================== */}
         <section className="w-full space-y-5 md:space-y-8">
           <h1 className="text-2xl font-semibold md:text-3xl">Artist Lineup</h1>
           <div className="flex origin-left gap-5 overflow-x-auto scroll-smooth">
@@ -148,20 +151,13 @@ export default async function EventPage({
           </div>
         </section>
 
-        <section className="w-full space-y-5 md:space-y-8">
+        {/* =========================== Event Gallery =========================== */}
+        <section className="w-full max-w-4xl space-y-5 md:space-y-8">
           <h1 className="text-2xl font-semibold md:text-3xl">Event Gallery</h1>
-          <div className="flex origin-left gap-5 overflow-x-auto scroll-smooth">
-            {event.images.map((image) => (
-              <Image
-                key={image.id}
-                src={image.url}
-                alt={image.url}
-                width={100}
-                height={100}
-              />
-            ))}
-          </div>
+          <AutoImageGrid images={event.images.map((image) => image.url)} />
         </section>
+
+        <div className="h-50" />
       </Container>
     </div>
   );
