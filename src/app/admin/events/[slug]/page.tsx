@@ -1,5 +1,6 @@
 import Image from "next/image";
 
+import { TicketTypeModal } from "@/components/modals/ticket-type/ticket-type-modal";
 import { getEventAction } from "@/domains/event/event.actions";
 
 export default async function EventPage({
@@ -33,6 +34,7 @@ export default async function EventPage({
       {/* Event Name */}
       <div className="flex items-center justify-between gap-2">
         <h1 className="text-2xl font-semibold md:text-3xl">{event.name}</h1>
+        <TicketTypeModal eventId={event.id} />
       </div>
 
       {/* Event Description */}
@@ -109,12 +111,6 @@ export default async function EventPage({
       <div className="flex items-center gap-2">
         <p>Event End Time:</p>
         <p>{event.endAt.toLocaleTimeString()}</p>
-      </div>
-
-      {/* Event Price */}
-      <div className="flex items-center gap-2">
-        <p>Event Price:</p>
-        <p>{event.price.toNumber()}</p>
       </div>
 
       {/* Event City */}

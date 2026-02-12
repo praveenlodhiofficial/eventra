@@ -20,6 +20,8 @@ model User {
   phoneNumber String?
   role        Role    @default(USER)
 
+  tickets Ticket[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -62,16 +64,15 @@ model Event {
   images       EventImage[]
 
   categories  EventCategory[] @relation("EventCategories")
-  city     String
+  performers Performer[] @relation("EventPerformers")
 
+  city     String
   status EventStatus @default(DRAFT)
 
-  performers Performer[] @relation("EventPerformers")
+  ticketTypes TicketType[]
 
   startAt DateTime
   endAt   DateTime
-
-  price Decimal @db.Decimal(10, 2)
 
   venueId String
   venue   Venue  @relation(fields: [venueId], references: [id])
@@ -110,4 +111,59 @@ model Venue {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+enum TicketStatus {
+  RESERVED
+  PAID
+  CANCELLED
+  REFUNDED
+  SCANNED
+}
+
+model TicketType {
+  id       String  @id @default(cuid())
+  name     String
+  price    Decimal @db.Decimal(10,2)
+  quantity Int
+
+  eventId  String
+  event    Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  tickets Ticket[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([eventId])
+  @@unique([eventId, name])
+}
+
+
+model Ticket {
+  id        String @id @default(cuid())
+
+  userId    String
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  ticketTypeId String
+  ticketType   TicketType @relation(fields: [ticketTypeId], references: [id])
+
+  // optional seating
+  seatNumber String?
+  section    String?
+  row        String?
+
+  quantity Int @default(1)
+
+  status TicketStatus @default(RESERVED)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([ticketTypeId])
+
+  // prevents same seat from being sold twice
+  @@unique([ticketTypeId, seatNumber, row, section])
 }

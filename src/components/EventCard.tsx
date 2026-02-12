@@ -68,7 +68,8 @@ export async function EventCard() {
 
                 {/* =========================== Event Price =========================== */}
                 <div className="text-muted-foreground text-xs md:text-[13px]">
-                  ₹{Number(event.price).toFixed(2)} onwards
+                  {/* ₹{Number(event.price).toFixed(2)} onwards */}
+                  Coming Soon
                 </div>
               </div>
             </div>

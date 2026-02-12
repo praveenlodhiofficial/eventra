@@ -89,7 +89,6 @@ export function CreateEventModal({
       venueId: "",
       startAt: new Date(),
       endAt: new Date(),
-      price: 0,
       images: [],
     },
   });
@@ -457,7 +456,7 @@ export function CreateEventModal({
                 </Field>
 
                 <div className="grid grid-cols-2 gap-4">
-                  {/* Price */}
+                  {/* Price
                   <Field>
                     <FieldLabel>Event Price</FieldLabel>
                     <FormField
@@ -481,7 +480,7 @@ export function CreateEventModal({
                         </FormItem>
                       )}
                     />
-                  </Field>
+                  </Field> */}
 
                   {/* Event Status */}
                   <Field>

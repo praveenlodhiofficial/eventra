@@ -42,7 +42,6 @@ export default async function EventsPage() {
           ...event,
           venueId: event.venue.name,
           city: event.venue.city,
-          price: event.price.toNumber(),
         }))}
         toolbarAction={<CreateEventModal categories={categories ?? []} />}
       />

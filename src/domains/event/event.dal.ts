@@ -1,4 +1,3 @@
-import { Prisma } from "@/generated/prisma/client";
 import prisma from "@/lib/prisma";
 import { slugify } from "@/utils/slugify";
 
@@ -19,7 +18,6 @@ export const createEvent = async (data: Event) => {
       city: data.city,
       startAt: data.startAt,
       endAt: data.endAt,
-      price: new Prisma.Decimal(data.price),
 
       // ✅ connect by ids
       categories: {
@@ -59,7 +57,6 @@ export const updateEventById = async (id: string, data: Event) => {
       city: data.city,
       startAt: data.startAt,
       endAt: data.endAt,
-      price: new Prisma.Decimal(data.price),
 
       categories: {
         set: data.categoryIds.map((id) => ({ id })),
@@ -104,7 +101,6 @@ export const findEvent = async ({ id, slug }: FindEventParams) => {
       performers: true,
       startAt: true,
       endAt: true,
-      price: true,
       venue: true,
       status: true,
     },
@@ -155,7 +151,6 @@ export const findEvents = async (options?: FindEventsOptions) => {
       performers: true,
       startAt: true,
       endAt: true,
-      price: true,
       venue: true,
       status: true,
     },

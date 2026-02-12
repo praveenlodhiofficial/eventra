@@ -64,6 +64,7 @@ export async function Navbar() {
                 variant="outline"
                 icon={<IconLockShare className="size-5" />}
                 className="cursor-pointer rounded-full"
+                gap="gap-3 md:gap-6"
               >
                 Admin
               </ActionButton1>
