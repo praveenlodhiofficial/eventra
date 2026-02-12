@@ -29,18 +29,24 @@ export const EventBaseSchema = z.object({
     .trim(),
 
   description: z.string().min(3, "Description is too short").trim(),
+
   coverImage: z.string().min(1, "Cover image is required"),
   images: z.array(z.string()).optional(),
+
   categoryIds: z.array(z.string()).min(1, "Select at least one category"),
-  city: z.string().min(1, "City is required").trim(),
-  status: EventStatusEnum.default("DRAFT"),
   performerIds: z
     .array(z.string().trim())
     .min(1, "Select at least one performer"),
-  venueId: z.string().min(1, "Venue is required").trim(),
+
+  city: z.string().min(1, "City is required").trim(),
+  status: EventStatusEnum.default("DRAFT"),
+
+  ticketTypes: z.array(z.string()).min(1, "Select at least one ticket type"),
+
   startAt: z.date().min(new Date(), "Start date cannot be in the past"),
   endAt: z.date().min(new Date(), "End date cannot be in the past"),
-  price: z.coerce.number().min(0, "Price cannot be negative"),
+
+  venueId: z.string().min(1, "Venue is required").trim(),
 });
 
 /* -------------------------------------------------------------------------- */
@@ -73,7 +79,6 @@ export type Event = z.output<typeof EventSchema>;
 export const EventSummarySchema = EventBaseSchema.pick({
   name: true,
   city: true,
-  price: true,
   venueId: true,
   startAt: true,
   endAt: true,

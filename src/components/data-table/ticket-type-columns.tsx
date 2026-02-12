@@ -1,13 +1,8 @@
 "use client";
 
-import Link from "next/link";
-
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 
-import { DeleteModal } from "@/components/modals/delete.modal";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,10 +11,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { VenueSummary } from "@/domains/venue/venue.schema";
-import { DeleteModalType } from "@/types/delete.types";
+import { TicketType } from "@/domains/ticket-type/ticket-type.schema";
 
-export const columns: ColumnDef<VenueSummary>[] = [
+import { Button } from "../ui/button";
+import { Checkbox } from "../ui/checkbox";
+
+export const ticketTypeColumns: ColumnDef<TicketType>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -47,26 +44,16 @@ export const columns: ColumnDef<VenueSummary>[] = [
     header: "Name",
   },
   {
-    accessorKey: "city",
-    header: "City",
+    accessorKey: "price",
+    header: "Price",
   },
   {
-    accessorKey: "state",
-    header: "State",
-  },
-  {
-    accessorKey: "country",
-    header: "Country",
-  },
-  {
-    accessorKey: "pincode",
-    header: "Pincode",
+    accessorKey: "quantity",
+    header: "Quantity",
   },
   {
     id: "actions",
     cell: ({ row }) => {
-      const payment = row.original;
-
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -77,16 +64,9 @@ export const columns: ColumnDef<VenueSummary>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem asChild>
-              <Link href={`/admin/venues/${row.original.id}`}>View Venue</Link>
-            </DropdownMenuItem>
+            <DropdownMenuItem>Edit Ticket Type</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Edit Venue</DropdownMenuItem>
-            <DeleteModal
-              type={DeleteModalType.VENUE}
-              id={row.original.id}
-              trigger="text"
-            />
+            {/* <DeleteModal type="ticketType" id={row.original.id} /> */}
           </DropdownMenuContent>
         </DropdownMenu>
       );

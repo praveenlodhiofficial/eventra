@@ -32,12 +32,17 @@ interface EventDataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   toolbarAction?: React.ReactNode;
+
+  showSearch?: boolean;
+  showColumnToggle?: boolean;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   toolbarAction,
+  showSearch = true,
+  showColumnToggle = true,
 }: EventDataTableProps<TData, TValue>) {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -57,45 +62,55 @@ export function DataTable<TData, TValue>({
 
   return (
     <div>
-      <div className="flex items-center py-4">
-        <Input
-          placeholder="Search Events..."
-          value={table.getColumn("name")?.getFilterValue() as string}
-          onChange={(event) =>
-            table.getColumn("name")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm rounded-lg border border-zinc-500 bg-white/10 px-3 py-6 text-sm font-light shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
-        />
-        <div className="flex w-full gap-3">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <ActionButton2 variant="outline" className="ml-auto w-fit">
-                Columns
-              </ActionButton2>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {table
-                .getAllColumns()
-                .filter((column) => column.getCanHide())
-                .map((column) => {
-                  return (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      className="capitalize"
-                      checked={column.getIsVisible()}
-                      onCheckedChange={(value) =>
-                        column.toggleVisibility(!!value)
-                      }
-                    >
-                      {column.id}
-                    </DropdownMenuCheckboxItem>
-                  );
-                })}
-            </DropdownMenuContent>
-          </DropdownMenu>
-          {toolbarAction}
+      {(showSearch || showColumnToggle || toolbarAction) && (
+        <div className="flex items-center justify-between py-4">
+          {/* ===================== Search Input ===================== */}
+          {showSearch && (
+            <Input
+              placeholder="Search Events..."
+              value={table.getColumn("name")?.getFilterValue() as string}
+              onChange={(event) =>
+                table.getColumn("name")?.setFilterValue(event.target.value)
+              }
+              className="max-w-sm rounded-lg border border-zinc-500 bg-white/10 px-3 py-6 text-sm font-light shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+            />
+          )}
+          <div className="flex w-fit gap-3">
+            {/* ===================== Column Toggle ===================== */}
+            {showColumnToggle && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <ActionButton2 variant="outline" className="ml-auto w-fit">
+                    Columns
+                  </ActionButton2>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  {table
+                    .getAllColumns()
+                    .filter((column) => column.getCanHide())
+                    .map((column) => {
+                      return (
+                        <DropdownMenuCheckboxItem
+                          key={column.id}
+                          className="capitalize"
+                          checked={column.getIsVisible()}
+                          onCheckedChange={(value) =>
+                            column.toggleVisibility(!!value)
+                          }
+                        >
+                          {column.id}
+                        </DropdownMenuCheckboxItem>
+                      );
+                    })}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+
+            {/* ===================== Toolbar Action ===================== */}
+            {toolbarAction && <div>{toolbarAction}</div>}
+          </div>
         </div>
-      </div>
+      )}
       <div className="overflow-hidden rounded-md border">
         <Table>
           <TableHeader>

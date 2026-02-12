@@ -1,10 +1,9 @@
 import { DataTable } from "@/components/admin/DataTable";
+import { eventColumns } from "@/components/data-table/event-columns";
 import { CreateEventModal } from "@/components/modals/events/create-event-modal";
 import { listEventCategoriesAction } from "@/domains/event-categories/event-categories.actions";
 import { listEventsAction } from "@/domains/event/event.actions";
 import { listVenuesAction } from "@/domains/venue/venue.actions";
-
-import { columns } from "./event-columns";
 
 export default async function EventsPage() {
   const res = await listEventsAction();
@@ -37,7 +36,7 @@ export default async function EventsPage() {
   return (
     <div className="mx-auto w-full">
       <DataTable
-        columns={columns}
+        columns={eventColumns}
         data={events.map((event) => ({
           ...event,
           venueId: event.venue.name,

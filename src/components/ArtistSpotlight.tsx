@@ -8,16 +8,22 @@ import Link from "next/link";
 import { motion } from "motion/react";
 
 import { PerformerSummary } from "@/domains/performer/performer.schema";
+import { cn } from "@/lib/utils";
 
 export function ArtistSpotlight({
   performers,
+  className,
 }: {
   performers: PerformerSummary[];
+  className?: string;
 }) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   return (
-    <div ref={scrollRef} className="flex gap-3 md:gap-5 lg:gap-10">
+    <div
+      ref={scrollRef}
+      className={cn("flex gap-3 md:gap-5 lg:gap-10", className)}
+    >
       {performers.map((performer, index) => (
         <Link
           href={`/artists/${performer.slug}`}

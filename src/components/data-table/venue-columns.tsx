@@ -1,8 +1,11 @@
 "use client";
 
+import Link from "next/link";
+
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 
+import { DeleteModal } from "@/components/modals/delete.modal";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -13,9 +16,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { TicketTypeSummary } from "@/domains/ticket-type/ticket-type.schema";
+import { VenueSummary } from "@/domains/venue/venue.schema";
+import { DeleteModalType } from "@/types/delete.types";
 
-export const columns: ColumnDef<TicketTypeSummary>[] = [
+export const venueColumns: ColumnDef<VenueSummary>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -43,12 +47,20 @@ export const columns: ColumnDef<TicketTypeSummary>[] = [
     header: "Name",
   },
   {
-    accessorKey: "price",
-    header: "Price",
+    accessorKey: "city",
+    header: "City",
   },
   {
-    accessorKey: "quantity",
-    header: "Quantity",
+    accessorKey: "state",
+    header: "State",
+  },
+  {
+    accessorKey: "country",
+    header: "Country",
+  },
+  {
+    accessorKey: "pincode",
+    header: "Pincode",
   },
   {
     id: "actions",
@@ -63,13 +75,16 @@ export const columns: ColumnDef<TicketTypeSummary>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuItem asChild>
+              <Link href={`/admin/venues/${row.original.id}`}>View Venue</Link>
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Edit Ticket Type</DropdownMenuItem>
-            {/* <DeleteModal
-              type={DeleteModalType.EVENT}
+            <DropdownMenuItem>Edit Venue</DropdownMenuItem>
+            <DeleteModal
+              type={DeleteModalType.VENUE}
               id={row.original.id}
               trigger="text"
-            /> */}
+            />
           </DropdownMenuContent>
         </DropdownMenu>
       );

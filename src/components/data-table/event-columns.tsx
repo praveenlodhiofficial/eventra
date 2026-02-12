@@ -22,7 +22,7 @@ import {
 import { EventSummary } from "@/domains/event/event.schema";
 import { DeleteModalType } from "@/types/delete.types";
 
-export const columns: ColumnDef<EventSummary>[] = [
+export const eventColumns: ColumnDef<EventSummary>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -66,10 +66,12 @@ export const columns: ColumnDef<EventSummary>[] = [
   {
     accessorKey: "venueId",
     header: "Venue",
-  },
-  {
-    accessorKey: "city",
-    header: "City",
+    cell: ({ row }) => {
+      const venue = row.original.venueId;
+      const city = row.original.city;
+
+      return `${venue}, ${city}`;
+    },
   },
   {
     id: "date",
