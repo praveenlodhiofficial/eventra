@@ -21,6 +21,7 @@ model User {
   role        Role    @default(USER)
 
   tickets Ticket[]
+  bookings Booking[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -70,6 +71,7 @@ model Event {
   status EventStatus @default(DRAFT)
 
   ticketTypes TicketType[]
+  bookings Booking[]
 
   startAt DateTime
   endAt   DateTime
@@ -131,6 +133,7 @@ model TicketType {
   event    Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
   tickets Ticket[]
+  bookingItems BookingItem[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -166,4 +169,42 @@ model Ticket {
 
   // prevents same seat from being sold twice
   @@unique([ticketTypeId, seatNumber, row, section])
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  EXPIRED
+}
+
+model BookingItem {
+  id String @id @default(cuid())
+
+  bookingId String
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  ticketTypeId String
+  ticketType TicketType @relation(fields: [ticketTypeId], references: [id], onDelete: Cascade)
+
+  quantity Int
+  price Decimal @db.Decimal(10,2)
+}
+
+model Booking {
+  id String @id @default(cuid())
+
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  eventId String
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  items BookingItem[]
+
+  totalAmount Decimal @db.Decimal(10,2)
+  status BookingStatus @default(PENDING)
+
+  expiresAt DateTime
+  createdAt DateTime @default(now())
 }
