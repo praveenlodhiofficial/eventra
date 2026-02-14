@@ -1,5 +1,9 @@
+import Link from "next/link";
+
 import { formatDate } from "date-fns";
 
+import { ActionButton1 } from "@/components/ui/action-button";
+import { getSession } from "@/domains/auth/auth.actions";
 import { findEvent } from "@/domains/event/event.dal";
 import { findTicketTypes } from "@/domains/ticket-type/ticket-type.dal";
 
@@ -11,6 +15,25 @@ export default async function BuyPage({
   params: { slug: string };
 }) {
   const { slug } = await params;
+
+  // ================================ SESSION CHECK ================================
+  const session = await getSession();
+  if (!session) {
+    return (
+      <div className="flex flex-col items-center justify-center">
+        <h1 className="text-2xl font-semibold md:text-3xl">
+          Please sign in to continue
+        </h1>
+        <Link href="/sign-in">
+          <ActionButton1>Sign In</ActionButton1>
+        </Link>
+      </div>
+    );
+  }
+
+  const userId = session.userId;
+
+  // ================================ EVENT CHECK ================================
   const event = await findEvent({ slug });
   if (!event) {
     return (
@@ -20,6 +43,7 @@ export default async function BuyPage({
     );
   }
 
+  // ================================ TICKET TYPES CHECK ================================
   const ticketTypes = await findTicketTypes(event.id);
   if (!ticketTypes || ticketTypes.length === 0) {
     return (
@@ -43,6 +67,7 @@ export default async function BuyPage({
     );
   }
 
+  // ================================ TICKET TYPES FOR SELECTION ================================
   const ticketTypesForSelection = ticketTypes.map((t) => ({
     id: t.id,
     name: t.name,
@@ -56,6 +81,8 @@ export default async function BuyPage({
       eventName={event.name}
       startAt={event.startAt.toISOString()}
       endAt={event.endAt.toISOString()}
+      eventId={event.id}
+      userId={userId}
     />
   );
 }

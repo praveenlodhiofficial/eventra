@@ -13,9 +13,17 @@ type TicketListProps = {
   eventName: string;
   startAt: string;
   endAt: string;
+  eventId: string;
+  userId: string;
 };
 
-function TicketList({ eventName, startAt, endAt }: TicketListProps) {
+function TicketList({
+  eventName,
+  startAt,
+  endAt,
+  eventId,
+  userId,
+}: TicketListProps) {
   const { ticketTypes, selections, setQuantity } = useTicketSelection();
   const start = new Date(startAt);
   const end = new Date(endAt);
@@ -72,7 +80,7 @@ function TicketList({ eventName, startAt, endAt }: TicketListProps) {
         ))}
       </div>
 
-      <FooterTotal />
+      <FooterTotal eventId={eventId} userId={userId} />
     </>
   );
 }
@@ -82,6 +90,8 @@ type BuyPageClientProps = {
   eventName: string;
   startAt: string;
   endAt: string;
+  eventId: string;
+  userId: string;
 };
 
 export function BuyPageClient({
@@ -89,11 +99,19 @@ export function BuyPageClient({
   eventName,
   startAt,
   endAt,
+  eventId,
+  userId,
 }: BuyPageClientProps) {
   return (
     <TicketSelectionProvider ticketTypes={ticketTypes}>
       <div className="relative flex h-full flex-col items-center justify-start gap-3 md:gap-5">
-        <TicketList eventName={eventName} startAt={startAt} endAt={endAt} />
+        <TicketList
+          eventName={eventName}
+          startAt={startAt}
+          endAt={endAt}
+          eventId={eventId}
+          userId={userId}
+        />
       </div>
     </TicketSelectionProvider>
   );

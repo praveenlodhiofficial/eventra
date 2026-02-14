@@ -15,10 +15,14 @@ export type EventImageInput = z.input<typeof EventImageSchema>;
 export type EventImage = z.output<typeof EventImageSchema>;
 
 /* -------------------------------------------------------------------------- */
-/*                           Event Base Schema                                */
+/*                           Event Status Enum                                */
 /* -------------------------------------------------------------------------- */
 
 export const EventStatusEnum = z.enum(EVENT_STATUS);
+
+/* -------------------------------------------------------------------------- */
+/*                            Event Base Schema                                */
+/* -------------------------------------------------------------------------- */
 
 export const EventBaseSchema = z.object({
   id: z.string().optional(),
