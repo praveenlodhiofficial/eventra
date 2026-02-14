@@ -2,7 +2,11 @@
 
 import { z } from "zod";
 
-import { createTicketType, listTicketTypes } from "./ticket-type.dal";
+import {
+  createTicketType,
+  listTicketTypes,
+  updateTicketType,
+} from "./ticket-type.dal";
 import { TicketTypeInput, TicketTypeSchema } from "./ticket-type.schema";
 
 /* -------------------------------------------------------------------------- */
@@ -28,6 +32,44 @@ export async function createTicketTypeAction(data: TicketTypeInput) {
       success: true,
       status: 201,
       message: "Ticket type created successfully",
+      data: ticketType,
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      success: false,
+      status: 500,
+      message: "Internal server error",
+    };
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/*                           Update Ticket Type Action                        */
+/* -------------------------------------------------------------------------- */
+
+export async function updateTicketTypeAction(
+  id: string,
+  data: TicketTypeInput
+) {
+  const parsed = TicketTypeSchema.safeParse(data);
+
+  if (!parsed.success) {
+    return {
+      success: false,
+      status: 400,
+      message: "Invalid ticket type data",
+      errors: z.treeifyError(parsed.error),
+    };
+  }
+
+  try {
+    const ticketType = await updateTicketType(id, parsed.data);
+
+    return {
+      success: true,
+      status: 200,
+      message: "Ticket type updated successfully",
       data: ticketType,
     };
   } catch (error) {

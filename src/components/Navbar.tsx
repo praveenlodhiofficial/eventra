@@ -16,7 +16,7 @@ export async function Navbar() {
     <NavbarMotion>
       <div className="flex w-full items-center justify-between bg-linear-to-b from-white via-white/80 to-transparent px-3 py-1 backdrop-blur-xs">
         {/* LOGO */}
-        <div className="flex items-center">
+        <Link href="/" className="flex items-center">
           <Image
             src="/icons/logo.png"
             alt="logo"
@@ -25,12 +25,11 @@ export async function Navbar() {
             className="size-10 invert"
           />
           <h1 className="text-2xl font-semibold md:text-3xl">Eventra</h1>
-        </div>
+        </Link>
 
         {/* ================= DESKTOP ================= */}
         <div className="hidden w-fit items-center overflow-hidden rounded-full p-2 pl-10 md:flex">
           <div className="flex items-center justify-start gap-10">
-            <Link href={`/`}> Home</Link>
             <Link href={`/events`}> Events</Link>
             <Link href={`/categories`}> Categories</Link>
             <Link href={`/performers`}> Performers</Link>

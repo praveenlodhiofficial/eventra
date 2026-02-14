@@ -103,6 +103,14 @@ export const findEvent = async ({ id, slug }: FindEventParams) => {
       endAt: true,
       venue: true,
       status: true,
+      ticketTypes: {
+        select: {
+          id: true,
+          name: true,
+          price: true,
+          quantity: true,
+        },
+      },
     },
   });
 };

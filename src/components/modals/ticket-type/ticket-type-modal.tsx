@@ -29,7 +29,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { createTicketTypeAction } from "@/domains/ticket-type/ticket-type.actions";
+import {
+  createTicketTypeAction,
+  updateTicketTypeAction,
+} from "@/domains/ticket-type/ticket-type.actions";
 import {
   TicketTypeInput,
   TicketTypeSchema,
@@ -37,18 +40,31 @@ import {
 
 type Props = {
   eventId: string;
+  mode?: "create" | "update";
+  ticketType?: {
+    id: string;
+    name: string;
+    price: number;
+    quantity: number;
+  };
 };
 
-export function TicketTypeModal({ eventId }: Props) {
+export function TicketTypeModal({
+  eventId,
+  mode = "create",
+  ticketType,
+}: Props) {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
+
+  const isUpdate = mode === "update";
 
   const form = useForm<TicketTypeInput>({
     resolver: zodResolver(TicketTypeSchema),
     defaultValues: {
-      name: "",
-      price: 0,
-      quantity: 1,
+      name: ticketType?.name ?? "",
+      price: ticketType?.price ?? 0,
+      quantity: ticketType?.quantity ?? 1,
       eventId,
     },
   });
@@ -57,12 +73,9 @@ export function TicketTypeModal({ eventId }: Props) {
 
   async function onSubmit(data: TicketTypeInput) {
     startTransition(async () => {
-      const result = await createTicketTypeAction({
-        name: data.name,
-        price: data.price,
-        quantity: data.quantity,
-        eventId,
-      });
+      const result = isUpdate
+        ? await updateTicketTypeAction(ticketType!.id, data)
+        : await createTicketTypeAction({ ...data, eventId });
 
       if (!result.success) {
         toast.error(result.message);
@@ -79,27 +92,33 @@ export function TicketTypeModal({ eventId }: Props) {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <ActionButton2
-          variant="secondary"
-          className="flex w-fit items-center gap-2"
-        >
-          <CircleFadingPlusIcon className="size-3.5" />
-          <span className="ml-2">Add Tickets</span>
-        </ActionButton2>
+        {isUpdate ? (
+          <ActionButton2 variant="outline" className="gap-2">
+            Update Ticket
+          </ActionButton2>
+        ) : (
+          <ActionButton2
+            variant="secondary"
+            className="flex w-full cursor-pointer items-center gap-2"
+          >
+            <CircleFadingPlusIcon className="size-3.5 group-hover:animate-pulse" />
+            <span className="ml-2">Add Tickets</span>
+          </ActionButton2>
+        )}
       </DialogTrigger>
 
       <DialogContent className="h-full w-full rounded-none md:h-[calc(100vh-17rem)] md:max-w-xl lg:rounded-3xl">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="no-scrollbar relative flex flex-col gap-4 overflow-y-auto"
+            className="flex flex-col gap-4 overflow-y-auto"
           >
             <DialogHeader className="bg-background sticky top-0 z-10 items-center">
               <DialogTitle className="border-primary border-y-2 px-5 py-1 text-base font-semibold uppercase md:text-xl">
-                Add Ticket Type
+                {isUpdate ? "Update Ticket Type" : "Add Ticket Type"}
               </DialogTitle>
               <DialogDescription className="sr-only">
-                Create a ticket category for this event.
+                Ticket type form
               </DialogDescription>
             </DialogHeader>
 
@@ -115,7 +134,6 @@ export function TicketTypeModal({ eventId }: Props) {
                       <FormControl>
                         <Input
                           placeholder="VIP / General / Early Bird"
-                          className="rounded-lg border border-zinc-200 bg-white/10 px-3 py-6 text-sm font-light shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
                           {...field}
                         />
                       </FormControl>
@@ -136,12 +154,10 @@ export function TicketTypeModal({ eventId }: Props) {
                       <FormControl>
                         <Input
                           type="number"
-                          placeholder="1000"
                           {...field}
                           onChange={(e) =>
                             field.onChange(Number(e.target.value))
                           }
-                          className="rounded-lg border border-zinc-200 bg-white/10 px-3 py-6 text-sm font-light shadow-none focus-visible:ring-0"
                         />
                       </FormControl>
                       <FormMessage />
@@ -161,12 +177,10 @@ export function TicketTypeModal({ eventId }: Props) {
                       <FormControl>
                         <Input
                           type="number"
-                          placeholder="100"
                           {...field}
                           onChange={(e) =>
                             field.onChange(Number(e.target.value))
                           }
-                          className="rounded-lg border border-zinc-200 bg-white/10 px-3 py-6 text-sm font-light shadow-none focus-visible:ring-0"
                         />
                       </FormControl>
                       <FormMessage />
@@ -186,15 +200,15 @@ export function TicketTypeModal({ eventId }: Props) {
               <ActionButton2
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full disabled:opacity-70"
+                className="w-full"
               >
-                <div className="flex items-center gap-2">
-                  {isSubmitting ? (
-                    <Loader2 className="size-4 animate-spin" />
-                  ) : (
-                    "Create Ticket"
-                  )}
-                </div>
+                {isSubmitting ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : isUpdate ? (
+                  "Update Ticket"
+                ) : (
+                  "Create Ticket"
+                )}
               </ActionButton2>
             </DialogFooter>
           </form>

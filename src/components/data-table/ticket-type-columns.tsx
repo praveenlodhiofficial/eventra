@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { TicketType } from "@/domains/ticket-type/ticket-type.schema";
 
+import { TicketTypeModal } from "../modals/ticket-type/ticket-type-modal";
 import { Button } from "../ui/button";
 import { Checkbox } from "../ui/checkbox";
 
@@ -64,7 +65,18 @@ export const ticketTypeColumns: ColumnDef<TicketType>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem>Edit Ticket Type</DropdownMenuItem>
+            <DropdownMenuItem>
+              <TicketTypeModal
+                eventId={row.original.eventId}
+                mode="update"
+                ticketType={{
+                  id: row.original.id!,
+                  name: row.original.name,
+                  price: row.original.price,
+                  quantity: row.original.quantity,
+                }}
+              />
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
             {/* <DeleteModal type="ticketType" id={row.original.id} /> */}
           </DropdownMenuContent>

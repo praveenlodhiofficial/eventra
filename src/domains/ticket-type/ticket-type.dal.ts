@@ -10,9 +10,24 @@ export async function createTicketType(data: TicketTypeInput) {
   return prisma.ticketType.create({
     data: {
       name: data.name,
-      price: data.price, // Prisma handles Decimal conversion
+      price: data.price,
       quantity: data.quantity,
       eventId: data.eventId,
+    },
+  });
+}
+
+/* -------------------------------------------------------------------------- */
+/*                          Update Ticket Type                                */
+/* -------------------------------------------------------------------------- */
+
+export async function updateTicketType(id: string, data: TicketTypeInput) {
+  return prisma.ticketType.update({
+    where: { id },
+    data: {
+      name: data.name,
+      price: data.price,
+      quantity: data.quantity,
     },
   });
 }

@@ -35,7 +35,7 @@ export function Carousel({
     <div className="mx-auto h-fit w-full lg:h-full">
       <div className="flex flex-col gap-3">
         <div
-          className="relative h-fit overflow-hidden lg:h-screen"
+          className="relative h-fit overflow-hidden lg:max-h-screen"
           ref={containerRef}
         >
           <motion.div className="flex" style={{ x }}>
