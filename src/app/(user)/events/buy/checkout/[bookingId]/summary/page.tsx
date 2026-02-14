@@ -73,11 +73,11 @@ export default async function CheckoutSummaryPage({
   const bookingFee = totalAmount * 0.118; // 11.8% GST
 
   return (
-    <div className="w-full space-y-3 py-5">
+    <div className="w-full space-y-3">
       {/* <h1 className="flex flex-col gap-1 text-center uppercase text-lg">Checkout</h1> */}
 
       {/* ========================================== STEP INDICATOR ========================================== */}
-      <div className="bg-muted-foreground/30 sticky top-7 z-10 flex items-center justify-center gap-5 border-y border-dashed border-black p-4 backdrop-blur-xs">
+      <div className="bg-muted-foreground/5 sticky top-5 z-10 flex items-center justify-center gap-5 border-y border-dashed border-black p-5 backdrop-blur-sm">
         <div className="flex items-center justify-center gap-1">
           <div className="bg-primary text-primary-foreground aspect-square size-5 rounded-full text-center text-sm">
             1
@@ -103,32 +103,35 @@ export default async function CheckoutSummaryPage({
       <div className="mx-auto mt-10 max-w-2xl space-y-5 rounded-2xl border pt-5">
         {/* ========================================== TICKET DETAILS ========================================== */}
         <div>
-          <p className="bg-muted-foreground/10 p-1 px-6 text-sm font-medium uppercase">
+          <p className="from-muted-foreground/10 to-primary/50 bg-linear-to-l p-1 px-6 text-sm font-medium text-white uppercase">
             Ticket Details
           </p>
-          {bookingItems.map((item) => (
-            <div
-              key={item.id}
-              className="relative m-5 space-y-2 rounded-xl border px-5 py-3"
-            >
-              <h1 className="text-lg font-medium">{eventName}</h1>
-              <h3 className="text-muted-foreground text-sm">
-                {item.ticketType.name}
-              </h3>
-              {/* Quantity */}
-              <h3 className="flex gap-1 text-sm">
-                <span className="font-medium">{item.quantity}</span> Tickets
-              </h3>
-              <h1 className="absolute right-5 bottom-3 text-2xl font-semibold">
-                ₹{Number(item.price)}
-              </h1>
-            </div>
-          ))}
+          <div className="relative m-5 rounded-xl border p-5">
+            <h1 className="mb-5 text-lg font-medium">{eventName}</h1>
+
+            {bookingItems.map((item) => (
+              <div
+                key={item.id}
+                className="flex items-end justify-between border-t py-3"
+              >
+                <div className="space-y-0.5">
+                  <h3 className="text-muted-foreground text-sm font-light">
+                    {item.ticketType.name}
+                  </h3>
+                  {/* Quantity */}
+                  <h3 className="flex gap-1 font-semibold">
+                    {item.quantity} Tickets
+                  </h3>
+                </div>
+                <h1 className="text-xl font-semibold">₹{Number(item.price)}</h1>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* ========================================== OFFER DETAILS ========================================== */}
         <div>
-          <p className="bg-muted-foreground/10 p-1 px-6 text-sm font-medium uppercase">
+          <p className="from-muted-foreground/10 to-primary/50 bg-linear-to-l p-1 px-6 text-sm font-medium text-white uppercase">
             Offer
           </p>
           <div className="relative m-5 overflow-hidden rounded-xl border">
@@ -158,7 +161,7 @@ export default async function CheckoutSummaryPage({
 
         {/* ========================================== PAYMENT DETAILS ========================================== */}
         <div>
-          <p className="bg-muted-foreground/10 p-1 px-6 text-sm font-medium uppercase">
+          <p className="from-muted-foreground/10 to-primary/50 bg-linear-to-l p-1 px-6 text-sm font-medium text-white uppercase">
             Payment Details
           </p>
           <div className="relative m-5 space-y-3 rounded-xl border px-5 py-3">

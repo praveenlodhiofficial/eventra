@@ -25,12 +25,12 @@ export async function createBookingItemAction(data: BookingItem) {
     return { success: false, message: "Ticket type not found" };
   }
 
-  const bookingItem = await createBookingItem(
+  const bookingItem = await createBookingItem(prisma, {
     bookingId,
     ticketTypeId,
     quantity,
-    Number(ticketType.price) // server truth
-  );
+    price: Number(ticketType.price),
+  });
 
   return { success: true, data: bookingItem };
 }
