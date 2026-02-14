@@ -59,7 +59,7 @@ export default async function EventPage({
   return (
     <div className="grid grid-cols-1 gap-5 md:grid-cols-[1fr_0.01fr_0.80fr]">
       {/* =========================== Event Details (Left Side) =========================== */}
-      <div className="flex flex-col gap-5 md:gap-10">
+      <div className="no-scrollbar flex max-h-[calc(100vh-7rem)] flex-col gap-5 overflow-y-auto md:gap-10">
         {/* =============== Event Name + Description + Cover Image + Artist Lineup + Gallery Images ================= */}
         <div className="flex flex-col gap-3">
           {/* Event Name */}
@@ -116,7 +116,7 @@ export default async function EventPage({
       <Separator orientation="vertical" className="bg-muted-foreground/30" />
 
       {/* =========================== Event Details (Right Side) =========================== */}
-      <div className="flex flex-col gap-5 md:gap-10">
+      <div className="no-scrollbar flex max-h-[calc(100vh-10rem)] flex-col gap-5 overflow-y-auto md:gap-10">
         {/* =============== Event Details Table ================= */}
         <div className="flex flex-col gap-3">
           <h1 className="text-base font-medium md:text-xl">Event Details</h1>

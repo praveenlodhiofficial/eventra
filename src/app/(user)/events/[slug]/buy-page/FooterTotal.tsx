@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import { ActionButton2 } from "@/components/ui/action-button";
 
 import { useTicketSelection } from "./TicketSelectionContext";
@@ -28,9 +30,11 @@ export function FooterTotal() {
           </p>
         </div>
 
-        <ActionButton2 className="flex cursor-pointer items-center justify-center py-6.5 text-center md:py-7">
-          <span className="text-base font-medium">Book Tickets</span>
-        </ActionButton2>
+        <Link href="/events/buy/checkout/summary">
+          <ActionButton2 className="flex cursor-pointer items-center justify-center py-6.5 text-center md:py-7">
+            <span className="text-base font-medium">Book Tickets</span>
+          </ActionButton2>
+        </Link>
       </div>
     </div>
   );
