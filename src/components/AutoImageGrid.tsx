@@ -14,7 +14,7 @@ export function AutoImageGrid({ images }: Props) {
   }
 
   return (
-    <div className="no-scrollbar flex max-w-225 gap-2 overflow-hidden overflow-x-auto rounded-2xl md:gap-3.5">
+    <div className="no-scrollbar flex gap-2 overflow-hidden overflow-x-auto rounded-2xl md:max-w-218 md:gap-3.5 lg:max-w-225">
       {groups.map((group, index) => {
         const type = PATTERN[index % PATTERN.length];
 

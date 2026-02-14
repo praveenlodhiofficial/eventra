@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { formatDate } from "date-fns";
 import { isSameDay } from "date-fns";
 import {
@@ -20,6 +22,7 @@ type Props = {
   venue: Venue;
   categories: EventCategory[];
   lowestTicketPrice: number;
+  slug: string;
 };
 
 export function EventDetailBox({
@@ -28,8 +31,16 @@ export function EventDetailBox({
   venue,
   categories,
   lowestTicketPrice,
+  slug,
 }: Props) {
-  if (!startAt || !endAt || !venue || !categories || !lowestTicketPrice) {
+  if (
+    !startAt ||
+    !endAt ||
+    !venue ||
+    !categories ||
+    !lowestTicketPrice ||
+    !slug
+  ) {
     return null;
   }
   const formattedStartDate = formatDate(startAt, "MMM dd, yyyy");
@@ -88,13 +99,15 @@ export function EventDetailBox({
             ₹&nbsp;{lowestTicketPrice}
           </h1>
         </div>
-        <ActionButton1
-          size="lg"
-          className="flex cursor-pointer items-center justify-center py-6.5 text-center md:py-7"
-          icon={<ArrowUpRight className="size-5" strokeWidth={1.5} />}
-        >
-          <span className="text-base font-medium">Book Tickets</span>
-        </ActionButton1>
+        <Link href={`/events/${slug}/buy-page`}>
+          <ActionButton1
+            size="lg"
+            className="flex cursor-pointer items-center justify-center py-6.5 text-center md:py-7"
+            icon={<ArrowUpRight className="size-5" strokeWidth={1.5} />}
+          >
+            <span className="text-base font-medium">Book Tickets</span>
+          </ActionButton1>
+        </Link>
       </section>
     </div>
   );

@@ -36,14 +36,14 @@ export async function updateTicketType(id: string, data: TicketTypeInput) {
 /*                           List Ticket Types                                */
 /* -------------------------------------------------------------------------- */
 
-export async function listTicketTypes(eventId: string) {
+export async function findTicketTypes(eventId: string) {
   return prisma.ticketType.findMany({
     where: { eventId },
     orderBy: {
       createdAt: "desc",
     },
     select: {
-      // id: true,
+      id: true,
       name: true,
       price: true,
       quantity: true,

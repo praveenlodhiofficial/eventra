@@ -116,13 +116,14 @@ export default async function EventPage({
             />
 
             {/* =========================== Event Details =========================== */}
-            <div className="block md:hidden">
+            <div className="block lg:hidden">
               <EventDetailBox
                 startAt={event.startAt}
                 endAt={event.endAt}
                 venue={event.venue}
                 categories={event.categories}
                 lowestTicketPrice={lowestTicketPrice}
+                slug={event.slug}
               />
             </div>
           </section>
@@ -146,7 +147,7 @@ export default async function EventPage({
           </section>
         </div>
 
-        <div className="top-5 hidden h-fit md:sticky md:block">
+        <div className="top-5 hidden h-fit lg:sticky lg:block">
           <section className="flex flex-col gap-5">
             {/* =========================== Tickets Sold =========================== */}
             <div className="bg-muted-foreground/10 flex flex-col items-end justify-end gap-1 rounded-lg p-5 md:rounded-xl lg:rounded-2xl">
@@ -165,6 +166,7 @@ export default async function EventPage({
               venue={event.venue}
               categories={event.categories}
               lowestTicketPrice={lowestTicketPrice}
+              slug={event.slug}
             />
           </section>
         </div>

@@ -4,7 +4,7 @@ import { z } from "zod";
 
 import {
   createTicketType,
-  listTicketTypes,
+  findTicketTypes,
   updateTicketType,
 } from "./ticket-type.dal";
 import { TicketTypeInput, TicketTypeSchema } from "./ticket-type.schema";
@@ -88,7 +88,7 @@ export async function updateTicketTypeAction(
 
 export async function listTicketTypesAction(eventId: string) {
   try {
-    const ticketTypes = await listTicketTypes(eventId);
+    const ticketTypes = await findTicketTypes(eventId);
 
     if (!ticketTypes) {
       return {
