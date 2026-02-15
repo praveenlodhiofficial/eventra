@@ -2,15 +2,13 @@ import Link from "next/link";
 
 import { Image } from "@imagekit/next";
 import { IconEdit } from "@tabler/icons-react";
-import { IconTrash } from "@tabler/icons-react";
 
 import { config } from "@/lib/config";
 import { DeleteModalType } from "@/types/delete.types";
 
 import { DeleteModal } from "../modals/delete.modal";
 import { Button } from "../ui/button";
-import { Tooltip, TooltipTrigger } from "../ui/tooltip";
-import { TooltipContent } from "../ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 interface PerformerCardProps {
   id: string;

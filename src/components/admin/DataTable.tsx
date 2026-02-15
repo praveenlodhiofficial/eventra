@@ -48,6 +48,7 @@ export function DataTable<TData, TValue>({
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
 
+  // eslint-disable-next-line
   const table = useReactTable({
     data,
     columns,

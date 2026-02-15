@@ -1,6 +1,7 @@
 "use client";
 
 import { ReactNode } from "react";
+import { PiSpinner } from "react-icons/pi";
 
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -58,25 +59,35 @@ export function ActionButton1({
   className,
   size = "lg",
   gap = "gap-5 md:gap-10",
+  isLoading,
+  disabled,
   ...props
-}: ActionButton1Props & { gap?: string }) {
+}: ActionButton1Props) {
   const isMobile = useIsMobile();
 
   return (
     <Button
       size={isMobile ? "md" : size}
+      disabled={disabled || isLoading}
       className={cn(
         "group relative flex h-10 w-fit items-center justify-center overflow-hidden rounded-lg text-xs uppercase md:h-12 md:text-sm",
         className
       )}
       {...props}
     >
-      <div
-        className={cn("relative flex w-full items-center justify-between", gap)}
-      >
-        <TextTrack>{children}</TextTrack>
-        {icon && <IconTrack icon={icon} />}
-      </div>
+      {isLoading ? (
+        <PiSpinner className="size-4 animate-spin" />
+      ) : (
+        <div
+          className={cn(
+            "relative flex w-full items-center justify-between",
+            gap
+          )}
+        >
+          <TextTrack>{children}</TextTrack>
+          {icon && <IconTrack icon={icon} />}
+        </div>
+      )}
     </Button>
   );
 }
@@ -93,6 +104,8 @@ export function ActionButton2({
   children,
   className,
   size = "lg",
+  isLoading,
+  disabled,
   ...props
 }: ActionButton2Props) {
   const isMobile = useIsMobile();
@@ -100,13 +113,18 @@ export function ActionButton2({
   return (
     <Button
       size={isMobile ? "sm" : size}
+      disabled={disabled || isLoading}
       className={cn(
         "group relative flex h-10 w-fit items-center justify-center overflow-hidden rounded-lg text-xs uppercase md:h-12 md:text-sm",
         className
       )}
       {...props}
     >
-      <TextTrack>{children}</TextTrack>
+      {isLoading ? (
+        <PiSpinner className="size-4 animate-spin" />
+      ) : (
+        <TextTrack>{children}</TextTrack>
+      )}
     </Button>
   );
 }

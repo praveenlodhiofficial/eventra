@@ -52,7 +52,7 @@ export function WheelTimePicker({
     date.setMilliseconds(0);
 
     onChange(date);
-  }, [hour, minute, meridiem]);
+  }, [hour, minute, meridiem, onChange, valueDate]);
 
   return (
     <div className="mx-auto w-full max-w-xs">

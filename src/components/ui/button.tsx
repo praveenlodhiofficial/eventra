@@ -1,4 +1,5 @@
 import * as React from "react";
+import { PiSpinner } from "react-icons/pi";
 
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
@@ -45,10 +46,13 @@ function Button({
   variant = "default",
   size = "default",
   asChild = false,
+  isLoading = false,
+  children,
   ...props
 }: React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean;
+    isLoading?: boolean;
   }) {
   const Comp = asChild ? Slot : "button";
 
@@ -59,7 +63,9 @@ function Button({
       data-size={size}
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
-    />
+    >
+      {isLoading ? <PiSpinner className="h-4 w-4 animate-spin" /> : children}
+    </Comp>
   );
 }
 

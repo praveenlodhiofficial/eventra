@@ -230,7 +230,7 @@ export function CreateEventModal({
                                 return (
                                   <FormItem
                                     key={category.id}
-                                    className="flex items-center space-y-0 space-x-3 rounded-lg rounded-md border p-3 py-4"
+                                    className="flex items-center space-y-0 space-x-3 rounded-md border p-3 py-4"
                                   >
                                     <FormControl>
                                       <Checkbox
@@ -523,7 +523,8 @@ export function CreateEventModal({
                   <FormField
                     control={form.control}
                     name="images"
-                    render={({ field }) => (
+                    // render={({ field }) => (
+                    render={() => (
                       <FormItem>
                         <FormControl>
                           <GalleryImageUpload

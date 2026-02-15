@@ -9,6 +9,7 @@ const adminRoutes = ["/admin"];
 export default async function proxy(req: NextRequest) {
   const path = req.nextUrl.pathname;
 
+  // eslint-disable-next-line
   const isPublic = publicRoutes.includes(path);
   const isAdmin = adminRoutes.some((r) => path.startsWith(r));
 

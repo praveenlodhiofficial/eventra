@@ -21,7 +21,7 @@ export type EventImage = z.output<typeof EventImageSchema>;
 export const EventStatusEnum = z.enum(EVENT_STATUS);
 
 /* -------------------------------------------------------------------------- */
-/*                            Event Base Schema                                */
+/*                            Event Base Schema                               */
 /* -------------------------------------------------------------------------- */
 
 export const EventBaseSchema = z.object({
