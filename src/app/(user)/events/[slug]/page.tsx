@@ -1,24 +1,14 @@
 import Link from "next/link";
 
 import { Image } from "@imagekit/next";
-import { formatDate, isSameDay } from "date-fns";
-import {
-  ArrowUpRight,
-  Bookmark,
-  CalendarCheckIcon,
-  ClockIcon,
-  MapPinIcon,
-  Share2,
-  TagIcon,
-} from "lucide-react";
+import { Bookmark, Share2 } from "lucide-react";
 
 import { ArtistSpotlight } from "@/components/ArtistSpotlight";
 import { AutoImageGrid } from "@/components/AutoImageGrid";
 import { EventDetailBox } from "@/components/EventDetailBox";
-import { ActionButton1, ActionButton2 } from "@/components/ui/action-button";
+import { ActionButton2 } from "@/components/ui/action-button";
 import { Container } from "@/components/ui/container";
 import { ReadMore } from "@/components/ui/read-more";
-import { Separator } from "@/components/ui/separator";
 import { findEvent } from "@/domains/event/event.dal";
 import { config } from "@/lib/config";
 

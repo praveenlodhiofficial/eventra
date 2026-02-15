@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { formatDate } from "date-fns";
+import { ChevronsRightIcon } from "lucide-react";
 
 import { ActionButton1 } from "@/components/ui/action-button";
 import { getSession } from "@/domains/auth/auth.actions";
@@ -20,12 +21,21 @@ export default async function BuyPage({
   const session = await getSession();
   if (!session) {
     return (
-      <div className="flex flex-col items-center justify-center">
-        <h1 className="text-2xl font-semibold md:text-3xl">
-          Please sign in to continue
+      <div className="bg-muted-foreground/10 absolute top-1/2 left-1/2 flex h-[calc(100vh-15rem)] w-5xl -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center gap-4 rounded-3xl">
+        <h1 className="text-center text-2xl font-medium md:text-3xl">
+          Sign in to book tickets
         </h1>
-        <Link href="/sign-in">
-          <ActionButton1>Sign In</ActionButton1>
+        <Link
+          href="/sign-in"
+          className="flex w-full items-center justify-center md:max-w-xs"
+        >
+          <ActionButton1
+            icon={<ChevronsRightIcon className="size-5" strokeWidth={1.5} />}
+            size="lg"
+            className="w-full cursor-pointer py-7 text-base"
+          >
+            Sign In
+          </ActionButton1>
         </Link>
       </div>
     );

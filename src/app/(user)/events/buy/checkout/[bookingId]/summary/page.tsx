@@ -12,6 +12,8 @@ import { findBookingItems } from "@/domains/booking-item/booking-items.dal";
 import { findBookingById } from "@/domains/booking/booking.dal";
 import { findEvent } from "@/domains/event/event.dal";
 
+import BillingForm from "./billing.form";
+
 export default async function CheckoutSummaryPage({
   params,
 }: {
@@ -186,6 +188,18 @@ export default async function CheckoutSummaryPage({
                 Continue to Billing Details
               </ActionButton2>
             </Link>
+          </div>
+        </div>
+      </div>
+
+      <div className="mx-auto mt-10 max-w-2xl space-y-5 rounded-2xl border pt-5">
+        {/* ========================================== TICKET DETAILS ========================================== */}
+        <div>
+          <p className="from-muted-foreground/10 to-primary/50 bg-linear-to-l p-1 px-6 text-sm font-medium text-white uppercase">
+            Billing Details
+          </p>
+          <div className="relative m-5 rounded-xl">
+            <BillingForm bookingId={bookingId} />
           </div>
         </div>
       </div>
