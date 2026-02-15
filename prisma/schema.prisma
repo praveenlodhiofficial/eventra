@@ -201,10 +201,34 @@ model Booking {
   event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
   items BookingItem[]
+  billingDetails BillingDetails?
 
   totalAmount Decimal @db.Decimal(10,2)
   status BookingStatus @default(PENDING)
 
   expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+enum Nationality {
+  INDIAN
+  INTERNATIONAL
+}
+
+model BillingDetails {
+  id String @id @default(cuid())
+
+  bookingId String @unique
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  name String
+  phone String
+  email String
+
+  nationality Nationality @default(INDIAN)
+  state String?
+
+  acceptedTerms Boolean @default(false)
+
   createdAt DateTime @default(now())
 }
