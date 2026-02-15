@@ -55,7 +55,7 @@ export function FooterTotal({ eventId, userId }: FooterTotalProps) {
         return;
       }
 
-      router.push(`/events/buy/checkout/${result.bookingId}/summary`);
+      router.push(`/events/buy/checkout/${result.bookingId}`);
     } catch (err) {
       console.error(err);
       alert("Something went wrong");

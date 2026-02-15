@@ -23,4 +23,9 @@ export const config = {
     issuer: process.env.MOJOAUTH_ISSUER!,
     redirect_url: process.env.MOJOAUTH_REDIRECT_URL!,
   },
+  razorpay: {
+    key_id: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_SECRET_ID,
+    webhook_secret: process.env.RAZORPAY_WEBHOOK_SECRET,
+  },
 };

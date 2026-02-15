@@ -36,5 +36,5 @@ export const PaymentSchema = z.object({
   status: PaymentStatusEnum.default("PENDING"),
 });
 
-export type PaymentInput = z.input<typeof PaymentSchema>;
+export type PaymentInput = z.infer<typeof PaymentSchema>;
 export type Payment = z.output<typeof PaymentSchema>;
