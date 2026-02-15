@@ -202,6 +202,7 @@ model Booking {
 
   items BookingItem[]
   billingDetails BillingDetails?
+  payment Payment[]
 
   totalAmount Decimal @db.Decimal(10,2)
   status BookingStatus @default(PENDING)
@@ -231,4 +232,38 @@ model BillingDetails {
   acceptedTerms Boolean @default(false)
 
   createdAt DateTime @default(now())
+}
+
+enum PaymentProvider {
+  RAZORPAY
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  REFUNDED
+}
+
+model Payment {
+  id String @id @default(cuid())
+
+  bookingId String
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  provider PaymentProvider @default(RAZORPAY)
+
+  razorpayOrderId   String? @unique
+  razorpayPaymentId String? @unique
+  razorpaySignature String?
+
+  amount Decimal @db.Decimal(10,2)
+  currency String @default("INR")
+
+  status PaymentStatus @default(PENDING)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([bookingId])
 }

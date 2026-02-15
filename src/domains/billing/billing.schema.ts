@@ -20,9 +20,12 @@ export const BillingDetailsSchema = z
     email: z.email().min(1, "Valid email is required").trim(),
     nationality: NationalityEnum.default("INDIAN"),
     state: z.string().optional(),
-    acceptedTerms: z.literal(false, {
-      message: "You must accept terms and conditions",
-    }),
+    acceptedTerms: z
+      .boolean()
+      .default(true)
+      .refine((value) => value, {
+        message: "You must accept terms and conditions",
+      }),
   })
   .refine((data) => data.nationality === "INTERNATIONAL" || !!data.state, {
     message: "State is required for Indian residents",

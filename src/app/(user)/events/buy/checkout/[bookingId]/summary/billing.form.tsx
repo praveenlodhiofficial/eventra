@@ -39,16 +39,17 @@ export default function BillingForm({ bookingId }: { bookingId: string }) {
     resolver: zodResolver(BillingDetailsSchema),
     defaultValues: {
       bookingId: bookingId,
-      name: "",
-      phone: "",
-      email: "",
+      name: "Praveen Kumar",
+      phone: "9876543210",
+      email: "praveen@example.com",
       nationality: "INDIAN",
-      state: "",
+      state: "Tamil Nadu",
       acceptedTerms: false,
     },
+    mode: "onChange",
   });
 
-  const { isSubmitting } = form.formState;
+  const { isSubmitting, isValid } = form.formState;
 
   function onSubmit(data: BillingDetailsInput) {
     startTransition(async () => {
@@ -69,7 +70,7 @@ export default function BillingForm({ bookingId }: { bookingId: string }) {
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <FieldGroup>
           {/* ======================================== NAME & PHONE ======================================== */}
-          <div className="mt-5 grid grid-cols-2 gap-3">
+          <FieldGroup className="mt-3 grid grid-cols-1 space-y-3 md:mt-5 md:grid-cols-2 md:space-y-0">
             {/* Name */}
             <Field>
               <FieldLabel>Name</FieldLabel>
@@ -111,10 +112,9 @@ export default function BillingForm({ bookingId }: { bookingId: string }) {
                 )}
               />
             </Field>
-          </div>
+          </FieldGroup>
 
           {/* ======================================== EMAIL ======================================== */}
-          {/* Email */}
           <Field>
             <FieldLabel>Email</FieldLabel>
             <FormField
@@ -156,7 +156,7 @@ export default function BillingForm({ bookingId }: { bookingId: string }) {
                   return (
                     <FormItem>
                       <FormControl>
-                        <div className="grid grid-cols-2 gap-3">
+                        <FieldGroup className="grid grid-cols-[0.8fr_1fr] gap-3 md:grid-cols-2">
                           {NATIONALITY.map((nationality) => {
                             const isChecked = field.value === nationality;
 
@@ -181,7 +181,7 @@ export default function BillingForm({ bookingId }: { bookingId: string }) {
                               </FormItem>
                             );
                           })}
-                        </div>
+                        </FieldGroup>
                       </FormControl>
 
                       <FormMessage />
@@ -218,15 +218,15 @@ export default function BillingForm({ bookingId }: { bookingId: string }) {
               control={form.control}
               name="acceptedTerms"
               render={({ field }) => (
-                <FormItem className="flex items-center space-y-0 space-x-1">
+                <FormItem className="flex items-center gap-7 md:gap-3">
                   <FormControl>
                     <Checkbox
-                      checked={field.value}
+                      checked={Boolean(field.value)}
                       onCheckedChange={field.onChange}
-                      className=""
+                      className="origin-left scale-220 md:scale-100"
                     />
                   </FormControl>
-                  <FormDescription className="line-clamp-1 cursor-pointer font-normal">
+                  <FormDescription className="line-clamp-2 cursor-pointer font-normal">
                     I have read and accepted the{" "}
                     <Link
                       href="/terms-and-conditions"
@@ -245,7 +245,9 @@ export default function BillingForm({ bookingId }: { bookingId: string }) {
         {/* ======================================= SUBMIT BUTTON ======================================= */}
         <ActionButton2
           type="submit"
-          disabled={isSubmitting}
+          disabled={
+            isSubmitting || !isValid || !form.getValues("acceptedTerms")
+          }
           className="mt-5 w-full cursor-pointer py-7 text-base disabled:cursor-not-allowed disabled:opacity-70"
         >
           <div className="flex items-center gap-2">

@@ -79,53 +79,63 @@ export default async function CheckoutSummaryPage({
       {/* <h1 className="flex flex-col gap-1 text-center uppercase text-lg">Checkout</h1> */}
 
       {/* ========================================== STEP INDICATOR ========================================== */}
-      <div className="bg-muted-foreground/5 sticky top-5 z-10 flex items-center justify-center gap-5 border-y border-dashed border-black p-5 backdrop-blur-sm">
-        <div className="flex items-center justify-center gap-1">
+      <div className="bg-background/50 sticky top-5 z-10 flex items-center justify-center gap-5 border-y border-dashed border-black p-5 backdrop-blur-sm">
+        <div className="flex flex-col items-center justify-center gap-1 md:flex-row">
           <div className="bg-primary text-primary-foreground aspect-square size-5 rounded-full text-center text-sm">
             1
           </div>
-          <span>Order Summary</span>
+          <span className="text-center text-sm md:text-base">
+            Order Summary
+          </span>
         </div>
-        <ChevronsRightIcon className="size-5" />
-        <div className="flex items-center justify-center gap-1">
+        <ChevronsRightIcon className="size-7 md:size-5" />
+        <div className="flex flex-col items-center justify-center gap-1 md:flex-row">
           <div className="bg-muted-foreground/50 text-muted aspect-square size-5 rounded-full text-center text-sm">
             2
           </div>
-          <span className="text-muted-foreground">Billing Details</span>
+          <span className="text-muted-foreground text-center text-sm md:text-base">
+            Billing Details
+          </span>
         </div>
-        <ChevronsRightIcon className="text-muted-foreground size-5" />
-        <div className="flex items-center justify-center gap-1">
+        <ChevronsRightIcon className="text-muted-foreground size-7 md:size-5" />
+        <div className="flex flex-col items-center justify-center gap-1 md:flex-row">
           <div className="bg-muted-foreground/50 text-muted aspect-square size-5 rounded-full text-center text-sm">
             3
           </div>
-          <span className="text-muted-foreground">Confirm Order</span>
+          <span className="text-muted-foreground text-center text-sm md:text-base">
+            Confirm Order
+          </span>
         </div>
       </div>
 
-      <div className="mx-auto mt-10 max-w-2xl space-y-5 rounded-2xl border pt-5">
+      <div className="mx-3 mt-5 max-w-2xl space-y-10 rounded-xl border pt-5 md:mx-auto md:mt-10 md:space-y-5 md:rounded-2xl">
         {/* ========================================== TICKET DETAILS ========================================== */}
         <div>
-          <p className="from-muted-foreground/10 to-primary/50 bg-linear-to-l p-1 px-6 text-sm font-medium text-white uppercase">
+          <p className="from-muted-foreground/10 to-primary/70 bg-linear-to-l p-1 px-6 text-sm font-medium text-white uppercase">
             Ticket Details
           </p>
-          <div className="relative m-5 rounded-xl border p-5">
-            <h1 className="mb-5 text-lg font-medium">{eventName}</h1>
+          <div className="relative m-3 rounded-xl border p-3 md:m-5 md:p-5">
+            <h1 className="mb-3 line-clamp-2 text-base font-medium md:mb-5 md:text-lg">
+              {eventName}
+            </h1>
 
             {bookingItems.map((item) => (
               <div
                 key={item.id}
-                className="flex items-end justify-between border-t py-3"
+                className="flex items-end justify-between border-t pt-3"
               >
                 <div className="space-y-0.5">
                   <h3 className="text-muted-foreground text-sm font-light">
                     {item.ticketType.name}
                   </h3>
                   {/* Quantity */}
-                  <h3 className="flex gap-1 font-semibold">
+                  <h3 className="flex gap-1 font-medium md:font-semibold">
                     {item.quantity} Tickets
                   </h3>
                 </div>
-                <h1 className="text-xl font-semibold">₹{Number(item.price)}</h1>
+                <h1 className="text-base font-semibold md:text-xl">
+                  ₹{Number(item.price)}
+                </h1>
               </div>
             ))}
           </div>
@@ -133,16 +143,16 @@ export default async function CheckoutSummaryPage({
 
         {/* ========================================== OFFER DETAILS ========================================== */}
         <div>
-          <p className="from-muted-foreground/10 to-primary/50 bg-linear-to-l p-1 px-6 text-sm font-medium text-white uppercase">
+          <p className="from-muted-foreground/10 to-primary/70 bg-linear-to-l p-1 px-6 text-sm font-medium text-white uppercase">
             Offer
           </p>
-          <div className="relative m-5 overflow-hidden rounded-xl border">
+          <div className="relative m-3 overflow-hidden rounded-xl border md:m-5">
             <ActionButton1
               variant="ghost"
               className="flex w-full justify-between rounded-none py-7"
               icon={<ChevronsRightIcon className="size-5" strokeWidth={1.5} />}
             >
-              <BiSolidOffer className="mr-3 size-5" />
+              <BiSolidOffer className="mr-3 size-4.5 md:size-5" />
               <span className="text-base font-normal capitalize">
                 View All Event Offers
               </span>
@@ -153,7 +163,7 @@ export default async function CheckoutSummaryPage({
               className="flex w-full justify-between rounded-none py-7"
               icon={<ChevronsRightIcon className="size-5" strokeWidth={1.5} />}
             >
-              <FaCreditCard className="mr-3 size-4.5" />
+              <FaCreditCard className="mr-3 size-4 md:size-4.5" />
               <span className="text-base font-normal capitalize">
                 View All Payment Offers
               </span>
@@ -163,10 +173,10 @@ export default async function CheckoutSummaryPage({
 
         {/* ========================================== PAYMENT DETAILS ========================================== */}
         <div>
-          <p className="from-muted-foreground/10 to-primary/50 bg-linear-to-l p-1 px-6 text-sm font-medium text-white uppercase">
+          <p className="from-muted-foreground/10 to-primary/70 bg-linear-to-l p-1 px-6 text-sm font-medium text-white uppercase">
             Payment Details
           </p>
-          <div className="relative m-5 space-y-3 rounded-xl border px-5 py-3">
+          <div className="relative m-3 space-y-3 rounded-xl border px-3 py-3 md:m-5 md:px-5 md:py-5">
             <div className="flex items-center justify-between font-semibold">
               <p>Order Amount</p>
               <p>₹{totalAmount}</p>
@@ -177,14 +187,16 @@ export default async function CheckoutSummaryPage({
             </div>
             <Separator className="bg-muted-foreground/20 my-3" />
             <div className="flex items-center justify-between">
-              <p className="text-xl font-semibold">Grand Total</p>
-              <p className="text-xl font-semibold">
+              <p className="text-lg font-semibold md:text-xl">Grand Total</p>
+              <p className="text-lg font-semibold md:text-xl">
                 ₹{(totalAmount + bookingFee).toFixed(2)}
               </p>
             </div>
-            <Separator className="bg-muted-foreground/20 my-3" />
-            <Link href="/events/buy/checkout/billing">
-              <ActionButton2 className="w-full cursor-pointer py-7">
+          </div>
+
+          <div className="m-3 md:m-5">
+            <Link href="/events/buy/checkout/billing" className="w-full">
+              <ActionButton2 className="w-full cursor-pointer rounded-xl py-7 text-sm">
                 Continue to Billing Details
               </ActionButton2>
             </Link>
@@ -192,13 +204,13 @@ export default async function CheckoutSummaryPage({
         </div>
       </div>
 
-      <div className="mx-auto mt-10 max-w-2xl space-y-5 rounded-2xl border pt-5">
+      <div className="mx-3 mt-5 max-w-2xl space-y-10 rounded-xl border pt-5 md:mx-auto md:mt-10 md:space-y-5 md:rounded-2xl">
         {/* ========================================== TICKET DETAILS ========================================== */}
         <div>
-          <p className="from-muted-foreground/10 to-primary/50 bg-linear-to-l p-1 px-6 text-sm font-medium text-white uppercase">
+          <p className="from-muted-foreground/10 to-primary/70 bg-linear-to-l p-1 px-6 text-sm font-medium text-white uppercase">
             Billing Details
           </p>
-          <div className="relative m-5 rounded-xl">
+          <div className="relative m-3 md:m-5">
             <BillingForm bookingId={bookingId} />
           </div>
         </div>
