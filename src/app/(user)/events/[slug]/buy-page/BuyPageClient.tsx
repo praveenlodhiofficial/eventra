@@ -55,7 +55,7 @@ function TicketList({
         </div>
       </div>
 
-      <div className="mb-25 w-full space-y-5 overflow-y-auto p-3 md:max-w-2xl">
+      <div className="w-full space-y-5 overflow-y-auto p-3 md:max-w-2xl">
         {ticketTypes.map((ticket) => (
           <div
             key={ticket.id}
@@ -104,7 +104,7 @@ export function BuyPageClient({
 }: BuyPageClientProps) {
   return (
     <TicketSelectionProvider ticketTypes={ticketTypes}>
-      <div className="relative flex h-full flex-col items-center justify-start gap-3 md:gap-5">
+      <div className="relative flex flex-col items-center justify-start gap-3 md:gap-5">
         <TicketList
           eventName={eventName}
           startAt={startAt}

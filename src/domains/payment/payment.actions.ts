@@ -1,37 +1,78 @@
 "use server";
 
-import { z } from "zod";
+import crypto from "crypto";
 
+import { config } from "@/lib/config";
+import prisma from "@/lib/prisma";
+import { razorpay } from "@/lib/razorpay";
+
+import { findBookingById } from "../booking/booking.dal";
 import { createPayment } from "./payment.dal";
-import { PaymentSchema } from "./payment.schema";
 
-export async function createPaymentAction(input: unknown) {
-  const parsed = PaymentSchema.safeParse(input);
+export async function createRazorpayOrderAction(bookingId: string) {
+  const booking = await findBookingById(bookingId);
 
-  if (!parsed.success) {
-    return {
-      success: false,
-      status: 400,
-      message: "Invalid payment data",
-      errors: z.treeifyError(parsed.error),
-    };
+  if (!booking) {
+    return { success: false, message: "Booking not found" };
   }
 
-  try {
-    const payment = await createPayment(parsed.data);
+  const order = await razorpay.orders.create({
+    amount: Number(booking.totalAmount) * 100,
+    currency: "INR",
+    receipt: booking.id,
+  });
 
-    return {
-      success: true,
-      status: 201,
-      data: payment,
-    };
-  } catch (error) {
-    console.error("Create payment error:", error);
+  // save attempt
+  await createPayment({
+    bookingId,
+    amount: Number(booking.totalAmount),
+    orderId: order.id,
+  });
 
-    return {
-      success: false,
-      status: 500,
-      message: "Failed to create payment",
-    };
+  return {
+    success: true,
+    order,
+  };
+}
+
+export async function verifyPaymentAction(data: {
+  razorpay_payment_id: string;
+  razorpay_order_id: string;
+  razorpay_signature: string;
+}) {
+  const body = data.razorpay_order_id + "|" + data.razorpay_payment_id;
+
+  const expected = crypto
+    .createHmac("sha256", config.razorpay.key_secret!)
+    .update(body)
+    .digest("hex");
+
+  const isValid = expected === data.razorpay_signature;
+
+  if (!isValid) {
+    await prisma.payment.update({
+      where: { razorpayOrderId: data.razorpay_order_id },
+      data: { status: "FAILED" },
+    });
+
+    return { success: false };
   }
+
+  // mark payment success
+  const payment = await prisma.payment.update({
+    where: { razorpayOrderId: data.razorpay_order_id },
+    data: {
+      razorpayPaymentId: data.razorpay_payment_id,
+      razorpaySignature: data.razorpay_signature,
+      status: "SUCCESS",
+    },
+  });
+
+  // confirm booking
+  await prisma.booking.update({
+    where: { id: payment.bookingId },
+    data: { status: "CONFIRMED" },
+  });
+
+  return { success: true };
 }
