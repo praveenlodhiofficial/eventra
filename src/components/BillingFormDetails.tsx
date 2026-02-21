@@ -1,6 +1,6 @@
 "use client";
 
-import { startTransition } from "react";
+import { startTransition, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import Link from "next/link";
@@ -33,6 +33,12 @@ import {
   BillingDetailsInput,
   BillingDetailsSchema,
 } from "@/domains/billing/billing.schema";
+import {
+  createRazorpayOrderAction,
+  verifyPaymentAction,
+} from "@/domains/payment/payment.actions";
+import { config } from "@/lib/config";
+import { RazorpayOptions } from "@/types/razorpay";
 
 export default function BillingFormDetails({
   bookingId,
@@ -54,23 +60,73 @@ export default function BillingFormDetails({
   });
 
   const { isSubmitting, isValid } = form.formState;
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+
+  async function handlePayNow(data: BillingDetailsInput) {
+    setIsProcessingPayment(true);
+
+    // First, save billing details
+    const billingResult = await createBillingDetailsAction(data);
+
+    if (!billingResult.success || !billingResult.data) {
+      toast.error(billingResult.message);
+      setIsProcessingPayment(false);
+      return;
+    }
+
+    toast.success("Billing details saved successfully");
+
+    // Then, proceed with Razorpay payment
+    const paymentRes = await createRazorpayOrderAction(bookingId);
+
+    if (!paymentRes.success) {
+      toast.error("Failed to create payment order");
+      setIsProcessingPayment(false);
+      return;
+    }
+
+    const order = paymentRes.order;
+
+    if (!order) {
+      toast.error("Payment order not found");
+      setIsProcessingPayment(false);
+      return;
+    }
+
+    const options = {
+      key: config.razorpay.key_id,
+      amount: order.amount,
+      currency: order.currency,
+      order_id: order.id,
+
+      handler: async function (response: {
+        razorpay_payment_id: string;
+        razorpay_order_id: string;
+        razorpay_signature: string;
+      }) {
+        await verifyPaymentAction(response);
+        window.location.reload();
+      },
+      modal: {
+        ondismiss: function () {
+          setIsProcessingPayment(false);
+        },
+      },
+    };
+
+    const rzp = new window.Razorpay(options as RazorpayOptions);
+    rzp.open();
+    setIsProcessingPayment(false);
+  }
 
   function onSubmit(data: BillingDetailsInput) {
-    startTransition(async () => {
-      const result = await createBillingDetailsAction(data);
-
-      if (!result.success || !result.data) {
-        toast.error(result.message);
-        return;
-      }
-
-      toast.success(result.message);
-      form.reset();
+    startTransition(() => {
+      handlePayNow(data);
     });
   }
 
   return (
-    <div className="mx-3 mt-5 max-w-2xl space-y-10 rounded-xl border pt-5 md:mx-auto md:mt-10 md:space-y-5 md:rounded-2xl">
+    <div className="max-w-2xl space-y-10 rounded-xl bg-white/30 pt-5 pb-1 backdrop-blur-sm md:mx-auto md:space-y-5 md:rounded-2xl">
       {/* ========================================== TICKET DETAILS ========================================== */}
       <div>
         <p className="from-muted-foreground/10 to-primary/70 bg-linear-to-l p-1 px-6 text-sm font-medium text-white uppercase">
@@ -93,7 +149,7 @@ export default function BillingFormDetails({
                           <FormControl>
                             <Input
                               placeholder="Name"
-                              className="rounded-lg border px-3 py-6 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 md:text-[15px]"
+                              className="border-muted-foreground/20 rounded-lg border px-3 py-6 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 md:text-[15px]"
                               {...field}
                             />
                           </FormControl>
@@ -114,7 +170,7 @@ export default function BillingFormDetails({
                           <FormControl>
                             <Input
                               placeholder="Phone Number"
-                              className="rounded-lg border px-3 py-6 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 md:text-[15px]"
+                              className="border-muted-foreground/20 rounded-lg border px-3 py-6 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 md:text-[15px]"
                               {...field}
                             />
                           </FormControl>
@@ -136,7 +192,7 @@ export default function BillingFormDetails({
                         <FormControl>
                           <Input
                             placeholder="Email"
-                            className="rounded-lg border px-3 py-6 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 md:text-[15px]"
+                            className="border-muted-foreground/20 rounded-lg border px-3 py-6 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 md:text-[15px]"
                             {...field}
                           />
                         </FormControl>
@@ -177,10 +233,11 @@ export default function BillingFormDetails({
                                   return (
                                     <FormItem
                                       key={nationality}
-                                      className="flex items-center space-y-0 space-x-2 rounded-md border p-3 py-4"
+                                      className="border-muted-foreground/20 flex items-center space-y-0 space-x-2 rounded-md border p-3 py-4"
                                     >
                                       <FormControl>
                                         <Checkbox
+                                          className="border-muted-foreground/40"
                                           checked={isChecked}
                                           onCheckedChange={(checked) =>
                                             toggle(
@@ -218,7 +275,7 @@ export default function BillingFormDetails({
                           <FormControl>
                             <Input
                               placeholder="State"
-                              className="rounded-lg border px-3 py-6 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 md:text-[15px]"
+                              className="border-muted-foreground/20 rounded-lg border px-3 py-6 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 md:text-[15px]"
                               {...field}
                             />
                           </FormControl>
@@ -240,7 +297,7 @@ export default function BillingFormDetails({
                           <Checkbox
                             checked={Boolean(field.value)}
                             onCheckedChange={field.onChange}
-                            className="origin-left scale-220 md:scale-100"
+                            className="border-muted-foreground/40 origin-left scale-220 md:scale-100"
                           />
                         </FormControl>
                         <FormDescription className="line-clamp-2 cursor-pointer font-normal">
@@ -259,22 +316,30 @@ export default function BillingFormDetails({
                 </Field>
               </FieldGroup>
 
-              {/* ======================================= SUBMIT BUTTON ======================================= */}
-              <ActionButton2
-                type="submit"
-                disabled={
-                  isSubmitting || !isValid || !form.getValues("acceptedTerms")
-                }
-                className="mt-5 w-full cursor-pointer py-7 text-base disabled:cursor-not-allowed disabled:opacity-70"
-              >
-                <div className="flex items-center gap-2">
-                  {isSubmitting ? (
-                    <Loader2 className="size-4 animate-spin" />
-                  ) : (
-                    "Save Billing Details"
-                  )}
-                </div>
-              </ActionButton2>
+              {/* ======================================= PAY NOW BUTTON ======================================= */}
+              <div className="mt-5">
+                <ActionButton2
+                  type="submit"
+                  disabled={
+                    isSubmitting ||
+                    isProcessingPayment ||
+                    !isValid ||
+                    !form.getValues("acceptedTerms")
+                  }
+                  className="w-full cursor-pointer py-7 text-base disabled:cursor-not-allowed disabled:opacity-70"
+                >
+                  <div className="flex items-center gap-2">
+                    {isSubmitting || isProcessingPayment ? (
+                      <>
+                        <Loader2 className="size-4 animate-spin" />
+                        {isSubmitting ? "Saving..." : "Processing..."}
+                      </>
+                    ) : (
+                      "Pay Now"
+                    )}
+                  </div>
+                </ActionButton2>
+              </div>
             </form>
           </Form>
         </div>

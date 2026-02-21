@@ -10,7 +10,7 @@ import { findBookingItems } from "@/domains/booking-item/booking-items.dal";
 import { findBookingById } from "@/domains/booking/booking.dal";
 import { findEvent } from "@/domains/event/event.dal";
 
-import { ActionButton1, ActionButton2 } from "./ui/action-button";
+import { ActionButton1 } from "./ui/action-button";
 import { Separator } from "./ui/separator";
 
 export default async function OrderSummary({
@@ -73,13 +73,13 @@ export default async function OrderSummary({
   const bookingFee = totalAmount * 0.118; // 11.8% GST
 
   return (
-    <div className="mx-3 mt-5 max-w-2xl space-y-10 rounded-xl border pt-5 md:mx-auto md:mt-10 md:space-y-5 md:rounded-2xl">
+    <div className="mx-3 mt-5 max-w-2xl space-y-10 rounded-xl bg-white/30 pt-5 pb-1 backdrop-blur-sm md:mx-auto md:mt-10 md:space-y-5 md:rounded-2xl">
       {/* ========================================== TICKET DETAILS ========================================== */}
       <div>
         <p className="from-muted-foreground/10 to-primary/70 bg-linear-to-l p-1 px-6 text-sm font-medium text-white uppercase">
           Ticket Details
         </p>
-        <div className="relative m-3 rounded-xl border md:m-5">
+        <div className="relative m-3 rounded-xl md:m-5">
           <h1 className="my-5 line-clamp-2 px-5 text-base font-medium md:text-lg">
             {eventName}
           </h1>
@@ -87,7 +87,7 @@ export default async function OrderSummary({
           {bookingItems.map((item) => (
             <div
               key={item.id}
-              className="flex items-end justify-between border-t px-5 py-3"
+              className="border-muted-foreground/20 flex items-end justify-between border-t px-5 py-3"
             >
               <div className="space-y-1">
                 <h3 className="text-muted-foreground text-sm font-light">
@@ -111,7 +111,7 @@ export default async function OrderSummary({
         <p className="from-muted-foreground/10 to-primary/70 bg-linear-to-l p-1 px-6 text-sm font-medium text-white uppercase">
           Offer
         </p>
-        <div className="relative m-3 overflow-hidden rounded-xl border md:m-5">
+        <div className="relative m-3 overflow-hidden rounded-xl md:m-5">
           <ActionButton1
             variant="ghost"
             className="flex w-full justify-between rounded-none py-7"
@@ -141,7 +141,7 @@ export default async function OrderSummary({
         <p className="from-muted-foreground/10 to-primary/70 bg-linear-to-l p-1 px-6 text-sm font-medium text-white uppercase">
           Payment Details
         </p>
-        <div className="relative m-3 space-y-3 rounded-xl border px-3 py-3 md:m-5 md:px-5 md:py-5">
+        <div className="relative m-3 space-y-3 rounded-xl px-3 py-3 md:m-5 md:px-5 md:py-5">
           <div className="flex items-center justify-between font-semibold">
             <p>Order Amount</p>
             <p>₹{totalAmount}</p>
