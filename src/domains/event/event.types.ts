@@ -21,5 +21,11 @@ export type FindEventParams = {
 /* -------------------------------------------------------------------------- */
 
 export type FindEventsOptions = {
+  id?: string;
+  slug?: string;
+  performerId?: string;
+  categoryId?: string;
+  city?: string;
   status?: EventStatus;
+  take?: number;
 };

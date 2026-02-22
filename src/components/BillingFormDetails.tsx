@@ -129,7 +129,7 @@ export default function BillingFormDetails({
     <div className="max-w-2xl space-y-10 rounded-xl bg-white/30 pt-5 pb-1 backdrop-blur-sm md:mx-auto md:space-y-5 md:rounded-2xl">
       {/* ========================================== TICKET DETAILS ========================================== */}
       <div>
-        <p className="from-muted-foreground/10 to-primary/70 bg-linear-to-l p-1 px-6 text-sm font-medium text-white uppercase">
+        <p className="from-muted-foreground/10 to-primary/80 bg-linear-to-l p-1 px-6 text-sm font-medium text-white uppercase">
           Billing Details
         </p>
         <div className="relative m-3 md:m-5">

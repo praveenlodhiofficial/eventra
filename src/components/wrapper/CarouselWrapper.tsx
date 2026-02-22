@@ -3,7 +3,7 @@ import { findEvents } from "@/domains/event/event.dal";
 import { Carousel } from "../Carousel";
 
 export async function CarouselWrapper() {
-  const events = await findEvents();
+  const events = await findEvents({ status: "PUBLISHED", take: 5 });
 
   if (!events || events.length === 0) {
     return (

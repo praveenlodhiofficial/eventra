@@ -2,6 +2,7 @@ import prisma from "@/lib/prisma";
 import { slugify } from "@/utils/slugify";
 
 import { EventCategory } from "./event-categories.schema";
+import { FindEventCategoryParams } from "./event-categories.types";
 
 /* -------------------------------------------------------------------------- */
 /*                           create Event Category                            */
@@ -44,6 +45,27 @@ export const deleteEventCategory = async (id: string) => {
 export const deleteEventCategories = async (ids: string[]) => {
   return prisma.eventCategory.deleteMany({
     where: { id: { in: ids } },
+  });
+};
+
+/* -------------------------------------------------------------------------- */
+/*                           Find Event Category by Id or Slug                        */
+/* -------------------------------------------------------------------------- */
+
+export const findEventCategory = async ({
+  id,
+  slug,
+}: FindEventCategoryParams) => {
+  return prisma.eventCategory.findFirst({
+    where: {
+      ...(id && { id }),
+      ...(slug && { slug: slug }),
+    },
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+    },
   });
 };
 

@@ -139,10 +139,24 @@ export const deleteEvents = async (ids: string[]) => {
 /*                               Find Events                                  */
 /* -------------------------------------------------------------------------- */
 
-export const findEvents = async (options?: FindEventsOptions) => {
+export const findEvents = async ({
+  id,
+  slug,
+  performerId,
+  categoryId,
+  city,
+  status,
+  take,
+}: FindEventsOptions) => {
   return prisma.event.findMany({
+    take,
     where: {
-      ...(options?.status && { status: options.status }),
+      ...(id && { id }),
+      ...(slug && { slug }),
+      ...(performerId && { performers: { some: { id: performerId } } }),
+      ...(categoryId && { categories: { some: { id: categoryId } } }),
+      ...(city && { city }),
+      ...(status && { status }),
     },
     orderBy: {
       startAt: "asc",

@@ -1,8 +1,8 @@
-import { EventCard } from "@/components/EventCard";
 import { EventCategories } from "@/components/EventCategories";
 import { Container } from "@/components/ui/container";
 import { ArtistSpotlightWrapper } from "@/components/wrapper/ArtistSpotlightWrapper";
 import { CarouselWrapper } from "@/components/wrapper/CarouselWrapper";
+import { EventsWrapper } from "@/components/wrapper/EventsWrapper";
 
 export default async function Home() {
   return (
@@ -33,11 +33,9 @@ export default async function Home() {
         </section>
 
         {/* =============================== Popular Events =============================== */}
+        {/* Popular Events */}
         <section className="mx-auto w-full max-w-7xl space-y-5 md:space-y-8">
-          <h1 className="text-2xl font-semibold md:text-3xl">Popular Events</h1>
-          <div className="flex gap-5">
-            <EventCard />
-          </div>
+          <EventsWrapper title="Popular Events" />
         </section>
       </Container>
     </div>

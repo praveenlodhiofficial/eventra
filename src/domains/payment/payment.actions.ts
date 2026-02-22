@@ -16,8 +16,14 @@ export async function createRazorpayOrderAction(bookingId: string) {
     return { success: false, message: "Booking not found" };
   }
 
+  // Calculate grand total (order amount + booking fee with GST)
+  // Booking fee is 11.8% GST on the order amount
+  const orderAmount = Number(booking.totalAmount);
+  const bookingFee = orderAmount * 0.118; // 11.8% GST
+  const grandTotal = orderAmount + bookingFee;
+
   const order = await razorpay.orders.create({
-    amount: Number(booking.totalAmount) * 100,
+    amount: Math.round(grandTotal * 100), // Convert to paise (Razorpay expects amount in smallest currency unit)
     currency: "INR",
     receipt: booking.id,
   });
@@ -25,7 +31,7 @@ export async function createRazorpayOrderAction(bookingId: string) {
   // save attempt
   await createPayment({
     bookingId,
-    amount: Number(booking.totalAmount),
+    amount: grandTotal, // Store grand total, not just order amount
     orderId: order.id,
   });
 

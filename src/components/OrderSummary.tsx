@@ -1,8 +1,6 @@
 import { BiSolidOffer } from "react-icons/bi";
 import { FaCreditCard } from "react-icons/fa6";
 
-import Link from "next/link";
-
 import { ChevronsRightIcon } from "lucide-react";
 
 import { getSession } from "@/domains/auth/auth.actions";
@@ -76,7 +74,7 @@ export default async function OrderSummary({
     <div className="mx-3 mt-5 max-w-2xl space-y-10 rounded-xl bg-white/30 pt-5 pb-1 backdrop-blur-sm md:mx-auto md:mt-10 md:space-y-5 md:rounded-2xl">
       {/* ========================================== TICKET DETAILS ========================================== */}
       <div>
-        <p className="from-muted-foreground/10 to-primary/70 bg-linear-to-l p-1 px-6 text-sm font-medium text-white uppercase">
+        <p className="from-muted-foreground/10 to-primary/80 bg-linear-to-l p-1 px-6 text-sm font-medium text-white uppercase">
           Ticket Details
         </p>
         <div className="relative m-3 rounded-xl md:m-5">
@@ -108,7 +106,7 @@ export default async function OrderSummary({
 
       {/* ========================================== OFFER DETAILS ========================================== */}
       <div>
-        <p className="from-muted-foreground/10 to-primary/70 bg-linear-to-l p-1 px-6 text-sm font-medium text-white uppercase">
+        <p className="from-muted-foreground/10 to-primary/80 bg-linear-to-l p-1 px-6 text-sm font-medium text-white uppercase">
           Offer
         </p>
         <div className="relative m-3 overflow-hidden rounded-xl md:m-5">
@@ -138,7 +136,7 @@ export default async function OrderSummary({
 
       {/* ========================================== PAYMENT DETAILS ========================================== */}
       <div>
-        <p className="from-muted-foreground/10 to-primary/70 bg-linear-to-l p-1 px-6 text-sm font-medium text-white uppercase">
+        <p className="from-muted-foreground/10 to-primary/80 bg-linear-to-l p-1 px-6 text-sm font-medium text-white uppercase">
           Payment Details
         </p>
         <div className="relative m-3 space-y-3 rounded-xl px-3 py-3 md:m-5 md:px-5 md:py-5">
