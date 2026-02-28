@@ -19,7 +19,7 @@ export default async function CategoriesPage() {
       <div className="flex flex-wrap gap-5">
         {categories.map((category) => (
           <Link href={`/categories/${category.slug}`} key={category.id}>
-            <div className="bg-accent flex aspect-3/4 h-[18vh] items-center justify-center rounded-3xl p-4 text-center text-sm font-medium md:h-[20vh] md:items-end md:text-lg md:font-semibold lg:h-[30vh]">
+            <div className="bg-accent flex aspect-3/4 h-[18vh] items-center justify-center rounded-3xl p-4 text-center text-sm font-medium md:h-[20vh] md:items-end md:text-lg lg:h-[30vh]">
               {category.name}
             </div>
           </Link>

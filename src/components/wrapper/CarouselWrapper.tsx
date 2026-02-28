@@ -16,9 +16,5 @@ export async function CarouselWrapper() {
   const coverImage = events.map((event) => event.coverImage);
   const slug = events.map((event) => event.slug);
 
-  return (
-    <div>
-      <Carousel coverImage={coverImage} slug={slug} />
-    </div>
-  );
+  return <Carousel coverImage={coverImage} slug={slug} />;
 }

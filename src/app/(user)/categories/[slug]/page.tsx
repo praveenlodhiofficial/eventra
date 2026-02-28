@@ -20,13 +20,20 @@ export default async function EventCategoryPage({
   }
 
   return (
-    <Container className="mx-auto w-full max-w-7xl space-y-5 md:space-y-8">
-      <h1 className="text-center text-2xl font-semibold md:text-3xl">
-        Music Category
+    <div>
+      <h1 className="bg-muted-foreground/10 p-2 text-center text-base font-semibold uppercase md:text-xl">
+        {category.name} Category
       </h1>
-      <div className="flex gap-5">
-        <EventsWrapper categoryId={category.id} />
-      </div>
-    </Container>
+
+      {category.events.length > 0 ? (
+        <Container className="mx-auto flex w-full max-w-7xl gap-5">
+          <EventsWrapper categoryId={category.id} />
+        </Container>
+      ) : (
+        <div className="flex h-[calc(100vh-10rem)] items-center justify-center text-xl font-medium">
+          No events found
+        </div>
+      )}
+    </div>
   );
 }

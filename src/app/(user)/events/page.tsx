@@ -1,14 +1,15 @@
 import { SlidersHorizontal } from "lucide-react";
 
-import { EventCard } from "@/components/EventCard";
 import { ActionButton1, ActionButton2 } from "@/components/ui/action-button";
-import { Container } from "@/components/ui/container";
+import { EventsWrapper } from "@/components/wrapper/EventsWrapper";
 
 export default function EventsPage() {
   return (
-    <Container>
-      <section className="mx-auto w-full space-y-5 md:max-w-7xl md:space-y-8">
-        <h1 className="text-2xl font-semibold md:text-3xl">Popular Events</h1>
+    <div className="space-y-5 md:space-y-8">
+      <h1 className="bg-muted-foreground/10 p-2 text-center text-base font-semibold uppercase md:text-xl">
+        All Events
+      </h1>
+      <section className="mx-auto w-full max-w-7xl space-y-5 md:space-y-8">
         <div className="no-scrollbar flex h-fit w-[calc(105%)] items-center justify-start gap-2 overflow-x-auto rounded-lg">
           <ActionButton1
             variant="secondary"
@@ -55,9 +56,9 @@ export default function EventsPage() {
           </ActionButton2>
         </div>
         <div className="flex gap-5">
-          <EventCard />
+          <EventsWrapper />
         </div>
       </section>
-    </Container>
+    </div>
   );
 }

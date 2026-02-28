@@ -28,7 +28,7 @@ export async function Navbar() {
         </Link>
 
         {/* ================= DESKTOP ================= */}
-        <div className="hidden w-fit items-center overflow-hidden rounded-full p-2 pl-10 md:flex">
+        <div className="hidden w-fit items-center overflow-hidden rounded-full px-2 py-2 pl-10 md:flex">
           <div className="flex items-center justify-start gap-10">
             <Link href={`/events`}> Events</Link>
             <Link href={`/categories`}> Categories</Link>

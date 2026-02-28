@@ -65,6 +65,7 @@ export const findEventCategory = async ({
       id: true,
       name: true,
       slug: true,
+      events: true,
     },
   });
 };
