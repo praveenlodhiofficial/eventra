@@ -20,12 +20,14 @@ export function CoverImageUpload({
   onRemoved,
   defaultImage,
   quality = 50,
+  placeholder = "Upload Cover Image",
 }: {
   folder: string;
   onUploaded: (url: string) => void;
   onRemoved: () => void;
   defaultImage?: string;
   quality?: number;
+  placeholder?: string;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -37,8 +39,10 @@ export function CoverImageUpload({
     setPreview(URL.createObjectURL(file));
     setProgress(0);
 
-    if (fileId) {
-      await deleteFromImageKit(fileId);
+    const previousIdentifier = fileId ?? defaultImage ?? null;
+
+    if (previousIdentifier) {
+      await deleteFromImageKit(previousIdentifier);
     }
 
     const res = await uploadToImageKit(file, folder, setProgress);
@@ -52,8 +56,13 @@ export function CoverImageUpload({
     onUploaded(res.url);
   };
 
-  const remove = async (fileId: string) => {
-    await deleteFromImageKit(fileId);
+  const remove = async () => {
+    const identifier = fileId ?? defaultImage ?? null;
+
+    if (identifier) {
+      await deleteFromImageKit(identifier);
+    }
+
     setPreview(null);
     setFileId(null);
     setProgress(0);
@@ -87,7 +96,8 @@ export function CoverImageUpload({
           <div className="group flex h-full w-full flex-col items-center justify-center gap-1">
             <UploadIcon className="text-muted-foreground size-4.5 group-hover:text-black" />
             <p className="text-muted-foreground text-center text-sm group-hover:text-black">
-              Upload Cover Image
+              {/* props.placeholder ?? "Upload Cover Image" */}
+              {placeholder ?? "Upload Cover Image"}
             </p>
           </div>
         )}
@@ -101,7 +111,7 @@ export function CoverImageUpload({
                 size="icon"
                 onClick={(e) => {
                   e.stopPropagation();
-                  remove(fileId!);
+                  void remove();
                 }}
                 className="absolute top-0 right-0 scale-80 rounded-full"
               >
