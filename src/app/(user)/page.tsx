@@ -35,7 +35,7 @@ export default async function Home() {
         {/* =============================== Popular Events =============================== */}
         {/* Popular Events */}
         <section className="mx-auto w-full max-w-7xl space-y-5 md:space-y-8">
-          <EventsWrapper title="Popular Events" />
+          <EventsWrapper title="Popular Events" take={8} />
         </section>
       </Container>
     </div>

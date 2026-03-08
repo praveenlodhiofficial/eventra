@@ -181,7 +181,7 @@ export const getEventAction = async (params: GetEventParams) => {
 
 export const listEventsAction = async () => {
   try {
-    const events = await findEvents();
+    const events = await findEvents({ status: "PUBLISHED", take: 10 });
 
     return {
       success: true,
