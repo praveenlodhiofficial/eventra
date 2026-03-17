@@ -25,7 +25,9 @@ export type FindEventsOptions = {
   slug?: string;
   performerId?: string;
   categoryId?: string;
+  categoryIds?: string[];
   city?: string;
   status?: EventStatus;
   take?: number;
+  sort?: "date" | "name" | "price-low" | "price-high" | "distance";
 };

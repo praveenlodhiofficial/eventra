@@ -4,32 +4,38 @@ import { findEvents } from "@/domains/event/event.dal";
 type Props = {
   performerId?: string;
   categoryId?: string;
+  categoryIds?: string[];
   city?: string;
   id?: string;
   slug?: string;
   status?: "PUBLISHED" | "DRAFT";
   title?: string;
   take?: number;
+  sort?: "date" | "name" | "price-low" | "price-high" | "distance";
 };
 
 export async function EventsWrapper({
   performerId,
   categoryId,
+  categoryIds,
   city,
   id,
   slug,
   status = "PUBLISHED",
   take = 4,
+  sort,
   title,
 }: Props) {
   const events = await findEvents({
     performerId,
     categoryId,
+    categoryIds,
     city,
     id,
     slug,
     status,
     take,
+    sort,
   });
 
   if (!events.length) return null;

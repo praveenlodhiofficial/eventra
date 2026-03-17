@@ -1,9 +1,25 @@
-import { SlidersHorizontal } from "lucide-react";
-
-import { ActionButton1, ActionButton2 } from "@/components/ui/action-button";
+import { FilterEvents } from "@/components/FilterEvents";
+import { ActionButton2 } from "@/components/ui/action-button";
 import { EventsWrapper } from "@/components/wrapper/EventsWrapper";
+import { findEventCategories } from "@/domains/event-categories/event-categories.dal";
 
-export default function EventsPage() {
+export default async function EventsPage({
+  searchParams,
+}: {
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const sp = (await searchParams) ?? {};
+  const sort =
+    typeof sp.sort === "string" && sp.sort.length
+      ? (sp.sort as "date" | "name" | "price-low" | "price-high" | "distance")
+      : "date";
+  const categoryIds =
+    typeof sp.categories === "string" && sp.categories.length
+      ? sp.categories.split(",").filter(Boolean)
+      : [];
+
+  const categories = await findEventCategories();
+
   return (
     <div className="space-y-5 md:space-y-8">
       <h1 className="bg-muted-foreground/10 p-2 text-center text-base font-semibold uppercase md:text-xl">
@@ -11,13 +27,11 @@ export default function EventsPage() {
       </h1>
       <section className="mx-auto w-full max-w-7xl space-y-5 md:space-y-8">
         <div className="no-scrollbar flex h-fit w-[calc(105%)] items-center justify-start gap-2 overflow-x-auto rounded-lg">
-          <ActionButton1
-            variant="secondary"
-            icon={<SlidersHorizontal className="size-5" />}
-            className="cursor-pointer rounded-r-full"
-          >
-            Filters
-          </ActionButton1>
+          <FilterEvents
+            categories={categories}
+            initialSort={sort}
+            initialCategoryIds={categoryIds}
+          />
           <ActionButton2
             variant="secondary"
             className="cursor-pointer rounded-full"
@@ -56,7 +70,7 @@ export default function EventsPage() {
           </ActionButton2>
         </div>
         <div className="flex gap-5">
-          <EventsWrapper />
+          <EventsWrapper take={50} sort={sort} categoryIds={categoryIds} />
         </div>
       </section>
     </div>

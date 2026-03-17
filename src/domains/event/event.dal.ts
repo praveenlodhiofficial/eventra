@@ -144,23 +144,32 @@ export const findEvents = async ({
   slug,
   performerId,
   categoryId,
+  categoryIds,
   city,
   status,
   take,
+  sort,
 }: FindEventsOptions) => {
-  return prisma.event.findMany({
+  const orderBy =
+    sort === "name"
+      ? ({ name: "asc" } as const)
+      : // date + distance fallback (distance not supported yet)
+        ({ startAt: "asc" } as const);
+
+  const events = await prisma.event.findMany({
     take,
     where: {
       ...(id && { id }),
       ...(slug && { slug }),
       ...(performerId && { performers: { some: { id: performerId } } }),
       ...(categoryId && { categories: { some: { id: categoryId } } }),
+      ...(categoryIds?.length && {
+        categories: { some: { id: { in: categoryIds } } },
+      }),
       ...(city && { city }),
       ...(status && { status }),
     },
-    orderBy: {
-      startAt: "asc",
-    },
+    orderBy,
     select: {
       id: true,
       name: true,
@@ -175,6 +184,24 @@ export const findEvents = async ({
       endAt: true,
       venue: true,
       status: true,
+      ticketTypes: { select: { price: true } },
     },
   });
+
+  if (sort === "price-low" || sort === "price-high") {
+    const dir = sort === "price-low" ? 1 : -1;
+    return [...events].sort((a, b) => {
+      const aMin = a.ticketTypes.reduce<number>(
+        (min, t) => Math.min(min, Number(t.price)),
+        Number.POSITIVE_INFINITY
+      );
+      const bMin = b.ticketTypes.reduce<number>(
+        (min, t) => Math.min(min, Number(t.price)),
+        Number.POSITIVE_INFINITY
+      );
+      return (aMin - bMin) * dir;
+    });
+  }
+
+  return events;
 };
