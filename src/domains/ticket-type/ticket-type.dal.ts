@@ -50,3 +50,13 @@ export async function findTicketTypes(eventId: string) {
     },
   });
 }
+
+/* -------------------------------------------------------------------------- */
+/*                           Delete Ticket Type                               */
+/* -------------------------------------------------------------------------- */
+
+export async function deleteTicketType(id: string) {
+  return prisma.ticketType.delete({
+    where: { id },
+  });
+}

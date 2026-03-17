@@ -4,6 +4,7 @@ import { z } from "zod";
 
 import {
   createTicketType,
+  deleteTicketType,
   findTicketTypes,
   updateTicketType,
 } from "./ticket-type.dal";
@@ -103,6 +104,30 @@ export async function listTicketTypesAction(eventId: string) {
       status: 200,
       message: "Ticket types fetched successfully",
       data: ticketTypes,
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      success: false,
+      status: 500,
+      message: "Internal server error",
+    };
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/*                           Delete Ticket Type Action                         */
+/* -------------------------------------------------------------------------- */
+
+export async function deleteTicketTypeAction(id: string) {
+  try {
+    const deleted = await deleteTicketType(id);
+
+    return {
+      success: true,
+      status: 200,
+      message: "Ticket type deleted successfully",
+      data: deleted,
     };
   } catch (error) {
     console.error(error);

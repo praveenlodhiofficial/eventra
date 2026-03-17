@@ -26,14 +26,17 @@ import { PerformerSummary } from "@/domains/performer/performer.schema";
 type Props = {
   value: string[]; // source of truth
   onChange: (ids: string[]) => void;
+  initialCache?: Record<string, PerformerSummary>;
 };
 
-export function PerformerPicker({ value, onChange }: Props) {
+export function PerformerPicker({ value, onChange, initialCache }: Props) {
   const [results, setResults] = useState<PerformerSummary[]>([]);
   const [open, setOpen] = useState(false);
 
   // cache for showing names/images
-  const [cache, setCache] = useState<Record<string, PerformerSummary>>({});
+  const [cache, setCache] = useState<Record<string, PerformerSummary>>(
+    () => initialCache ?? {}
+  );
 
   // ✅ NEW → control input
   const [search, setSearch] = useState("");

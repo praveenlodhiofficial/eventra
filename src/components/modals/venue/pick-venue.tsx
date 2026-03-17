@@ -25,14 +25,22 @@ type Props = {
   value: string | null; // single source of truth
   onChange: (id: string | null) => void;
   onVenueSelect?: (venue: VenueSummary) => void;
+  initialCache?: Record<string, VenueSummary>;
 };
 
-export function VenuePicker({ value, onChange, onVenueSelect }: Props) {
+export function VenuePicker({
+  value,
+  onChange,
+  onVenueSelect,
+  initialCache,
+}: Props) {
   const [results, setResults] = useState<VenueSummary[]>([]);
   const [open, setOpen] = useState(false);
 
   // cache for showing name/city
-  const [cache, setCache] = useState<Record<string, VenueSummary>>({});
+  const [cache, setCache] = useState<Record<string, VenueSummary>>(
+    () => initialCache ?? {}
+  );
 
   // ✅ NEW → control input
   const [search, setSearch] = useState("");

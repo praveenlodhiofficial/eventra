@@ -140,7 +140,11 @@ export const eventColumns: ColumnDef<EventSummary>[] = [
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Edit Event</DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href={`/admin/events/${row.original.slug}/edit`}>
+                Edit Event
+              </Link>
+            </DropdownMenuItem>
             <DeleteModal
               type={DeleteModalType.EVENT}
               id={row.original.id}

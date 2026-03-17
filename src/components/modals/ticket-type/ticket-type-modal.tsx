@@ -47,12 +47,14 @@ type Props = {
     price: number;
     quantity: number;
   };
+  trigger?: React.ReactNode;
 };
 
 export function TicketTypeModal({
   eventId,
   mode = "create",
   ticketType,
+  trigger,
 }: Props) {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
@@ -92,7 +94,9 @@ export function TicketTypeModal({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        {isUpdate ? (
+        {trigger ? (
+          trigger
+        ) : isUpdate ? (
           <ActionButton2 type="button" variant="outline" className="gap-2">
             Update Ticket
           </ActionButton2>
