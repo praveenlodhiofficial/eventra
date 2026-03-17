@@ -38,40 +38,105 @@ export const EventBaseSchema = z.object({
   images: z.array(z.string()).optional(),
 
   categoryIds: z.array(z.string()).min(1, "Select at least one category"),
-  performerIds: z
-    .array(z.string().trim())
-    .min(1, "Select at least one performer"),
+  performerIds: z.array(z.string().trim()).optional().default([]),
 
-  city: z.string().min(1, "City is required").trim(),
+  // "To be announced" flags – kept in DB as booleans
+  performerToBeAnnounced: z.boolean().default(false),
+  venueToBeAnnounced: z.boolean().default(false),
+  cityToBeAnnounced: z.boolean().default(false),
+  scheduleToBeAnnounced: z.boolean().default(false),
+
+  city: z.string().trim().optional(),
   status: EventStatusEnum.default("DRAFT"),
 
-  ticketTypes: z.array(z.string()).min(1, "Select at least one ticket type"),
+  // Ticket types are created after the event (relation records),
+  // so the event can be created without them.
+  ticketTypes: z.array(z.string()).optional(),
 
-  startAt: z.date().min(new Date(), "Start date cannot be in the past"),
-  endAt: z.date().min(new Date(), "End date cannot be in the past"),
+  startAt: z.date().optional(),
+  endAt: z.date().optional(),
 
-  venueId: z.string().min(1, "Venue is required").trim(),
+  venueId: z.string().trim().optional(),
+
+  // UI-only helper; not stored in DB but part of form type
+  ticketTypesToBeAnnounced: z.boolean().default(false),
 });
 
 /* -------------------------------------------------------------------------- */
 /*                            Event Schema                                    */
 /* -------------------------------------------------------------------------- */
 
-export const EventSchema = EventBaseSchema.refine(
-  (data) => data.startAt >= new Date(),
-  {
-    path: ["startAt"],
-    message: "Start date cannot be in the past",
-  }
-)
-  .refine((data) => data.endAt >= new Date(), {
-    path: ["endAt"],
-    message: "End date cannot be in the past",
-  })
-  .refine((data) => data.endAt > data.startAt, {
-    path: ["endAt"],
-    message: "End date must be after start date",
-  });
+export const EventSchema = EventBaseSchema //
+  // Performers must exist unless marked TBA
+  .refine(
+    (data) =>
+      data.performerToBeAnnounced || (data.performerIds?.length ?? 0) > 0,
+    {
+      path: ["performerIds"],
+      message: "Select at least one performer or mark as 'to be announced'",
+    }
+  )
+  // City must exist unless marked TBA
+  .refine(
+    (data) =>
+      data.cityToBeAnnounced || Boolean(data.city && data.city.trim().length),
+    {
+      path: ["city"],
+      message: "City is required or mark as 'to be announced'",
+    }
+  )
+  // Venue must exist unless marked TBA
+  .refine(
+    (data) =>
+      data.venueToBeAnnounced ||
+      Boolean(data.venueId && data.venueId.trim().length),
+    {
+      path: ["venueId"],
+      message: "Venue is required or mark as 'to be announced'",
+    }
+  )
+  // Date/time rules only when schedule is not TBA
+  .refine(
+    (data) =>
+      data.scheduleToBeAnnounced ||
+      (data.startAt instanceof Date &&
+        data.endAt instanceof Date &&
+        !Number.isNaN(data.startAt.getTime()) &&
+        !Number.isNaN(data.endAt.getTime())),
+    {
+      path: ["startAt"],
+      message: "Start and end date are required or mark as 'to be announced'",
+    }
+  )
+  .refine(
+    (data) =>
+      data.scheduleToBeAnnounced ||
+      (data.startAt instanceof Date && data.startAt >= new Date()),
+    {
+      path: ["startAt"],
+      message: "Start date cannot be in the past",
+    }
+  )
+  .refine(
+    (data) =>
+      data.scheduleToBeAnnounced ||
+      (data.endAt instanceof Date && data.endAt >= new Date()),
+    {
+      path: ["endAt"],
+      message: "End date cannot be in the past",
+    }
+  )
+  .refine(
+    (data) =>
+      data.scheduleToBeAnnounced ||
+      (data.startAt instanceof Date &&
+        data.endAt instanceof Date &&
+        data.endAt > data.startAt),
+    {
+      path: ["endAt"],
+      message: "End date must be after start date",
+    }
+  );
 
 export type EventInput = z.input<typeof EventSchema>;
 export type Event = z.output<typeof EventSchema>;

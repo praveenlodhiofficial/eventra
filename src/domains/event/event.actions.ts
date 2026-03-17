@@ -181,7 +181,8 @@ export const getEventAction = async (params: GetEventParams) => {
 
 export const listEventsAction = async () => {
   try {
-    const events = await findEvents({ status: "PUBLISHED", take: 10 });
+    // Admin view: fetch all events regardless of status
+    const events = await findEvents({});
 
     return {
       success: true,

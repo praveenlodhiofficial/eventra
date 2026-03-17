@@ -30,4 +30,5 @@ export type FindEventsOptions = {
   status?: EventStatus;
   take?: number;
   sort?: "date" | "name" | "price-low" | "price-high" | "distance";
+  near?: { lat: number; lng: number } | null;
 };

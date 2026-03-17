@@ -66,19 +66,24 @@ model Event {
   images       EventImage[]
 
   categories  EventCategory[] @relation("EventCategories")
-  performers Performer[] @relation("EventPerformers")
+  performers  Performer[]     @relation("EventPerformers")
 
-  city     String
+  city                  String?
+  cityToBeAnnounced     Boolean      @default(false)
+  performerToBeAnnounced Boolean     @default(false)
+  venueToBeAnnounced    Boolean      @default(false)
+  scheduleToBeAnnounced Boolean      @default(false)
+
   status EventStatus @default(DRAFT)
 
   ticketTypes TicketType[]
   bookings Booking[]
 
-  startAt DateTime
-  endAt   DateTime
+  startAt DateTime?
+  endAt   DateTime?
 
-  venueId String
-  venue   Venue  @relation(fields: [venueId], references: [id])
+  venueId String?
+  venue   Venue?  @relation(fields: [venueId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -109,6 +114,8 @@ model Venue {
   state   String
   country String
   pincode String
+  lat     Float?
+  lng     Float?
 
   events Event[]
 

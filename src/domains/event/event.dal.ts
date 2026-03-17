@@ -15,22 +15,31 @@ export const createEvent = async (data: Event) => {
       slug: slugify(data.name),
       description: data.description,
       coverImage: data.coverImage,
-      city: data.city,
-      startAt: data.startAt,
-      endAt: data.endAt,
+      status: data.status,
+      city: data.city ?? null,
+      cityToBeAnnounced: data.cityToBeAnnounced,
+      performerToBeAnnounced: data.performerToBeAnnounced,
+      venueToBeAnnounced: data.venueToBeAnnounced,
+      scheduleToBeAnnounced: data.scheduleToBeAnnounced,
+      startAt: data.startAt ?? null,
+      endAt: data.endAt ?? null,
 
       // ✅ connect by ids
       categories: {
         connect: data.categoryIds.map((id) => ({ id })),
       },
 
-      venue: {
-        connect: { id: data.venueId },
-      },
+      venue: data.venueId
+        ? {
+            connect: { id: data.venueId },
+          }
+        : undefined,
 
-      performers: {
-        connect: data.performerIds.map((id) => ({ id })),
-      },
+      performers: data.performerIds?.length
+        ? {
+            connect: data.performerIds.map((id) => ({ id })),
+          }
+        : undefined,
 
       // ✅ create image records
       images: data.images?.length
@@ -54,6 +63,7 @@ export const updateEventById = async (id: string, data: Event) => {
       slug: slugify(data.name),
       description: data.description,
       coverImage: data.coverImage,
+      status: data.status,
       city: data.city,
       startAt: data.startAt,
       endAt: data.endAt,
@@ -103,6 +113,10 @@ export const findEvent = async ({ id, slug }: FindEventParams) => {
       endAt: true,
       venue: true,
       status: true,
+      cityToBeAnnounced: true,
+      performerToBeAnnounced: true,
+      venueToBeAnnounced: true,
+      scheduleToBeAnnounced: true,
       ticketTypes: {
         select: {
           id: true,
@@ -149,6 +163,7 @@ export const findEvents = async ({
   status,
   take,
   sort,
+  near,
 }: FindEventsOptions) => {
   const orderBy =
     sort === "name"
@@ -182,11 +197,39 @@ export const findEvents = async ({
       performers: true,
       startAt: true,
       endAt: true,
-      venue: true,
+      venue: {
+        select: {
+          id: true,
+          name: true,
+          address: true,
+          city: true,
+          state: true,
+          country: true,
+          pincode: true,
+          lat: true,
+          lng: true,
+        },
+      },
       status: true,
       ticketTypes: { select: { price: true } },
     },
   });
+
+  const haversineKm = (
+    a: { lat: number; lng: number },
+    b: { lat: number; lng: number }
+  ) => {
+    const R = 6371;
+    const dLat = ((b.lat - a.lat) * Math.PI) / 180;
+    const dLng = ((b.lng - a.lng) * Math.PI) / 180;
+    const lat1 = (a.lat * Math.PI) / 180;
+    const lat2 = (b.lat * Math.PI) / 180;
+
+    const x =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.sin(dLng / 2) * Math.sin(dLng / 2) * Math.cos(lat1) * Math.cos(lat2);
+    return 2 * R * Math.asin(Math.sqrt(x));
+  };
 
   if (sort === "price-low" || sort === "price-high") {
     const dir = sort === "price-low" ? 1 : -1;
@@ -200,6 +243,30 @@ export const findEvents = async ({
         Number.POSITIVE_INFINITY
       );
       return (aMin - bMin) * dir;
+    });
+  }
+
+  if (sort === "distance" && near) {
+    return [...events].sort((a, b) => {
+      const aHas =
+        a.venue && Number.isFinite(a.venue.lat) && Number.isFinite(a.venue.lng);
+      const bHas =
+        b.venue && Number.isFinite(b.venue.lat) && Number.isFinite(b.venue.lng);
+
+      // push missing-coords venues to bottom
+      if (!aHas && !bHas) return 0;
+      if (!aHas) return 1;
+      if (!bHas) return -1;
+
+      const aD = haversineKm(near, {
+        lat: a.venue!.lat!,
+        lng: a.venue!.lng!,
+      });
+      const bD = haversineKm(near, {
+        lat: b.venue!.lat!,
+        lng: b.venue!.lng!,
+      });
+      return aD - bD;
     });
   }
 
