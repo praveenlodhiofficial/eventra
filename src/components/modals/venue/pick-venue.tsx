@@ -24,9 +24,10 @@ import { VenueSummary } from "@/domains/venue/venue.schema";
 type Props = {
   value: string | null; // single source of truth
   onChange: (id: string | null) => void;
+  onVenueSelect?: (venue: VenueSummary) => void;
 };
 
-export function VenuePicker({ value, onChange }: Props) {
+export function VenuePicker({ value, onChange, onVenueSelect }: Props) {
   const [results, setResults] = useState<VenueSummary[]>([]);
   const [open, setOpen] = useState(false);
 
@@ -67,6 +68,7 @@ export function VenuePicker({ value, onChange }: Props) {
   const selectVenue = (venue: VenueSummary) => {
     onChange(venue.id); // replace, not append
     setCache((prev) => ({ ...prev, [venue.id]: venue }));
+    onVenueSelect?.(venue);
 
     // ✅ NEW → reset input
     setSearch("");
@@ -79,29 +81,6 @@ export function VenuePicker({ value, onChange }: Props) {
 
   return (
     <div className="space-y-3">
-      {/* ======================= Selected ======================= */}
-      {selectedVenue && (
-        <Badge
-          variant="secondary"
-          className="flex w-fit items-center gap-3 py-1.5 pl-5 text-sm"
-        >
-          {selectedVenue.name}, {selectedVenue.city}
-          <Button
-            type="button"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              onChange(null);
-            }}
-            variant="default"
-            size="icon-sm"
-            className="hover:bg-destructive cursor-pointer rounded-full transition-all duration-200"
-          >
-            <X className="size-4.5" />
-          </Button>
-        </Badge>
-      )}
-
       {/* ======================= Search ======================= */}
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
@@ -125,8 +104,8 @@ export function VenuePicker({ value, onChange }: Props) {
           onOpenAutoFocus={(e) => e.preventDefault()}
         >
           <Command>
-            <CommandEmpty className="p-0 pt-2 text-center text-sm">
-              No venues found.
+            <CommandEmpty className="px-5 py-3 text-start text-sm">
+              <span className="relative top-1">No venues found.</span>
             </CommandEmpty>
 
             <CommandGroup className="max-h-52 overflow-y-auto">
@@ -146,6 +125,29 @@ export function VenuePicker({ value, onChange }: Props) {
           </Command>
         </PopoverContent>
       </Popover>
+
+      {/* ======================= Selected ======================= */}
+      {selectedVenue && (
+        <Badge
+          variant="secondary"
+          className="flex w-fit items-center gap-3 py-1.5 pl-5 text-sm"
+        >
+          {selectedVenue.name}, {selectedVenue.city}
+          <Button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onChange(null);
+            }}
+            variant="default"
+            size="icon-sm"
+            className="hover:bg-destructive cursor-pointer rounded-full transition-all duration-200"
+          >
+            <X className="size-4.5" />
+          </Button>
+        </Badge>
+      )}
     </div>
   );
 }

@@ -73,12 +73,12 @@ export function CoverImageUpload({
     <div className="flex w-full flex-col gap-2">
       <div
         onClick={() => inputRef.current?.click()}
-        className="relative flex aspect-video w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl"
+        className="bg-secondary relative flex aspect-video w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl"
       >
         <Progress
           value={progress}
           max={100}
-          className="bg-secondary pointer-events-none absolute inset-0 z-[-1] h-full rounded-none"
+          className="pointer-events-none absolute inset-0 z-[-1] h-full rounded-none bg-red-500"
           indicatorClassName="bg-green-500/50"
         />
 

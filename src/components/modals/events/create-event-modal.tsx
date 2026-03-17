@@ -299,6 +299,11 @@ export function CreateEventModal({
                           <VenuePicker
                             value={field.value}
                             onChange={field.onChange}
+                            onVenueSelect={(venue) => {
+                              form.setValue("city", venue.city, {
+                                shouldValidate: true,
+                              });
+                            }}
                           />
                         </FormControl>
                         <FormMessage />

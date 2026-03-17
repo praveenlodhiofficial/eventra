@@ -45,6 +45,8 @@ export function AddVenueModal() {
       state: "Maharashtra",
       country: "India",
       pincode: "400051",
+      lat: 19.0607,
+      lng: 72.8699,
     },
   });
 
@@ -68,8 +70,9 @@ export function AddVenueModal() {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <ActionButton2
+          type="button"
           variant="secondary"
-          className="flex w-fit cursor-pointer items-center gap-2"
+          className="flex w-full cursor-pointer items-center gap-2"
         >
           <CircleFadingPlusIcon className="size-3.5 group-hover:animate-pulse" />
           <span className="ml-2">Add Venue</span>
@@ -106,25 +109,34 @@ export function AddVenueModal() {
                     name: "city",
                     label: "City",
                     placeholder: "Venue City",
+                    readOnly: true,
                   },
                   {
                     name: "state",
                     label: "State",
                     placeholder: "Venue State",
+                    readOnly: true,
                   },
                   {
                     name: "country",
                     label: "Country",
                     placeholder: "Venue Country",
+                    readOnly: true,
                   },
                   {
                     name: "pincode",
                     label: "Pincode",
                     placeholder: "Venue Pincode",
+                    readOnly: true,
                   },
                 ].map((fieldData) => (
                   <Field key={fieldData.name}>
-                    <FieldLabel>{fieldData.label}</FieldLabel>
+                    <FieldLabel>
+                      {fieldData.label}
+                      {"readOnly" in fieldData && fieldData.readOnly
+                        ? " (auto)"
+                        : ""}
+                    </FieldLabel>
                     <FormField
                       control={form.control}
                       name={fieldData.name as keyof VenueInput}
@@ -134,6 +146,11 @@ export function AddVenueModal() {
                             <Input
                               placeholder={fieldData.placeholder}
                               className="rounded-lg border border-zinc-200 bg-white/10 px-3 py-6 text-sm font-light shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                              readOnly={
+                                "readOnly" in fieldData
+                                  ? Boolean(fieldData.readOnly)
+                                  : false
+                              }
                               {...field}
                             />
                           </FormControl>
@@ -163,6 +180,8 @@ export function AddVenueModal() {
                     form.setValue("pincode", data.pincode, {
                       shouldValidate: true,
                     });
+                    form.setValue("lat", data.lat, { shouldValidate: true });
+                    form.setValue("lng", data.lng, { shouldValidate: true });
                   }}
                 />
               </div>

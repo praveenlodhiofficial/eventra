@@ -87,11 +87,12 @@ export function EventCategoriesModal(props: Props) {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         {isUpdate ? (
-          <ActionButton2 variant="outline" className="w-fit">
+          <ActionButton2 type="button" variant="outline" className="w-fit">
             Rename Category
           </ActionButton2>
         ) : (
           <ActionButton2
+            type="button"
             variant="secondary"
             className="flex w-fit cursor-pointer items-center gap-2"
           >

@@ -81,6 +81,55 @@ export function PerformerPicker({ value, onChange }: Props) {
 
   return (
     <div className="space-y-3">
+      {/* ======================= Search Performers ======================= */}
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <div>
+            <Command className="rounded-lg border">
+              <CommandInput
+                value={search}
+                placeholder="Search performers ..."
+                onValueChange={handleSearch}
+                className="placeholder:font-light"
+              />
+            </Command>
+          </div>
+        </PopoverTrigger>
+
+        {/* ======================= Search Results ======================= */}
+        <PopoverContent
+          className="p-0"
+          align="start"
+          side="bottom"
+          onOpenAutoFocus={(e) => e.preventDefault()}
+        >
+          <Command>
+            <CommandEmpty className="px-5 py-3 text-start text-sm">
+              <span className="relative top-1">No performers found.</span>
+            </CommandEmpty>
+
+            <CommandGroup className="max-h-52 overflow-y-auto">
+              {results.map((performer) => (
+                <CommandItem
+                  key={performer.id}
+                  onSelect={() => togglePerformer(performer)}
+                  className="flex items-center gap-3"
+                >
+                  <Image
+                    src={performer.image}
+                    alt={performer.name}
+                    width={32}
+                    height={32}
+                    className="aspect-square rounded-full object-cover"
+                  />
+                  {performer.name}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </Command>
+        </PopoverContent>
+      </Popover>
+
       {/* ======================= Selected Performers ======================= */}
       <div className="flex flex-wrap gap-2">
         {value.map((id) => {
@@ -111,55 +160,6 @@ export function PerformerPicker({ value, onChange }: Props) {
           );
         })}
       </div>
-
-      {/* ======================= Search Performers ======================= */}
-      <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
-          <div>
-            <Command className="rounded-lg border">
-              <CommandInput
-                value={search}
-                placeholder="Search performers ..."
-                onValueChange={handleSearch}
-                className="placeholder:font-light"
-              />
-            </Command>
-          </div>
-        </PopoverTrigger>
-
-        {/* ======================= Search Results ======================= */}
-        <PopoverContent
-          className="p-0"
-          align="start"
-          side="bottom"
-          onOpenAutoFocus={(e) => e.preventDefault()}
-        >
-          <Command>
-            <CommandEmpty className="p-0 pt-2 text-center text-sm">
-              No performers found.
-            </CommandEmpty>
-
-            <CommandGroup className="max-h-52 overflow-y-auto">
-              {results.map((performer) => (
-                <CommandItem
-                  key={performer.id}
-                  onSelect={() => togglePerformer(performer)}
-                  className="flex items-center gap-3"
-                >
-                  <Image
-                    src={performer.image}
-                    alt={performer.name}
-                    width={32}
-                    height={32}
-                    className="aspect-square rounded-full object-cover"
-                  />
-                  {performer.name}
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </Command>
-        </PopoverContent>
-      </Popover>
     </div>
   );
 }
