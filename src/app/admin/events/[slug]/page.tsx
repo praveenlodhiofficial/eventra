@@ -140,7 +140,11 @@ export default async function EventPage({
                   <td className="bg-muted w-1/3 px-4 py-2 font-medium">
                     Event Venue
                   </td>
-                  <td className="px-4 py-2">{event.venue.name}</td>
+                  <td className="px-4 py-2">
+                    {event.venueToBeAnnounced
+                      ? "To be announced"
+                      : (event.venue?.name ?? "N/A")}
+                  </td>
                 </tr>
 
                 <tr className="border-b border-neutral-800">
@@ -148,7 +152,11 @@ export default async function EventPage({
                     Event Date
                   </td>
                   <td className="px-4 py-2">
-                    {isSameDay(event.startAt, event.endAt) ? (
+                    {event.scheduleToBeAnnounced ||
+                    !event.startAt ||
+                    !event.endAt ? (
+                      "To be announced"
+                    ) : isSameDay(event.startAt, event.endAt) ? (
                       <>{format(event.startAt, "dd MMM yyyy")}</>
                     ) : (
                       <>
@@ -164,7 +172,14 @@ export default async function EventPage({
                     Event Time
                   </td>
                   <td className="px-4 py-2">
-                    {format(event.startAt, "p")} → {format(event.endAt, "p")}
+                    {event.scheduleToBeAnnounced ||
+                    !event.startAt ||
+                    !event.endAt
+                      ? "To be announced"
+                      : `${format(event.startAt, "p")} → ${format(
+                          event.endAt,
+                          "p"
+                        )}`}
                   </td>
                 </tr>
 
@@ -174,7 +189,11 @@ export default async function EventPage({
                     Event Venue
                   </td>
                   <td className="px-4 py-2">
-                    {event.venue.name}, {event.venue.city}
+                    {event.venueToBeAnnounced
+                      ? "To be announced"
+                      : event.venue
+                        ? `${event.venue.name}, ${event.venue.city}`
+                        : "N/A"}
                   </td>
                 </tr>
               </tbody>

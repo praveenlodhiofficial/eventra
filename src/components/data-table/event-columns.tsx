@@ -70,15 +70,21 @@ export const eventColumns: ColumnDef<EventSummary>[] = [
       const venue = row.original.venueId;
       const city = row.original.city;
 
-      return `${venue}, ${city}`;
+      return venue ? `${venue}, ${city}` : "To be announced";
     },
   },
   {
     id: "date",
     header: "Date",
     cell: ({ row }) => {
-      const start = new Date(row.original.startAt);
-      const end = new Date(row.original.endAt);
+      const { startAt, endAt } = row.original;
+
+      if (!startAt || !endAt) {
+        return "To be announced";
+      }
+
+      const start = new Date(startAt);
+      const end = new Date(endAt);
 
       const sameDay = format(start, "yyyy-MM-dd") === format(end, "yyyy-MM-dd");
 
@@ -94,8 +100,14 @@ export const eventColumns: ColumnDef<EventSummary>[] = [
     id: "time",
     header: "Time",
     cell: ({ row }) => {
-      const start = new Date(row.original.startAt);
-      const end = new Date(row.original.endAt);
+      const { startAt, endAt } = row.original;
+
+      if (!startAt || !endAt) {
+        return "To be announced";
+      }
+
+      const start = new Date(startAt);
+      const end = new Date(endAt);
 
       return `${format(start, "p")} → ${format(end, "p")}`;
     },

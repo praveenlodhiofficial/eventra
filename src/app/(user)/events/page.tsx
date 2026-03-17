@@ -17,6 +17,19 @@ export default async function EventsPage({
     typeof sp.categories === "string" && sp.categories.length
       ? sp.categories.split(",").filter(Boolean)
       : [];
+  const initialLocation =
+    typeof sp.lat === "string" &&
+    typeof sp.lng === "string" &&
+    typeof sp.location === "string" &&
+    sp.lat.length &&
+    sp.lng.length &&
+    sp.location.length
+      ? {
+          name: sp.location,
+          lat: Number(sp.lat),
+          lng: Number(sp.lng),
+        }
+      : null;
 
   const categories = await findEventCategories();
 
@@ -31,6 +44,13 @@ export default async function EventsPage({
             categories={categories}
             initialSort={sort}
             initialCategoryIds={categoryIds}
+            initialLocation={
+              initialLocation &&
+              Number.isFinite(initialLocation.lat) &&
+              Number.isFinite(initialLocation.lng)
+                ? initialLocation
+                : null
+            }
           />
           <ActionButton2
             variant="secondary"
@@ -70,7 +90,18 @@ export default async function EventsPage({
           </ActionButton2>
         </div>
         <div className="flex gap-5">
-          <EventsWrapper take={50} sort={sort} categoryIds={categoryIds} />
+          <EventsWrapper
+            take={50}
+            sort={sort}
+            categoryIds={categoryIds}
+            near={
+              initialLocation &&
+              Number.isFinite(initialLocation.lat) &&
+              Number.isFinite(initialLocation.lng)
+                ? { lat: initialLocation.lat, lng: initialLocation.lng }
+                : null
+            }
+          />
         </div>
       </section>
     </div>

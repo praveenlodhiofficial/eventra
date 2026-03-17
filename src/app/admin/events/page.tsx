@@ -1,6 +1,8 @@
+import Link from "next/link";
+
 import { DataTable } from "@/components/admin/DataTable";
 import { eventColumns } from "@/components/data-table/event-columns";
-import { CreateEventModal } from "@/components/modals/events/create-event-modal";
+import { ActionButton2 } from "@/components/ui/action-button";
 import { listEventCategoriesAction } from "@/domains/event-categories/event-categories.actions";
 import { listEventsAction } from "@/domains/event/event.actions";
 import { listVenuesAction } from "@/domains/venue/venue.actions";
@@ -28,7 +30,14 @@ export default async function EventsPage() {
     return (
       <div className="flex h-[calc(100vh-10rem)] flex-col items-center justify-center gap-4 text-xl font-medium">
         <p>No events or categories found</p>
-        <CreateEventModal categories={categories ?? []} />
+        <Link href="/admin/events/create">
+          <ActionButton2
+            variant="outline"
+            className="flex w-fit cursor-pointer items-center gap-2"
+          >
+            Create Event
+          </ActionButton2>
+        </Link>
       </div>
     );
   }
@@ -38,11 +47,25 @@ export default async function EventsPage() {
       <DataTable
         columns={eventColumns}
         data={events.map((event) => ({
-          ...event,
-          venueId: event.venue.name,
-          city: event.venue.city,
+          name: event.name,
+          status: event.status,
+          id: event.id,
+          slug: event.slug,
+          city: event.city ?? undefined,
+          startAt: event.startAt ?? undefined,
+          endAt: event.endAt ?? undefined,
+          venueId: event.venue ? event.venue.name : undefined,
         }))}
-        toolbarAction={<CreateEventModal categories={categories ?? []} />}
+        toolbarAction={
+          <Link href="/admin/events/create">
+            <ActionButton2
+              variant="outline"
+              className="flex w-fit cursor-pointer items-center gap-2"
+            >
+              Create Event
+            </ActionButton2>
+          </Link>
+        }
       />
     </div>
   );

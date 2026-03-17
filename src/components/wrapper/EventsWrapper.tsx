@@ -12,6 +12,7 @@ type Props = {
   title?: string;
   take?: number;
   sort?: "date" | "name" | "price-low" | "price-high" | "distance";
+  near?: { lat: number; lng: number } | null;
 };
 
 export async function EventsWrapper({
@@ -24,6 +25,7 @@ export async function EventsWrapper({
   status = "PUBLISHED",
   take = 4,
   sort,
+  near,
   title,
 }: Props) {
   const events = await findEvents({
@@ -36,6 +38,7 @@ export async function EventsWrapper({
     status,
     take,
     sort,
+    near,
   });
 
   if (!events.length) return null;
