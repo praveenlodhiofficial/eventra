@@ -12,8 +12,8 @@ import { CalendarIcon, Clock, Loader2, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { PerformerPicker } from "@/components/modals/performer/pick-performer";
-import { AddVenueModal } from "@/components/modals/venue/add-venue-modal";
 import { VenuePicker } from "@/components/modals/venue/pick-venue";
+import { VenueModal } from "@/components/modals/venue/venue-modal";
 import { ActionButton2 } from "@/components/ui/action-button";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -371,7 +371,7 @@ export default function EditEventPageClient({
                     </FormItem>
                   )}
                 />
-                <AddVenueModal />
+                <VenueModal />
               </FieldGroup>
 
               <FormField

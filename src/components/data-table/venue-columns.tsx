@@ -6,6 +6,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 
 import { DeleteModal } from "@/components/modals/delete.modal";
+import { VenueModal } from "@/components/modals/venue/venue-modal";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -79,7 +80,15 @@ export const venueColumns: ColumnDef<VenueSummary>[] = [
               <Link href={`/admin/venues/${row.original.id}`}>View Venue</Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Edit Venue</DropdownMenuItem>
+            <VenueModal
+              type="update"
+              venue={row.original}
+              trigger={
+                <DropdownMenuItem onSelect={(event) => event.preventDefault()}>
+                  Edit Venue
+                </DropdownMenuItem>
+              }
+            />
             <DeleteModal
               type={DeleteModalType.VENUE}
               id={row.original.id}

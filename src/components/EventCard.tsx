@@ -13,11 +13,35 @@ type Props = {
     coverImage: string;
     startAt: Date;
     endAt: Date;
-    venue: { name: string; state: string };
+    venue?: { name?: string | null; state?: string | null } | null;
+    ticketTypes?: { price: number | string | null }[];
   };
 };
 
 export function EventCard({ event }: Props) {
+  const hasVenueName = event.venue?.name && event.venue.name.trim().length > 0;
+  const hasVenueState =
+    event.venue?.state && event.venue.state.trim().length > 0;
+
+  const venueText =
+    hasVenueName && hasVenueState
+      ? `${event.venue!.name}, ${event.venue!.state}`
+      : "Venue to be announced";
+
+  const prices = (event.ticketTypes ?? [])
+    .map((t) => (t?.price != null ? Number(t.price) : NaN))
+    .filter((n) => Number.isFinite(n) && n > 0) as number[];
+
+  const lowestPrice = prices.length ? Math.min(...prices) : null;
+
+  const priceFormatter = new Intl.NumberFormat("en-IN", {
+    maximumFractionDigits: 0,
+  });
+
+  const priceText = lowestPrice
+    ? `₹ ${priceFormatter.format(lowestPrice)} onwards`
+    : "Tickets to be announced";
+
   return (
     <Link
       href={`/events/${event.slug}`}
@@ -57,11 +81,9 @@ export function EventCard({ event }: Props) {
         </div>
 
         {/* venue */}
-        <div className="text-muted-foreground text-xs">
-          {event.venue.name}, {event.venue.state}
-        </div>
+        <div className="text-muted-foreground text-xs">{venueText}</div>
 
-        <div className="text-muted-foreground text-xs">Coming Soon</div>
+        <div className="text-muted-foreground text-xs">{priceText}</div>
       </div>
     </Link>
   );

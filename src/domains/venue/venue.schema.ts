@@ -26,10 +26,7 @@ export type Venue = z.output<typeof VenueSchema>;
 /*                            Venue Summary Schema                            */
 /* -------------------------------------------------------------------------- */
 
-export const VenueSummarySchema = VenueSchema.pick({
-  name: true,
-  city: true,
-}).extend({
+export const VenueSummarySchema = VenueSchema.extend({
   id: z.string(),
 });
 

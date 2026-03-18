@@ -48,11 +48,12 @@ export function EventCategoriesModal(props: Props) {
   const [isOpen, setIsOpen] = useState(false);
 
   const isUpdate = props.type === "update";
-  const eventCategory = isUpdate ? props.eventCategory : { name: "" };
-
-  if (!eventCategory) {
-    throw new Error("Event category not found");
-  }
+  const eventCategory = isUpdate
+    ? props.eventCategory
+    : {
+        id: undefined,
+        name: "",
+      };
 
   const form = useForm<EventCategoryInput>({
     resolver: zodResolver(EventCategorySchema),
@@ -102,7 +103,7 @@ export function EventCategoriesModal(props: Props) {
         )}
       </DialogTrigger>
       <DialogContent className="h-fit max-w-[calc(100%-2rem)] md:max-w-md lg:rounded-3xl">
-        <Form {...form}>
+        <Form {...form} key={isUpdate ? eventCategory.id : "create"}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
             className="no-scrollbar relative flex flex-col gap-10 overflow-hidden overflow-y-scroll"

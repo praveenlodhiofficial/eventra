@@ -1,6 +1,6 @@
 import { DataTable } from "@/components/admin/DataTable";
 import { venueColumns } from "@/components/data-table/venue-columns";
-import { AddVenueModal } from "@/components/modals/venue/add-venue-modal";
+import { VenueModal } from "@/components/modals/venue/venue-modal";
 import { listVenuesAction } from "@/domains/venue/venue.actions";
 
 export default async function VenuesPage() {
@@ -20,7 +20,7 @@ export default async function VenuesPage() {
     return (
       <div className="flex h-[calc(100vh-10rem)] flex-col items-center justify-center gap-4 text-xl font-medium">
         <p>No venues found</p>
-        <AddVenueModal />
+        <VenueModal />
       </div>
     );
   }
@@ -30,7 +30,7 @@ export default async function VenuesPage() {
       <DataTable
         columns={venueColumns}
         data={venues}
-        toolbarAction={<AddVenueModal />}
+        toolbarAction={<VenueModal />}
       />
     </div>
   );

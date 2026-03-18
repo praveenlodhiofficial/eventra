@@ -48,8 +48,8 @@ import { createTicketTypeAction } from "@/domains/ticket-type/ticket-type.action
 import { EventCategoriesModal } from "../modals/event-categories/event-categories-modal";
 import { PerformerModal } from "../modals/performer/performer-modal";
 import { TicketTypeDraftModal } from "../modals/ticket-type/ticket-type-modal";
-import { AddVenueModal } from "../modals/venue/add-venue-modal";
 import { VenuePicker } from "../modals/venue/pick-venue";
+import { VenueModal } from "../modals/venue/venue-modal";
 
 type Props = {
   categories: EventCategory[];
@@ -327,7 +327,7 @@ export default function CreateEventPageClient({ categories }: Props) {
                     </FormItem>
                   )}
                 />
-                <AddVenueModal />
+                <VenueModal />
               </FieldGroup>
 
               {/* Venue "to be announced" */}

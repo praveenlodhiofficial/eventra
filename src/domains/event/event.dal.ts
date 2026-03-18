@@ -64,27 +64,46 @@ export const updateEventById = async (id: string, data: Event) => {
       description: data.description,
       coverImage: data.coverImage,
       status: data.status,
-      city: data.city,
-      startAt: data.startAt,
-      endAt: data.endAt,
+      city: data.city ?? null,
+      cityToBeAnnounced: data.cityToBeAnnounced,
+      performerToBeAnnounced: data.performerToBeAnnounced,
+      venueToBeAnnounced: data.venueToBeAnnounced,
+      scheduleToBeAnnounced: data.scheduleToBeAnnounced,
+      startAt: data.startAt ?? null,
+      endAt: data.endAt ?? null,
 
       categories: {
         set: data.categoryIds.map((id) => ({ id })),
       },
 
-      venue: {
-        connect: { id: data.venueId },
-      },
+      venue:
+        data.venueId && !data.venueToBeAnnounced
+          ? {
+              connect: { id: data.venueId },
+            }
+          : data.venueToBeAnnounced
+            ? {
+                disconnect: true,
+              }
+            : undefined,
 
-      performers: {
-        set: data.performerIds.map((id) => ({ id })),
-      },
+      performers: data.performerIds?.length
+        ? {
+            set: data.performerIds.map((id) => ({ id })),
+          }
+        : data.performerToBeAnnounced
+          ? {
+              set: [],
+            }
+          : undefined,
 
       // replace images
-      images: {
-        deleteMany: {},
-        create: data.images?.map((url) => ({ url })) ?? [],
-      },
+      images: data.images
+        ? {
+            deleteMany: {},
+            create: data.images.map((url) => ({ url })),
+          }
+        : undefined,
     },
   });
 };

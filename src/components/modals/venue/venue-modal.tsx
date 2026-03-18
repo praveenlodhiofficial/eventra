@@ -1,12 +1,13 @@
 "use client";
 
+import { ReactNode } from "react";
 import { startTransition, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { useRouter } from "next/navigation";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CircleFadingPlusIcon } from "lucide-react";
+import { CircleFadingPlusIcon, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { MapBox } from "@/components/MapBox";
@@ -29,30 +30,68 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { createVenueAction } from "@/domains/venue/venue.actions";
-import { VenueInput, VenueSchema } from "@/domains/venue/venue.schema";
+import {
+  createVenueAction,
+  updateVenueAction,
+} from "@/domains/venue/venue.actions";
+import {
+  VenueInput,
+  VenueSchema,
+  VenueSummary,
+} from "@/domains/venue/venue.schema";
 
-export function AddVenueModal() {
+type VenueForUpdate = VenueSummary;
+
+type Props =
+  | {
+      type?: "create";
+      trigger?: ReactNode;
+    }
+  | {
+      type: "update";
+      venue: VenueForUpdate;
+      trigger?: ReactNode;
+    };
+
+export function VenueModal(props: Props = { type: "create" }) {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
+
+  const isUpdate = props.type === "update";
+
+  const venue: VenueForUpdate = isUpdate
+    ? props.venue
+    : {
+        id: "",
+        name: "",
+        address: "",
+        city: "",
+        state: "",
+        country: "",
+        pincode: "",
+      };
 
   const form = useForm<VenueInput>({
     resolver: zodResolver(VenueSchema),
     defaultValues: {
-      name: "Jio World Plaza",
-      address: "Jio World Plaza, Bandra Kurla Complex, Mumbai",
-      city: "Mumbai",
-      state: "Maharashtra",
-      country: "India",
-      pincode: "400051",
-      lat: 19.0607,
-      lng: 72.8699,
+      name: venue.name,
+      address: venue.address,
+      city: venue.city,
+      state: venue.state,
+      country: venue.country,
+      pincode: venue.pincode,
+      lat: venue.lat ?? undefined,
+      lng: venue.lng ?? undefined,
     },
   });
 
+  const { isSubmitting } = form.formState;
+
   function onSubmit(data: VenueInput) {
     startTransition(async () => {
-      const result = await createVenueAction(data);
+      const result = isUpdate
+        ? await updateVenueAction(venue.id, data)
+        : await createVenueAction(data);
 
       if (!result.success) {
         toast.error(result.message);
@@ -62,21 +101,29 @@ export function AddVenueModal() {
       toast.success(result.message);
       form.reset();
       setIsOpen(false);
+      router.refresh();
     });
-    router.refresh();
   }
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <ActionButton2
-          type="button"
-          variant="secondary"
-          className="flex w-full cursor-pointer items-center gap-2"
-        >
-          <CircleFadingPlusIcon className="size-3.5 group-hover:animate-pulse" />
-          <span className="ml-2">Add Venue</span>
-        </ActionButton2>
+        {props.trigger ? (
+          props.trigger
+        ) : isUpdate ? (
+          <ActionButton2 type="button" variant="outline" className="w-fit">
+            Edit Venue
+          </ActionButton2>
+        ) : (
+          <ActionButton2
+            type="button"
+            variant="secondary"
+            className="flex w-full cursor-pointer items-center gap-2"
+          >
+            <CircleFadingPlusIcon className="size-3.5 group-hover:animate-pulse" />
+            <span className="ml-2">Add Venue</span>
+          </ActionButton2>
+        )}
       </DialogTrigger>
 
       <DialogContent className="h-full w-full rounded-none md:h-[calc(100vh-7rem)] md:max-w-3xl lg:max-w-5xl lg:rounded-3xl">
@@ -87,7 +134,7 @@ export function AddVenueModal() {
           >
             <DialogHeader className="bg-background sticky top-0 flex h-fit items-center justify-center">
               <DialogTitle className="border-primary w-fit border-y-2 px-5 py-1 text-base font-semibold uppercase md:text-lg lg:text-xl">
-                Add Venue
+                {isUpdate ? "Update Venue" : "Add Venue"}
               </DialogTitle>
             </DialogHeader>
 
@@ -195,9 +242,18 @@ export function AddVenueModal() {
               </DialogClose>
               <ActionButton2
                 type="submit"
+                disabled={isSubmitting}
                 className="w-full disabled:cursor-not-allowed disabled:opacity-70"
               >
-                Save changes
+                <div className="flex items-center gap-2">
+                  {isSubmitting ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : isUpdate ? (
+                    "Update Venue"
+                  ) : (
+                    "Add Venue"
+                  )}
+                </div>
               </ActionButton2>
             </DialogFooter>
           </form>
