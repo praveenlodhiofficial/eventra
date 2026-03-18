@@ -118,7 +118,7 @@ export function VenueModal(props: Props = { type: "create" }) {
           <ActionButton2
             type="button"
             variant="secondary"
-            className="flex w-full cursor-pointer items-center gap-2"
+            className="flex w-fit cursor-pointer items-center gap-2"
           >
             <CircleFadingPlusIcon className="size-3.5 group-hover:animate-pulse" />
             <span className="ml-2">Add Venue</span>

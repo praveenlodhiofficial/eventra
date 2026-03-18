@@ -246,7 +246,7 @@ export default function CreateEventPageClient({ categories }: Props) {
             <Field>
               <FieldLabel>Event Performers</FieldLabel>
 
-              <FieldGroup className="grid grid-cols-[1fr_0.4fr] gap-3">
+              <FieldGroup className="grid grid-cols-[1fr_auto] gap-3">
                 <FormField
                   control={form.control}
                   name="performerIds"
@@ -306,7 +306,7 @@ export default function CreateEventPageClient({ categories }: Props) {
             <Field>
               <FieldLabel>Event Venue</FieldLabel>
 
-              <FieldGroup className="grid grid-cols-[1fr_0.4fr] gap-3">
+              <FieldGroup className="grid grid-cols-[1fr_auto] gap-3">
                 <FormField
                   control={form.control}
                   name="venueId"

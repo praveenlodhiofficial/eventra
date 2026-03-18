@@ -17,12 +17,16 @@ import { ActionButton1 } from "./ui/action-button";
 import { Separator } from "./ui/separator";
 
 type Props = {
-  startAt: Date;
-  endAt: Date;
-  venue: Venue;
+  startAt: Date | null;
+  endAt: Date | null;
+  venue: Venue | null;
   categories: EventCategory[];
-  lowestTicketPrice: number;
+  lowestTicketPrice: number | null;
+  ticketsToBeAnnounced?: boolean;
   slug: string;
+  cityToBeAnnounced?: boolean;
+  venueToBeAnnounced?: boolean;
+  scheduleToBeAnnounced?: boolean;
 };
 
 export function EventDetailBox({
@@ -31,20 +35,32 @@ export function EventDetailBox({
   venue,
   categories,
   lowestTicketPrice,
+  ticketsToBeAnnounced,
   slug,
+  cityToBeAnnounced,
+  venueToBeAnnounced,
+  scheduleToBeAnnounced,
 }: Props) {
-  if (
-    !startAt ||
-    !endAt ||
-    !venue ||
-    !categories ||
-    !lowestTicketPrice ||
-    !slug
-  ) {
-    return null;
-  }
-  const formattedStartDate = formatDate(startAt, "MMM dd, yyyy");
-  const formattedEndDate = formatDate(endAt, "MMM dd, yyyy");
+  const priceFormatter = new Intl.NumberFormat("en-IN", {
+    maximumFractionDigits: 0,
+  });
+
+  const hasSchedule =
+    startAt instanceof Date &&
+    endAt instanceof Date &&
+    !Number.isNaN(startAt.getTime()) &&
+    !Number.isNaN(endAt.getTime());
+
+  const formattedStartDate = hasSchedule
+    ? formatDate(startAt!, "MMM dd, yyyy")
+    : null;
+  const formattedEndDate = hasSchedule
+    ? formatDate(endAt!, "MMM dd, yyyy")
+    : null;
+
+  const showTbaSchedule = Boolean(scheduleToBeAnnounced) || !hasSchedule;
+  const showTbaVenue = Boolean(venueToBeAnnounced) || !venue;
+  const showTbaCity = Boolean(cityToBeAnnounced);
 
   return (
     <div className="bg-muted-foreground/10 flex flex-col gap-3 rounded-lg p-5 md:rounded-xl lg:rounded-2xl">
@@ -53,7 +69,9 @@ export function EventDetailBox({
         <div className="flex items-center gap-3">
           <CalendarCheckIcon className="size-4.5" strokeWidth={1.5} />
           <span className="text-sm font-light md:text-base">
-            {isSameDay(startAt, endAt) ? (
+            {showTbaSchedule || !formattedStartDate || !formattedEndDate ? (
+              <>To be announced</>
+            ) : isSameDay(startAt!, endAt!) ? (
               <>{formattedStartDate}</>
             ) : (
               <>
@@ -67,7 +85,17 @@ export function EventDetailBox({
         <div className="flex items-center gap-3">
           <MapPinIcon className="size-4.5" strokeWidth={1.5} />
           <span className="text-sm font-light md:text-base">
-            {venue.name}, {venue.state}
+            {showTbaVenue ? (
+              <>To be announced</>
+            ) : (
+              <>
+                {venue!.name},{" "}
+                <span>
+                  {showTbaCity ? "" : venue!.city + ", "}
+                  {venue!.state}
+                </span>
+              </>
+            )}
           </span>
         </div>
 
@@ -75,7 +103,13 @@ export function EventDetailBox({
         <div className="flex items-center gap-3">
           <ClockIcon className="size-4.5" strokeWidth={1.5} />
           <span className="text-sm font-light md:text-base">
-            {formatDate(startAt, "p")} - {formatDate(endAt, "p")}
+            {showTbaSchedule ? (
+              <>To be announced</>
+            ) : (
+              <>
+                {formatDate(startAt!, "p")} - {formatDate(endAt!, "p")}
+              </>
+            )}
           </span>
         </div>
 
@@ -83,31 +117,41 @@ export function EventDetailBox({
         <div className="flex items-center gap-3">
           <TagIcon className="size-4.5" strokeWidth={1.5} />
           <span className="text-sm font-light md:text-base">
-            {categories.map((category) => category.name).join(", ")}
+            {categories?.length
+              ? categories.map((category) => category.name).join(", ")
+              : "To be announced"}
           </span>
         </div>
       </section>
 
       <Separator className="border-muted-foreground/20 my-2 border" />
 
-      <section className="flex items-center justify-between gap-5">
-        <div className="flex flex-col justify-start text-start">
-          <p className="text-muted-foreground text-sm font-light md:text-base">
-            Starts From
-          </p>
-          <h1 className="text-start text-2xl font-semibold md:text-3xl">
-            ₹&nbsp;{lowestTicketPrice}
+      <section className="flex items-end justify-between gap-5">
+        {ticketsToBeAnnounced || !lowestTicketPrice ? (
+          <h1 className="border-muted-foreground w-full rounded-lg border border-dashed p-4 text-center text-base font-medium md:text-lg">
+            Tickets to be announced
           </h1>
-        </div>
-        <Link href={`/events/${slug}/buy-page`}>
-          <ActionButton1
-            size="lg"
-            className="flex cursor-pointer items-center justify-center py-6.5 text-center md:py-7"
-            icon={<ArrowUpRight className="size-5" strokeWidth={1.5} />}
-          >
-            <span className="text-base font-medium">Book Tickets</span>
-          </ActionButton1>
-        </Link>
+        ) : (
+          <>
+            <div className="flex flex-col justify-start text-start">
+              <p className="text-muted-foreground text-sm font-light md:text-base">
+                Starts from
+              </p>
+              <h1 className="text-start text-2xl font-semibold md:text-3xl">
+                ₹&nbsp;{priceFormatter.format(lowestTicketPrice)}
+              </h1>
+            </div>
+            <Link href={`/events/${slug}/buy-page`}>
+              <ActionButton1
+                size="lg"
+                className="flex cursor-pointer items-center justify-center py-6.5 text-center md:py-7"
+                icon={<ArrowUpRight className="size-5" strokeWidth={1.5} />}
+              >
+                <span className="text-base font-medium">Book Tickets</span>
+              </ActionButton1>
+            </Link>
+          </>
+        )}
       </section>
     </div>
   );

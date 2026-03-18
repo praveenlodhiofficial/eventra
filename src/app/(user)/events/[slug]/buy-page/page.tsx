@@ -56,6 +56,7 @@ export default async function BuyPage({
   // ================================ TICKET TYPES CHECK ================================
   const ticketTypes = await findTicketTypes(event.id);
   if (!ticketTypes || ticketTypes.length === 0) {
+    const hasSchedule = Boolean(event.startAt && event.endAt);
     return (
       <div className="relative flex min-h-[calc(100vh-10rem)] flex-col items-center justify-center">
         <div className="bg-muted-foreground/10 absolute top-0 left-0 flex w-full flex-col gap-1 p-5 text-center">
@@ -64,9 +65,15 @@ export default async function BuyPage({
           </h1>
           <div className="flex flex-col gap-1">
             <span className="text-sm font-light md:text-sm">
-              {formatDate(event.startAt, "MMM dd, yyyy")} |{" "}
-              {formatDate(event.startAt, "EEEE")} |{" "}
-              {formatDate(event.startAt, "p")} - {formatDate(event.endAt, "p")}
+              {hasSchedule
+                ? `${formatDate(event.startAt!, "MMM dd, yyyy")} | ${formatDate(
+                    event.startAt!,
+                    "EEEE"
+                  )} | ${formatDate(event.startAt!, "p")} - ${formatDate(
+                    event.endAt!,
+                    "p"
+                  )}`
+                : "Schedule to be announced"}
             </span>
           </div>
         </div>
@@ -89,8 +96,8 @@ export default async function BuyPage({
     <BuyPageClient
       ticketTypes={ticketTypesForSelection}
       eventName={event.name}
-      startAt={event.startAt.toISOString()}
-      endAt={event.endAt.toISOString()}
+      startAt={(event.startAt ?? new Date()).toISOString()}
+      endAt={(event.endAt ?? new Date()).toISOString()}
       eventId={event.id}
       userId={userId}
     />
