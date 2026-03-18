@@ -29,7 +29,13 @@ export default async function VenuesPage() {
     <div className="mx-auto w-full">
       <DataTable
         columns={venueColumns}
-        data={venues}
+        data={venues.map((v) => ({
+          ...v,
+          lat: v.lat ?? undefined,
+          lng: v.lng ?? undefined,
+        }))}
+        searchColumnId="name"
+        searchPlaceholder="Search venues..."
         toolbarAction={<VenueModal />}
       />
     </div>

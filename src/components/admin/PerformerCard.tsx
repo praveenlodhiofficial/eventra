@@ -1,13 +1,13 @@
 import Link from "next/link";
 
 import { Image } from "@imagekit/next";
-import { IconEdit } from "@tabler/icons-react";
 
+import { Performer } from "@/domains/performer/performer.schema";
 import { config } from "@/lib/config";
 import { DeleteModalType } from "@/types/delete.types";
 
 import { DeleteModal } from "../modals/delete.modal";
-import { Button } from "../ui/button";
+import { PerformerModal } from "../modals/performer/performer-modal";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 interface PerformerCardProps {
@@ -16,6 +16,7 @@ interface PerformerCardProps {
   name: string;
   image: string;
   role: string;
+  bio: string;
 }
 
 export function PerformerCard({
@@ -24,7 +25,16 @@ export function PerformerCard({
   name,
   image,
   role,
+  bio,
 }: PerformerCardProps) {
+  const performerForModal: Performer = {
+    id,
+    name,
+    image,
+    role,
+    bio,
+  };
+
   return (
     <div className="group bg-background relative block w-full overflow-hidden rounded-xl border">
       {/* Image */}
@@ -55,9 +65,7 @@ export function PerformerCard({
         <div className="flex flex-col gap-1.5">
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="default" size="icon-sm" className="rounded-lg">
-                <IconEdit className="size-4" />
-              </Button>
+              <PerformerModal type="update" performer={performerForModal} />
             </TooltipTrigger>
             <TooltipContent side="right">
               <p>Edit Performer Details</p>

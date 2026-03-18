@@ -84,6 +84,7 @@ export const findAllPerformers = async () => {
       image: true,
       slug: true,
       role: true,
+      bio: true,
     },
   });
 };

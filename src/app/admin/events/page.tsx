@@ -56,6 +56,8 @@ export default async function EventsPage() {
           endAt: event.endAt ?? undefined,
           venueId: event.venue ? event.venue.name : undefined,
         }))}
+        searchColumnId="name"
+        searchPlaceholder="Search events..."
         toolbarAction={
           <Link href="/admin/events/create">
             <ActionButton2

@@ -6,10 +6,11 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CircleFadingPlusIcon, Loader2 } from "lucide-react";
+import { CircleFadingPlusIcon, Loader2, PencilIcon } from "lucide-react";
 import { toast } from "sonner";
 
 import { ActionButton2 } from "@/components/ui/action-button";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogClose,
@@ -94,14 +95,18 @@ export function PerformerModal(props: Props) {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         {isUpdate ? (
-          <ActionButton2 type="button" variant="outline" className="w-fit">
-            Edit Details
-          </ActionButton2>
+          <Button
+            variant="secondary"
+            size="icon-sm"
+            className="border-border rounded-lg border"
+          >
+            <PencilIcon className="size-4" />
+          </Button>
         ) : (
           <ActionButton2
             type="button"
             variant="secondary"
-            className="flex w-full cursor-pointer items-center gap-2"
+            className="flex w-fit cursor-pointer items-center gap-2"
           >
             <CircleFadingPlusIcon className="size-3.5 group-hover:animate-pulse" />
             <span className="ml-2">Add Performer</span>

@@ -35,6 +35,9 @@ interface EventDataTableProps<TData, TValue> {
 
   showSearch?: boolean;
   showColumnToggle?: boolean;
+
+  searchColumnId?: string;
+  searchPlaceholder?: string;
 }
 
 export function DataTable<TData, TValue>({
@@ -43,6 +46,8 @@ export function DataTable<TData, TValue>({
   toolbarAction,
   showSearch = true,
   showColumnToggle = true,
+  searchColumnId = "name",
+  searchPlaceholder = "Search...",
 }: EventDataTableProps<TData, TValue>) {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -61,6 +66,9 @@ export function DataTable<TData, TValue>({
     },
   });
 
+  const searchColumn = table.getColumn(searchColumnId);
+  const searchValue = (searchColumn?.getFilterValue() as string) ?? "";
+
   return (
     <div>
       {(showSearch || showColumnToggle || toolbarAction) && (
@@ -68,10 +76,10 @@ export function DataTable<TData, TValue>({
           {/* ===================== Search Input ===================== */}
           {showSearch && (
             <Input
-              placeholder="Search Events..."
-              value={table.getColumn("name")?.getFilterValue() as string}
+              placeholder={searchPlaceholder}
+              value={searchValue}
               onChange={(event) =>
-                table.getColumn("name")?.setFilterValue(event.target.value)
+                searchColumn?.setFilterValue(event.target.value)
               }
               className="max-w-sm rounded-lg border border-zinc-500 bg-white/10 px-3 py-6 text-sm font-light shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
             />

@@ -6,10 +6,11 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CircleFadingPlusIcon, Loader2 } from "lucide-react";
+import { CircleFadingPlusIcon, Loader2, PencilIcon } from "lucide-react";
 import { toast } from "sonner";
 
 import { ActionButton2 } from "@/components/ui/action-button";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogClose,
@@ -88,9 +89,13 @@ export function EventCategoriesModal(props: Props) {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         {isUpdate ? (
-          <ActionButton2 type="button" variant="outline" className="w-fit">
-            Rename Category
-          </ActionButton2>
+          <Button
+            variant="secondary"
+            size="icon-sm"
+            className="border-border rounded-lg border"
+          >
+            <PencilIcon className="size-4" />
+          </Button>
         ) : (
           <ActionButton2
             type="button"

@@ -202,6 +202,7 @@ export const listPerformersAction = async () => {
         image: performer.image,
         slug: performer.slug,
         role: performer.role,
+        bio: performer.bio,
       })),
     };
   } catch (error) {

@@ -15,8 +15,8 @@ export const VenueSchema = z.object({
   state: z.string().min(3, "State must be at least 3 characters").trim(),
   country: z.string().min(3, "Country must be at least 3 characters").trim(),
   pincode: z.string().min(1, "Pincode is required").trim(),
-  lat: z.number().finite().optional(),
-  lng: z.number().finite().optional(),
+  lat: z.number().finite().nullable().optional(),
+  lng: z.number().finite().nullable().optional(),
 });
 
 export type VenueInput = z.input<typeof VenueSchema>;
