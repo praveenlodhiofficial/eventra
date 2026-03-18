@@ -6,29 +6,17 @@ import { useForm } from "react-hook-form";
 import Link from "next/link";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
+import { Lock, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 
-import { ActionButton2 } from "@/components/ui/action-button";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Field,
-  FieldDescription,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Separator } from "@/components/ui/separator";
 import { createBillingDetailsAction } from "@/domains/billing/billing.actions";
-import { NATIONALITY } from "@/domains/billing/billing.constants";
 import {
   BillingDetailsInput,
   BillingDetailsSchema,
@@ -59,7 +47,8 @@ export default function BillingFormDetails({
     mode: "onChange",
   });
 
-  const { isSubmitting, isValid } = form.formState;
+  const { errors, isSubmitting, isValid } = form.formState;
+  const acceptedTerms = Boolean(form.watch("acceptedTerms"));
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
   async function handlePayNow(data: BillingDetailsInput) {
@@ -126,224 +115,303 @@ export default function BillingFormDetails({
   }
 
   return (
-    <div className="max-w-2xl space-y-10 rounded-xl bg-white/30 pt-5 pb-1 backdrop-blur-sm md:mx-auto md:space-y-5 md:rounded-2xl">
-      {/* ========================================== TICKET DETAILS ========================================== */}
-      <div>
-        <p className="from-muted-foreground/10 to-primary/80 bg-linear-to-l p-1 px-6 text-sm font-medium text-white uppercase">
-          Billing Details
-        </p>
-        <div className="relative m-3 md:m-5">
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
-              <FieldGroup>
-                {/* ======================================== NAME & PHONE ======================================== */}
-                <FieldGroup className="mt-3 grid grid-cols-1 space-y-3 md:mt-5 md:grid-cols-2 md:space-y-0">
-                  {/* Name */}
-                  <Field>
-                    <FieldLabel>Name</FieldLabel>
-                    <FormField
-                      control={form.control}
-                      name="name"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <Input
-                              placeholder="Name"
-                              className="border-muted-foreground/20 rounded-lg border px-3 py-6 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 md:text-[15px]"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </Field>
+    <form
+      onSubmit={form.handleSubmit(onSubmit)}
+      className="no-scrollbar h-full space-y-6 overflow-y-auto md:max-h-[calc(100vh-5rem)] md:py-6 lg:py-8"
+    >
+      <Card className="via-background border-indigo-500/15 bg-linear-to-br from-transparent to-indigo-500/5 p-4 md:p-6">
+        <CardTitle className="text-base tracking-tight md:text-lg">
+          Contact details
+        </CardTitle>
+        <section className="space-y-6">
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="name" className="text-sm font-medium">
+                Full name
+              </Label>
+              <Input
+                id="name"
+                placeholder="Enter your full name"
+                // className="w-full rounded-lg border border-zinc-200 bg-white/10 px-3 py-6 text-sm font-light shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                className="border-border/60 h-11 rounded-lg focus-visible:border-indigo-500/40 focus-visible:ring-4 focus-visible:ring-indigo-500/15"
+                {...form.register("name")}
+              />
+              {errors.name?.message ? (
+                <p className="text-destructive text-xs">
+                  {errors.name.message}
+                </p>
+              ) : null}
+            </div>
 
-                  {/* Phone Number */}
-                  <Field>
-                    <FieldLabel>Phone Number</FieldLabel>
-                    <FormField
-                      control={form.control}
-                      name="phone"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <Input
-                              placeholder="Phone Number"
-                              className="border-muted-foreground/20 rounded-lg border px-3 py-6 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 md:text-[15px]"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </Field>
-                </FieldGroup>
+            <div className="space-y-2">
+              <Label htmlFor="phone" className="text-sm font-medium">
+                Phone
+              </Label>
+              <Input
+                id="phone"
+                placeholder="10-digit mobile number"
+                className="border-border/60 h-11 rounded-lg focus-visible:border-indigo-500/40 focus-visible:ring-4 focus-visible:ring-indigo-500/15"
+                {...form.register("phone")}
+              />
+              {errors.phone?.message ? (
+                <p className="text-destructive text-xs">
+                  {errors.phone.message}
+                </p>
+              ) : null}
+            </div>
+          </div>
 
-                {/* ======================================== EMAIL ======================================== */}
-                <Field>
-                  <FieldLabel>Email</FieldLabel>
-                  <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input
-                            placeholder="Email"
-                            className="border-muted-foreground/20 rounded-lg border px-3 py-6 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 md:text-[15px]"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FieldDescription>
-                    We&apos;ll email you ticket confirmation and invoices
-                  </FieldDescription>
-                </Field>
+          <div className="space-y-2">
+            <Label htmlFor="email" className="text-sm font-medium">
+              Email
+            </Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="you@example.com"
+              className="border-border/60 h-11 rounded-lg focus-visible:border-indigo-500/40 focus-visible:ring-4 focus-visible:ring-indigo-500/15"
+              {...form.register("email")}
+            />
+            <p className="text-muted-foreground pt-3 text-xs">
+              Your tickets and invoice will be sent to this email.
+            </p>
+            {errors.email?.message ? (
+              <p className="text-destructive text-xs">{errors.email.message}</p>
+            ) : null}
+          </div>
+        </section>
+      </Card>
 
-                <div className="grid gap-3">
-                  {/* ======================================== NATIONALITY ======================================== */}
-                  <Field>
-                    <FieldLabel>Nationality</FieldLabel>
-                    <FormField
-                      control={form.control}
-                      name="nationality"
-                      render={({ field }) => {
-                        const toggle = (
-                          nationality: string,
-                          checked: boolean
-                        ) => {
-                          if (checked) {
-                            field.onChange(nationality);
-                          } else {
-                            field.onChange("");
-                          }
-                        };
-                        return (
-                          <FormItem>
-                            <FormControl>
-                              <FieldGroup className="grid grid-cols-[0.8fr_1fr] gap-3 md:grid-cols-2">
-                                {NATIONALITY.map((nationality) => {
-                                  const isChecked = field.value === nationality;
+      <Card className="via-background border-indigo-500/15 bg-linear-to-br from-transparent to-indigo-500/5 p-4 md:p-6">
+        <CardTitle className="text-base tracking-tight">
+          Billing address
+        </CardTitle>
+        <section className="space-y-6">
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="nationality" className="text-sm font-medium">
+                Nationality
+              </Label>
+              <Input
+                id="nationality"
+                placeholder="e.g. Indian"
+                className="border-border/60 h-11 rounded-lg focus-visible:border-indigo-500/40 focus-visible:ring-4 focus-visible:ring-indigo-500/15"
+                {...form.register("nationality")}
+              />
+              {errors.nationality?.message ? (
+                <p className="text-destructive text-xs">
+                  {errors.nationality.message}
+                </p>
+              ) : null}
+            </div>
 
-                                  return (
-                                    <FormItem
-                                      key={nationality}
-                                      className="border-muted-foreground/20 flex items-center space-y-0 space-x-2 rounded-md border p-3 py-4"
-                                    >
-                                      <FormControl>
-                                        <Checkbox
-                                          className="border-muted-foreground/40"
-                                          checked={isChecked}
-                                          onCheckedChange={(checked) =>
-                                            toggle(
-                                              nationality,
-                                              Boolean(checked)
-                                            )
-                                          }
-                                        />
-                                      </FormControl>
+            <div className="space-y-2">
+              <Label htmlFor="state" className="text-sm font-medium">
+                State
+              </Label>
+              <Input
+                id="state"
+                placeholder="e.g. Maharashtra"
+                className="border-border/60 h-11 rounded-lg focus-visible:border-indigo-500/40 focus-visible:ring-4 focus-visible:ring-indigo-500/15"
+                {...form.register("state")}
+              />
+              {errors.state?.message ? (
+                <p className="text-destructive text-xs">
+                  {errors.state.message}
+                </p>
+              ) : null}
+            </div>
+          </div>
+        </section>
+      </Card>
 
-                                      <FormLabel className="line-clamp-1 cursor-pointer font-normal">
-                                        {nationality.charAt(0).toUpperCase() +
-                                          nationality.slice(1)}
-                                      </FormLabel>
-                                    </FormItem>
-                                  );
-                                })}
-                              </FieldGroup>
-                            </FormControl>
-
-                            <FormMessage />
-                          </FormItem>
-                        );
-                      }}
-                    />
-                  </Field>
-
-                  {/* ======================================== STATE ======================================== */}
-                  <Field>
-                    <FormField
-                      control={form.control}
-                      name="state"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <Input
-                              placeholder="State"
-                              className="border-muted-foreground/20 rounded-lg border px-3 py-6 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 md:text-[15px]"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </Field>
+      <Card className="via-background border-indigo-500/15 bg-linear-to-br from-transparent to-indigo-500/5 p-4 md:p-6">
+        <CardTitle className="text-lg tracking-tight">Payment</CardTitle>
+        <section className="space-y-6">
+          <RadioGroup defaultValue="upi" className="gap-3">
+            <PaymentOption
+              value="upi"
+              title="UPI"
+              description="Pay instantly using UPI apps like GPay, PhonePe, Paytm."
+              icon={<UpiMark />}
+            />
+            <PaymentOption
+              value="card"
+              title="Credit / Debit card"
+              description="Visa, Mastercard and most major cards supported."
+              icon={
+                <div className="flex items-center gap-2">
+                  <VisaMark />
+                  <MastercardMark />
                 </div>
+              }
+            />
+            <PaymentOption
+              value="wallet"
+              title="Wallets"
+              description="Use supported wallets during the secure payment step."
+              icon={<WalletMark />}
+            />
+          </RadioGroup>
 
-                {/* ======================================== ACCEPTED TERMS ======================================== */}
-                <Field>
-                  <FormField
-                    control={form.control}
-                    name="acceptedTerms"
-                    render={({ field }) => (
-                      <FormItem className="flex items-center gap-7 md:gap-3">
-                        <FormControl>
-                          <Checkbox
-                            checked={Boolean(field.value)}
-                            onCheckedChange={field.onChange}
-                            className="border-muted-foreground/40 origin-left scale-220 md:scale-100"
-                          />
-                        </FormControl>
-                        <FormDescription className="line-clamp-2 cursor-pointer font-normal">
-                          I have read and accepted the{" "}
-                          <Link
-                            href="/terms-and-conditions"
-                            className="font-medium text-blue-600"
-                          >
-                            terms and conditions
-                          </Link>
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </Field>
-              </FieldGroup>
+          <Separator />
 
-              {/* ======================================= PAY NOW BUTTON ======================================= */}
-              <div className="mt-5">
-                <ActionButton2
-                  type="submit"
-                  disabled={
-                    isSubmitting ||
-                    isProcessingPayment ||
-                    !isValid ||
-                    !form.getValues("acceptedTerms")
-                  }
-                  className="w-full cursor-pointer py-7 text-base disabled:cursor-not-allowed disabled:opacity-70"
+          <div className="flex items-start gap-3">
+            <Checkbox
+              id="acceptedTerms"
+              checked={acceptedTerms}
+              onCheckedChange={(checked) =>
+                form.setValue("acceptedTerms", Boolean(checked), {
+                  shouldValidate: true,
+                  shouldDirty: true,
+                })
+              }
+              className="mt-0.5"
+            />
+            <div className="space-y-2">
+              <Label
+                htmlFor="acceptedTerms"
+                className="text-sm leading-5 font-normal"
+              >
+                I agree to the{" "}
+                <Link
+                  href="/terms-and-conditions"
+                  className="text-foreground underline underline-offset-4"
                 >
-                  <div className="flex items-center gap-2">
-                    {isSubmitting || isProcessingPayment ? (
-                      <>
-                        <Loader2 className="size-4 animate-spin" />
-                        {isSubmitting ? "Saving..." : "Processing..."}
-                      </>
-                    ) : (
-                      "Pay Now"
-                    )}
-                  </div>
-                </ActionButton2>
-              </div>
-            </form>
-          </Form>
+                  terms and conditions
+                </Link>
+                .
+              </Label>
+              {errors.acceptedTerms?.message ? (
+                <p className="text-destructive text-xs">
+                  {errors.acceptedTerms.message}
+                </p>
+              ) : null}
+            </div>
+          </div>
+
+          <Button
+            type="submit"
+            className="h-12 w-full rounded-lg bg-linear-to-r from-indigo-600 to-cyan-600 text-white shadow-sm shadow-indigo-500/10 hover:from-indigo-600/90 hover:to-cyan-600/90 focus-visible:ring-4 focus-visible:ring-indigo-500/20 focus-visible:outline-none disabled:from-indigo-600/30 disabled:to-cyan-600/30 disabled:text-white"
+            disabled={
+              isSubmitting || isProcessingPayment || !isValid || !acceptedTerms
+            }
+            isLoading={isSubmitting || isProcessingPayment}
+          >
+            <span className="flex items-center justify-center gap-2">
+              <Lock className="size-4" />
+              Pay now
+            </span>
+          </Button>
+          <p className="text-muted-foreground text-center text-xs">
+            Secure checkout powered by Razorpay.
+          </p>
+        </section>
+      </Card>
+    </form>
+  );
+}
+
+function PaymentOption({
+  value,
+  title,
+  description,
+  icon,
+}: {
+  value: string;
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+}) {
+  const id = `payment-${value}`;
+  return (
+    <div className="relative">
+      <RadioGroupItem id={id} value={value} className="peer sr-only" />
+      <Label htmlFor={id} className="block cursor-pointer">
+        <div className="border-border/60 bg-background hover:bg-muted/20 flex items-start justify-between gap-4 rounded-xl border p-4 transition-colors peer-data-[state=checked]:border-indigo-600 peer-data-[state=checked]:ring-4 peer-data-[state=checked]:ring-cyan-500/15">
+          <div className="space-y-2">
+            <p className="text-sm font-medium md:text-[15px]">{title}</p>
+            <p className="text-muted-foreground text-xs leading-5 font-normal md:text-[13px]">
+              {description}
+            </p>
+          </div>
+          <div className="text-muted-foreground shrink-0">{icon}</div>
         </div>
-      </div>
+      </Label>
+    </div>
+  );
+}
+
+function VisaMark() {
+  return (
+    <svg
+      aria-label="Visa"
+      viewBox="0 0 60 20"
+      className="text-foreground h-5 w-auto"
+      role="img"
+    >
+      <rect width="60" height="20" rx="4" fill="currentColor" opacity="0.08" />
+      <path
+        d="M14.2 14.6H11.7L10.1 6.2h2.5l1.6 8.4ZM22.5 6.4a6.5 6.5 0 0 0-2.3-.4c-2.5 0-4.3 1.2-4.3 3 0 1.3 1.3 2 2.3 2.4 1 .4 1.4.7 1.4 1.1 0 .6-.8.9-1.6.9-.9 0-1.8-.2-2.4-.5l-.3-.2-.4 2.1c.6.2 1.7.5 2.9.5 2.7 0 4.5-1.2 4.5-3.1 0-1-.7-1.8-2.3-2.4-1-.4-1.6-.7-1.6-1.1 0-.4.5-.8 1.6-.8.9 0 1.5.2 2 .4l.2.1.4-2Z"
+        fill="currentColor"
+        opacity="0.9"
+      />
+      <path
+        d="M29.6 6.2h-2c-.6 0-1 .2-1.2.7l-3.8 7.7H25l.5-1.3h3l.3 1.3h2.2l-1.9-8.4Zm-3.4 5.4 1.2-3 0 0 .6 3h-1.8Z"
+        fill="currentColor"
+        opacity="0.9"
+      />
+      <path
+        d="M40.8 6.2 38.4 14.6H36l-1.5-5.5c-.1-.4-.2-.6-.6-.8A9 9 0 0 0 31.8 7l.1-.8h3.7c.5 0 1 .3 1.1.7l.8 4.1 2-4.8h2.3Z"
+        fill="currentColor"
+        opacity="0.9"
+      />
+    </svg>
+  );
+}
+
+function MastercardMark() {
+  return (
+    <svg
+      aria-label="Mastercard"
+      viewBox="0 0 60 20"
+      className="text-foreground h-5 w-auto"
+      role="img"
+    >
+      <rect width="60" height="20" rx="4" fill="currentColor" opacity="0.08" />
+      <circle cx="28" cy="10" r="5.2" fill="currentColor" opacity="0.35" />
+      <circle cx="34" cy="10" r="5.2" fill="currentColor" opacity="0.55" />
+      <path
+        d="M31 5.7a6.4 6.4 0 0 0 0 8.6 6.4 6.4 0 0 0 0-8.6Z"
+        fill="currentColor"
+        opacity="0.8"
+      />
+      <path
+        d="M18 14.4V5.6h1.8l2.1 5.8 2.1-5.8H26v8.8h-1.3V7.9l-2.2 6.5h-1.2l-2.2-6.5v6.5H18Z"
+        fill="currentColor"
+        opacity="0.85"
+      />
+      <path
+        d="M41 14.4V5.6h3.3c1.9 0 3 1 3 2.7 0 1.8-1.1 2.8-3 2.8h-1.9v3.3H41Zm1.4-4.5h1.9c1 0 1.6-.5 1.6-1.6S45.3 6.8 44.3 6.8h-1.9v3.1Z"
+        fill="currentColor"
+        opacity="0.85"
+      />
+    </svg>
+  );
+}
+
+function UpiMark() {
+  return (
+    <div className="border-border/60 text-foreground inline-flex h-5 items-center rounded-md border px-2 text-[11px] font-medium">
+      UPI
+    </div>
+  );
+}
+
+function WalletMark() {
+  return (
+    <div className="border-border/60 text-foreground inline-flex h-5 items-center rounded-md border px-2 text-[11px] font-medium">
+      Wallet
     </div>
   );
 }

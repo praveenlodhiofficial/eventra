@@ -25,6 +25,7 @@ import { Container } from "@/components/ui/container";
 import { ReadMore } from "@/components/ui/read-more";
 import { Separator } from "@/components/ui/separator";
 import { findEvent } from "@/domains/event/event.dal";
+import { getTicketsSoldForEvent } from "@/domains/ticket/ticket.dal";
 import { config } from "@/lib/config";
 
 export default async function EventPage({
@@ -55,6 +56,19 @@ export default async function EventPage({
   const priceFormatter = new Intl.NumberFormat("en-IN", {
     maximumFractionDigits: 0,
   });
+
+  const ticketsSold = await getTicketsSoldForEvent(event.id);
+  const totalTickets = (event.ticketTypes ?? []).reduce(
+    (sum, t) => sum + (Number.isFinite(t.quantity) ? t.quantity : 0),
+    0
+  );
+
+  const lowestTicketPrice =
+    event.ticketTypes?.reduce<number | null>((min, t) => {
+      const price = Number(t.price);
+      if (!Number.isFinite(price)) return min;
+      return min === null ? price : Math.min(min, price);
+    }, null) ?? null;
 
   const hasSchedule =
     event.startAt instanceof Date &&
@@ -182,7 +196,8 @@ export default async function EventPage({
                 Tickets Sold
               </CardTitle>
               <CardDescription className="text-primary text-end text-xl font-semibold md:text-3xl lg:text-4xl">
-                21,000 / 30,000
+                {priceFormatter.format(ticketsSold)} /{" "}
+                {priceFormatter.format(totalTickets)}
               </CardDescription>
             </Card>
 
@@ -270,9 +285,7 @@ export default async function EventPage({
                       </CardTitle>
                       <CardDescription className="text-primary text-xl font-semibold md:text-3xl">
                         ₹&nbsp;
-                        {priceFormatter.format(
-                          Number(event.ticketTypes[0].price)
-                        )}
+                        {priceFormatter.format(lowestTicketPrice ?? 0)}
                       </CardDescription>
                     </CardContent>
                     <Link href={`/events/${slug}/buy-page`}>

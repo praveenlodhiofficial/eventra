@@ -19,3 +19,21 @@ export const createTicket = async (data: TicketInput) => {
     },
   });
 };
+
+/* -------------------------------------------------------------------------- */
+/*                         Tickets sold for an event                           */
+/* -------------------------------------------------------------------------- */
+
+export const getTicketsSoldForEvent = async (eventId: string) => {
+  const res = await prisma.ticket.aggregate({
+    where: {
+      status: { in: ["PAID", "SCANNED"] },
+      ticketType: {
+        eventId,
+      },
+    },
+    _sum: { quantity: true },
+  });
+
+  return res._sum.quantity ?? 0;
+};
