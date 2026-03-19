@@ -38,8 +38,8 @@ export default async function EventsPage({
       <h1 className="bg-muted-foreground/10 p-2 text-center text-base font-semibold uppercase md:text-xl">
         All Events
       </h1>
-      <section className="mx-auto w-full max-w-7xl space-y-5 md:space-y-8">
-        <div className="no-scrollbar flex h-fit w-[calc(105%)] items-center justify-start gap-2 overflow-x-auto rounded-lg">
+      <section className="w-full max-w-7xl space-y-5 md:space-y-8 lg:mx-auto">
+        <div className="no-scrollbar mx-3 flex h-fit items-center justify-start gap-2 overflow-x-auto rounded-lg md:mx-5 md:gap-3">
           <FilterEvents
             categories={categories}
             initialSort={sort}
@@ -89,7 +89,7 @@ export default async function EventsPage({
             Concerts
           </ActionButton2>
         </div>
-        <div className="flex gap-5">
+        <div className="flex gap-5 px-3 md:px-5">
           <EventsWrapper
             take={50}
             sort={sort}

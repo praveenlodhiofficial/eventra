@@ -179,7 +179,7 @@ export function FilterEvents({
             orientation="vertical"
             className="h-full gap-0 bg-transparent"
           >
-            <TabsList className="w-40 rounded-none bg-transparent p-0">
+            <TabsList className="rounded-none bg-transparent p-0 md:w-40">
               <TabsTrigger
                 value="sort-by"
                 className="data-[state=active]:bg-muted data-[state=active]:text-primary cursor-pointer rounded-l-xl rounded-r-none border-0 px-4 py-3 text-sm group-data-[variant=default]/tabs-list:data-[state=active]:shadow-none md:text-base"
@@ -300,7 +300,7 @@ export function FilterEvents({
           </Tabs>
 
           {/* Actions */}
-          <div className="mt-0.5 ml-40 grid grid-cols-2 items-center gap-2">
+          <div className="mt-0.5 grid grid-cols-2 items-center gap-2 md:ml-40">
             <ActionButton2
               variant="outline"
               size="lg"

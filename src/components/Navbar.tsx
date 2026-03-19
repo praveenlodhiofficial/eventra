@@ -9,6 +9,12 @@ import { ActionButton1 } from "./ui/action-button";
 import { MobileNav } from "./ui/mobile-nav";
 import { NavbarMotion } from "./ui/navbar-motion";
 
+const nav = [
+  { label: "Events", href: "/events" },
+  // { label: "Categories", href: "/categories", },
+  { label: "Performers", href: "/performers" },
+];
+
 export async function Navbar() {
   const session = await getSession();
 
@@ -30,9 +36,15 @@ export async function Navbar() {
         {/* ================= DESKTOP ================= */}
         <div className="hidden w-fit items-center overflow-hidden rounded-full px-2 py-2 pl-10 md:flex">
           <div className="flex items-center justify-start gap-10">
-            <Link href={`/events`}> Events</Link>
-            <Link href={`/categories`}> Categories</Link>
-            <Link href={`/performers`}> Performers</Link>
+            {nav.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="fade-in text-sm underline-offset-3 hover:underline md:text-base"
+              >
+                {item.label}
+              </Link>
+            ))}
           </div>
 
           {!session && (

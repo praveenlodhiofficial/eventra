@@ -1,7 +1,7 @@
 "use client";
 
 import { startTransition, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -50,7 +50,10 @@ export default function BillingFormDetails({
   });
 
   const { errors, isSubmitting, isValid } = form.formState;
-  const acceptedTerms = Boolean(form.watch("acceptedTerms"));
+  const acceptedTerms = useWatch({
+    control: form.control,
+    name: "acceptedTerms",
+  });
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
   async function handlePayNow(data: BillingDetailsInput) {

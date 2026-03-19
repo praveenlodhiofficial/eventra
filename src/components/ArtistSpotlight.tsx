@@ -26,7 +26,7 @@ export function ArtistSpotlight({
     >
       {performers.map((performer, index) => (
         <Link
-          href={`/artists/${performer.slug}`}
+          href={`/performers/${performer.slug}`}
           key={performer.id}
           className="overflow-hidden"
         >

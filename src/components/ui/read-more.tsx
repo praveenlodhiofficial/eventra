@@ -34,7 +34,7 @@ export function ReadMore({ text, lines = 4, className }: ReadMoreProps) {
       <ActionButton1
         variant="link"
         onClick={() => setOpen(!open)}
-        className="items-cente mt-3 flex origin-left scale-80 p-0 text-sm font-medium text-blue-500 hover:underline md:scale-100"
+        className="flex origin-left scale-80 items-center p-0 text-sm font-medium text-blue-500 hover:underline md:scale-100"
         icon={
           open ? (
             <IconChevronUp className="size-5 scale-80" />

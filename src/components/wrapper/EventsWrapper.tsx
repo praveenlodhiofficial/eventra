@@ -45,7 +45,7 @@ export async function EventsWrapper({
 
   return (
     <section className="space-y-5">
-      {title && <h2 className="text-2xl font-semibold">{title}</h2>}
+      {title && <h1 className="text-2xl font-semibold md:text-3xl">{title}</h1>}
 
       <div className="grid grid-cols-2 gap-3 md:gap-5 lg:grid-cols-4">
         {events.slice(0, take).map((event) => (
