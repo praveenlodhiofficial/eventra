@@ -69,6 +69,8 @@ export function VenueModal(props: Props = { type: "create" }) {
         state: "",
         country: "",
         pincode: "",
+        lat: 0,
+        lng: 0,
       };
 
   const form = useForm<VenueInput>({
@@ -80,8 +82,8 @@ export function VenueModal(props: Props = { type: "create" }) {
       state: venue.state,
       country: venue.country,
       pincode: venue.pincode,
-      lat: venue.lat ?? undefined,
-      lng: venue.lng ?? undefined,
+      lat: venue.lat,
+      lng: venue.lng,
     },
   });
 
@@ -199,6 +201,7 @@ export function VenueModal(props: Props = { type: "create" }) {
                                   : false
                               }
                               {...field}
+                              value={field.value ?? ""}
                             />
                           </FormControl>
                           <FormMessage />

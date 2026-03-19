@@ -49,7 +49,21 @@ export async function EventsWrapper({
 
       <div className="grid grid-cols-2 gap-3 md:gap-5 lg:grid-cols-4">
         {events.slice(0, take).map((event) => (
-          <EventCard key={event.id} event={event} />
+          <EventCard
+            key={event.id}
+            event={{
+              id: event.id,
+              name: event.name,
+              slug: event.slug,
+              coverImage: event.coverImage,
+              startAt: event.startAt,
+              endAt: event.endAt,
+              venue: event.venue,
+              ticketTypes: event.ticketTypes.map((ticketType) => ({
+                price: ticketType.price.toString(),
+              })),
+            }}
+          />
         ))}
       </div>
     </section>

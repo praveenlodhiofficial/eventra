@@ -55,7 +55,11 @@ export default async function AdminEditEventPage({ params }: PageProps) {
       ? {
           id: event.venue.id!,
           name: event.venue.name,
+          address: event.venue.address,
           city: event.venue.city,
+          state: event.venue.state,
+          country: event.venue.country,
+          pincode: event.venue.pincode,
         }
       : null,
   };

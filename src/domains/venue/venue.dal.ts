@@ -102,6 +102,10 @@ export const searchVenuesByNameOrCity = async (
     select: {
       id: true,
       name: true,
+      address: true,
+      state: true,
+      country: true,
+      pincode: true,
       city: true,
     },
   });

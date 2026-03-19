@@ -11,8 +11,8 @@ type Props = {
     name: string;
     slug: string;
     coverImage: string;
-    startAt: Date;
-    endAt: Date;
+    startAt: Date | null;
+    endAt: Date | null;
     venue?: { name?: string | null; state?: string | null } | null;
     ticketTypes?: { price: number | string | null }[];
   };
@@ -62,15 +62,15 @@ export function EventCard({ event }: Props) {
       <div className="space-y-1.5 p-3">
         {/* date */}
         <div className="text-xs text-amber-600">
-          {isSameDay(event.startAt, event.endAt) ? (
+          {isSameDay(event.startAt!, event.endAt!) ? (
             <>
-              {format(event.startAt, "MMM dd, yyyy")},{" "}
-              {format(event.startAt, "p")}
+              {format(event.startAt!, "MMM dd, yyyy")},{" "}
+              {format(event.startAt!, "p")}
             </>
           ) : (
             <>
-              {format(event.startAt, "MMM dd")} —{" "}
-              {format(event.endAt, "MMM dd")}
+              {format(event.startAt!, "MMM dd")} —{" "}
+              {format(event.endAt!, "MMM dd")}
             </>
           )}
         </div>

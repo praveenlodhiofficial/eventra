@@ -22,10 +22,23 @@ export async function createRazorpayOrderAction(bookingId: string) {
   const bookingFee = orderAmount * 0.118; // 11.8% GST
   const grandTotal = orderAmount + bookingFee;
 
+  const appName = "Eventra";
+  const appId = config.razorpay.key_id ?? "unknown";
+  const isTestMode = appId.startsWith("rzp_test");
+
   const order = await razorpay.orders.create({
     amount: Math.round(grandTotal * 100), // Convert to paise (Razorpay expects amount in smallest currency unit)
     currency: "INR",
     receipt: booking.id,
+    notes: {
+      app_name: appName,
+      app_id: appId,
+      environment: isTestMode ? "test" : "live",
+      booking_id: booking.id,
+      event_id: booking.eventId,
+      user_id: booking.userId,
+      payment_for: "event_tickets",
+    },
   });
 
   // save attempt

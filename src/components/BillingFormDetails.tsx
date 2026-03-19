@@ -4,13 +4,14 @@ import { startTransition, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Lock, ShieldCheck } from "lucide-react";
+import { Lock } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -33,6 +34,7 @@ export default function BillingFormDetails({
 }: {
   bookingId: string;
 }) {
+  const router = useRouter();
   const form = useForm<BillingDetailsInput>({
     resolver: zodResolver(BillingDetailsSchema),
     defaultValues: {
@@ -82,19 +84,44 @@ export default function BillingFormDetails({
       return;
     }
 
+    const appName = "Eventra";
+    const appId = config.razorpay.key_id ?? "unknown";
+    const isTestMode = appId.startsWith("rzp_test");
+
     const options = {
       key: config.razorpay.key_id,
       amount: order.amount,
       currency: order.currency,
       order_id: order.id,
 
+      name: appName,
+      description: `Ticket booking (${bookingId})`,
+      prefill: {
+        name: data.name,
+        email: data.email,
+        contact: data.phone,
+      },
+      notes: {
+        app_name: appName,
+        app_id: appId,
+        environment: isTestMode ? "test" : "live",
+        booking_id: bookingId,
+        payment_for: "event_tickets",
+      },
+
       handler: async function (response: {
         razorpay_payment_id: string;
         razorpay_order_id: string;
         razorpay_signature: string;
       }) {
-        await verifyPaymentAction(response);
-        window.location.reload();
+        const verifyRes = await verifyPaymentAction(response);
+        if (!verifyRes.success) {
+          toast.error("Payment verification failed");
+          setIsProcessingPayment(false);
+          return;
+        }
+
+        router.push("/events");
       },
       modal: {
         ondismiss: function () {
