@@ -1,5 +1,5 @@
 import { Image } from "@imagekit/next";
-import { ArrowUpRight, Calendar, Music, Share2, Sparkles } from "lucide-react";
+import { ArrowUpRight, Calendar, Share2, Sparkles } from "lucide-react";
 
 import { EventCard } from "@/components/EventCard";
 import { PerformerCard } from "@/components/PerformerCard";
@@ -139,21 +139,14 @@ export default async function PerformerPage({
               {/* ======================= UPCOMING EVENTS ======================= */}
               {upcomingEvents.length > 0 && (
                 <section className="space-y-6">
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-3">
-                      <div className="bg-primary/10 rounded-lg p-2">
-                        <Calendar className="text-primary h-5 w-5" />
-                      </div>
-                      <div>
-                        <h2 className="text-2xl font-bold tracking-tight">
-                          Upcoming Events
-                        </h2>
-                        <p className="text-muted-foreground text-xs">
-                          {upcomingEvents.length} event
-                          {upcomingEvents.length !== 1 ? "s" : ""} coming soon
-                        </p>
-                      </div>
-                    </div>
+                  <div className="space-y-1">
+                    <h1 className="text-2xl font-semibold md:text-3xl">
+                      Upcoming Events
+                    </h1>
+                    <p className="text-muted-foreground text-xs">
+                      {upcomingEvents.length} event
+                      {upcomingEvents.length !== 1 ? "s" : ""} coming soon
+                    </p>
                   </div>
                   <div className="grid grid-cols-2 gap-4 md:gap-6 lg:grid-cols-3">
                     {upcomingEvents.map((event) => (
@@ -181,20 +174,13 @@ export default async function PerformerPage({
               {pastEvents.length > 0 && (
                 <section className="space-y-6">
                   <div className="space-y-2">
-                    <div className="flex items-center gap-3">
-                      <div className="bg-muted rounded-lg p-2">
-                        <Music className="text-muted-foreground h-5 w-5" />
-                      </div>
-                      <div>
-                        <h2 className="text-2xl font-bold tracking-tight">
-                          Past Events
-                        </h2>
-                        <p className="text-muted-foreground text-xs">
-                          {pastEvents.length} event
-                          {pastEvents.length !== 1 ? "s" : ""} completed
-                        </p>
-                      </div>
-                    </div>
+                    <h1 className="text-2xl font-semibold md:text-3xl">
+                      Past Events
+                    </h1>
+                    <p className="text-muted-foreground text-xs">
+                      {pastEvents.length} event
+                      {pastEvents.length !== 1 ? "s" : ""} completed
+                    </p>
                   </div>
                   <div className="grid grid-cols-2 gap-3 md:gap-5 lg:grid-cols-3">
                     {pastEvents.map((event) => (
@@ -220,14 +206,12 @@ export default async function PerformerPage({
             </div>
           ) : (
             /* ======================= EMPTY STATE ======================= */
-            <div className="border-border from-primary/5 rounded-2xl border border-dashed bg-linear-to-br to-transparent p-12 text-center sm:p-16">
-              <div className="bg-primary/10 mx-auto mb-4 inline-flex rounded-full p-4">
-                <Calendar className="text-primary h-8 w-8" />
-              </div>
-              <h3 className="text-foreground text-lg font-semibold">
+            <div className="border-muted-foreground bg-muted text-muted-foreground flex w-full flex-col items-center justify-center rounded-4xl border border-dashed p-35">
+              <Calendar className="h-10 w-10" strokeWidth={1.5} />
+              <h3 className="mt-2 text-lg font-medium md:text-xl">
                 No events yet
               </h3>
-              <p className="text-muted-foreground mt-1 text-sm">
+              <p className="text-muted-foreground mt-1 text-sm md:text-base">
                 Check back soon for upcoming events from {performer.name}
               </p>
             </div>
@@ -239,19 +223,19 @@ export default async function PerformerPage({
               <div className="space-y-2">
                 <div className="flex items-center gap-3">
                   <div className="bg-primary/10 rounded-lg p-2">
-                    <Sparkles className="text-primary h-5 w-5" />
+                    <Sparkles className="text-primary size-4 md:size-5 lg:size-7" />
                   </div>
                   <div>
-                    <h2 className="text-2xl font-bold tracking-tight">
+                    <h1 className="text-2xl font-semibold md:text-3xl">
                       Similar Performers
-                    </h2>
+                    </h1>
                     <p className="text-muted-foreground text-xs">
                       Other {performer.role}s you might like
                     </p>
                   </div>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-6 lg:grid-cols-4">
+              <div className="grid grid-cols-2 gap-4 md:grid-cols-2 md:gap-4 lg:grid-cols-4">
                 {filteredSimilarPerformers.map((p) => (
                   <PerformerCard
                     key={p.id}

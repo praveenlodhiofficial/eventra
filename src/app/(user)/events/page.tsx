@@ -91,7 +91,7 @@ export default async function EventsPage({
         </div>
         <div className="flex gap-5 px-3 md:px-5">
           <EventsWrapper
-            take={50}
+            take={15}
             sort={sort}
             categoryIds={categoryIds}
             near={

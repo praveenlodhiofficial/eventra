@@ -125,7 +125,7 @@ export function LocationPickerDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange} modal>
-      <DialogContent className="flex h-full w-full flex-col gap-3 rounded-none md:h-[calc(100vh-7rem)] md:max-w-3xl lg:rounded-3xl">
+      <DialogContent className="flex h-full w-full flex-col gap-3 rounded-none px-3 md:h-[calc(100vh-7rem)] md:max-w-3xl md:px-5 lg:rounded-3xl">
         <DialogHeader>
           <DialogTitle className="px-5 py-1 text-center text-base font-semibold uppercase md:text-lg lg:text-xl">
             {title}
@@ -150,11 +150,11 @@ export function LocationPickerDialog({
               onClick={useMyLocation}
               disabled={isLocating}
               className={cn(
-                "bg-secondary text-secondary-foreground hover:bg-secondary/80 inline-flex h-12 items-center justify-center gap-2 rounded-xl px-4 text-xs font-medium uppercase transition-opacity disabled:cursor-not-allowed disabled:opacity-70 md:text-sm"
+                "bg-secondary text-secondary-foreground hover:bg-secondary/80 inline-flex h-12 items-center justify-center gap-2 rounded-xl px-4 font-medium uppercase transition-opacity disabled:cursor-not-allowed disabled:opacity-70 md:text-sm"
               )}
             >
               <CrosshairIcon className="size-4" />
-              {isLocating ? "Locating..." : "Use my location"}
+              <span> {isLocating ? "Locating..." : "Detect"}</span>
             </button>
           </div>
 

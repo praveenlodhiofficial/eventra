@@ -156,6 +156,7 @@ export const searchPerformersByName = async (
       name: true,
       image: true,
       role: true,
+      slug: true,
     },
   });
 };
